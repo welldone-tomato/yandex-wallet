@@ -4,14 +4,16 @@ const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
+const FILE_NAME = '/./db/cards.json';
+
 const CardsContext = {
     /**
      * Возвращает список карт со всеми данными в object
      * 
      * @returns {Promise<Object>}
      */
-    readCards: async () => {
-        let data = await readFile(__dirname + '/./db/cards.json', 'utf8');
+    async readCards() {
+        let data = await readFile(__dirname + FILE_NAME, 'utf8');
         return JSON.parse(data);
     },
 
@@ -22,7 +24,6 @@ const CardsContext = {
      */
     async readCardsNumbers() {
         const cards = await this.readCards();
-
         return cards.map(item => item['cardNumber']);
     },
 
@@ -32,7 +33,7 @@ const CardsContext = {
      * @param {any} cards 
      */
     async writeCards(cards) {
-        await writeFile(__dirname + '/./db/cards.json', JSON.stringify(cards));
+        await writeFile(__dirname + FILE_NAME, JSON.stringify(cards));
     },
 
     /**
