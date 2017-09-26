@@ -3,11 +3,18 @@ const router = require('koa-router')();
 const koaBody = require('koa-body')();
 
 const cardsRoute = require('./routes/cards');
+const CardsContext = require('./data/cards_context');
 
 const app = new Koa();
 
-// if (process.env.NODE_ENV !== 'test') {
-// }
+if (process.env.NODE_ENV !== 'test') {
+	app.use(async (ctx, next) => {
+		const start = new Date();
+		await next();
+		const ms = new Date() - start;
+		console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+	});
+}
 
 // Обработчик ошибок
 app.use(async (ctx, next) => {
@@ -19,6 +26,12 @@ app.use(async (ctx, next) => {
 			message: err.message
 		};
 	}
+});
+
+// inject Context
+app.use(async (ctx, next) => {
+	ctx.CardsContext = new CardsContext();
+	await next();
 });
 
 router.use('/cards', koaBody, cardsRoute.routes());

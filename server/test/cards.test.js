@@ -124,7 +124,9 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.length.should.be.eql(1);
+                    res.body.should.have.property('id').eql(2);
+                    res.body.should.have.property('cardNumber').eql('5483874041820682');
+                    res.body.should.have.property('cardType').eql('mastercard');
                     done();
                 });
         });

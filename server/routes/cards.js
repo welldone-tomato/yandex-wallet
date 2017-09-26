@@ -1,8 +1,7 @@
 const router = require('koa-router')();
 const bankUtils = require('../libs/utils');
-const CardContext = require('../fsdb');
 
-router.get('/', async ctx => ctx.body = await CardContext.readCardsNumbers());
+router.get('/', async ctx => ctx.body = await ctx.CardsContext.getCardsNumbers());
 
 router.post('/', async ctx => {
 	const {body} = ctx.request;
@@ -16,20 +15,16 @@ router.post('/', async ctx => {
 	const cardType = bankUtils.getCardType(cardNumber);
 	if (cardType === '' || !bankUtils.moonCheck(cardNumber)) ctx.throw(400, 'valid cardNumber required');
 
-	const cardsNumber = await CardContext.readCardsNumbers();
-	const cards = await CardContext.readCards();
+	const cardsNumbers = await ctx.CardsContext.getCardsNumbers();
 
-	if (cardsNumber.includes(cardNumber)) ctx.throw(400, 'non doublicated cardNumber required')
+	if (cardsNumbers.includes(cardNumber)) ctx.throw(400, 'non doublicated cardNumber required')
 
-	const newCard = {
-		id: CardContext.getNextId(cards),
+	let newCard = {
 		cardNumber,
 		balance: 0
 	};
 
-	cards.push(newCard);
-
-	await CardContext.writeCards(cards);
+	newCard = await ctx.CardsContext.add(newCard);
 
 	ctx.body = {
 		id: newCard.id,
@@ -40,16 +35,14 @@ router.post('/', async ctx => {
 
 router.delete('/:id', async ctx => {
 	const {id} = ctx.params;
-	if (!id) ctx.throw(400, 'id required')
+	if (!id) ctx.throw(400, 'id is required')
 
-	const card = await CardContext.findById(parseInt(id, 10));
-	const cards = await CardContext.readCards();
+	await ctx.CardsContext.remove(id);
 
-	if (!card || !cards) ctx.throw(404, 'card with this id is not found');
+	ctx.status = 200;
+});
 
-	const newCards = cards.filter(card => card.id !== parseInt(id, 10));
-
-	await CardContext.writeCards(newCards);
+router.get('/:id/transactions', async ctx => {
 
 	ctx.status = 200;
 });
