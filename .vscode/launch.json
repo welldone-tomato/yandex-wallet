@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Mocha Server Tests",
+            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "args": [
+                "-u",
+                "tdd",
+                "--timeout",
+                "999999",
+                "--colors",
+                "${workspaceRoot}/server/test"
+            ],
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Launch Server",
+            "program": "${workspaceRoot}/server/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Nodemon Server",
+            "runtimeExecutable": "nodemon",
+            "program": "${workspaceRoot}/server/index.js",
+            "restart": true,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        }
+    ]
+}

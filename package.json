@@ -1,0 +1,27 @@
+{
+  "name": "yandex-wallet",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "koa": "^2.3.0",
+    "koa-body": "^2.3.0",
+    "koa-router": "^7.2.1",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.13"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "start:server": "node ./server/index.js",
+    "test:server": "mocha ./server/test --timeout 10000",
+    "cover:server": "nyc mocha ./server/test --timeout 10000"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "chai-http": "^3.0.0",
+    "mocha": "^3.5.3",
+    "nyc": "^11.2.1"
+  }
+}
