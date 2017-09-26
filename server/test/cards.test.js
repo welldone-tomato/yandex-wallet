@@ -5,8 +5,14 @@ const chaiHttp = require('chai-http');
 const fs = require('fs');
 const server = require('../index');
 const should = chai.should();
+const util = require('util');
+
+const writeFile = util.promisify(fs.writeFile);
 
 chai.use(chaiHttp);
+
+const CARDS_FILE_NAME = '/../db/cards.json';
+const TRANSACTIONS_FILE_NAME = '/../db/transactions.json'
 
 describe('Cards', () => {
     /**
@@ -14,7 +20,7 @@ describe('Cards', () => {
      * 
      * @param {Function} done 
      */
-    function restoreCards(done) {
+    function restoreDb(done) {
         const cards = [
             {
                 "id": 0,
@@ -28,14 +34,22 @@ describe('Cards', () => {
             }
         ];
 
-        fs.writeFile(__dirname + '/../db/cards.json', JSON.stringify(cards), err => {
-            if (err)
-                throw err;
-            else done();
-        });
+        const transactions = [{
+            "id": 1,
+            "cardId": 1,
+            "type": "prepaidCard",
+            "data": "220003000000003",
+            "time": "2017-08-9T05:28:31+03:00",
+            "sum": "10"
+        }];
+
+        Promise.all(
+            [writeFile(__dirname + CARDS_FILE_NAME, JSON.stringify(cards)),
+                writeFile(__dirname + TRANSACTIONS_FILE_NAME, JSON.stringify(transactions))]
+        ).then(() => done());
     }
 
-    before(done => restoreCards(done));
+    before(done => restoreDb(done));
 
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
@@ -99,7 +113,7 @@ describe('Cards', () => {
         });
 
         it('it should POST new card', done => {
-            after(done => restoreCards(done));
+            after(done => restoreDb(done));
 
             chai.request(server)
                 .post('/cards')
@@ -110,9 +124,7 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(2);
-                    res.body.should.have.property('cardNumber').eql('5483874041820682');
-                    res.body.should.have.property('cardType').eql('mastercard');
+                    res.body.length.should.be.eql(1);
                     done();
                 });
         });
@@ -129,13 +141,25 @@ describe('Cards', () => {
         });
 
         it('it should DELETE card with real id', done => {
-            after(done => restoreCards(done));
+            after(done => restoreDb(done));
 
             chai.request(server)
                 .delete('/cards/1')
                 .end((err, res) => {
                     res.should.have.status(200);
                     done();
+                });
+        });
+    });
+
+    describe('/GET transactions by card id', () => {
+        it('should get all transactions by card id === 1', done => {
+            chai.request(server)
+                .get('/cards/1/transactions')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('arrray');
                 });
         });
     });
