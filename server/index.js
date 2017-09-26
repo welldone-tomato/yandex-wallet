@@ -1,6 +1,7 @@
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
+const compose = require('koa-compose');
 
 const cardsRoute = require('./routes/cards');
 const CardsContext = require('./data/cards_context');
@@ -29,12 +30,12 @@ app.use(async (ctx, next) => {
 });
 
 // inject Context
-app.use(async (ctx, next) => {
+const cardContextInjector = async (ctx, next) => {
 	ctx.CardsContext = new CardsContext();
 	await next();
-});
+};
 
-router.use('/cards', koaBody, cardsRoute.routes());
+router.use('/cards', compose([koaBody, cardContextInjector]), cardsRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
