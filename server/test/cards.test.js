@@ -161,7 +161,8 @@ describe('Cards', () => {
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
-                    res.body.should.be.a('arrray');
+                    res.body.should.be.a('array');
+                    done();
                 });
         });
     });
