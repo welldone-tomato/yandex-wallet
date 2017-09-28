@@ -23,8 +23,11 @@ class TransactionsContext extends Context {
      * @memberof TransactionsContext
      */
     async getByCardId(id) {
+        if (typeof id === 'string' || id instanceof String)
+            id = parseInt(id, 10);
+
         const data = await this.getAll();
-        return data.filter(item => item.cardId === parseInt(id, 10));
+        return data.filter(item => item.cardId === id);
     }
 
     /**
@@ -39,13 +42,18 @@ class TransactionsContext extends Context {
         if (!transaction || !cardsContext)
             throw new ApplicationError(`missing context`, 500);
 
-        const {cardId} = transaction;
+        let {cardId} = transaction;
+        cardId = parseInt(cardId, 10);
+
         const card = await cardsContext.get(cardId);
 
         if (!card)
             throw new ApplicationError(`Card with id=${cardId} not found`, 400);
 
-        await this.add(transaction);
+        await this.add({
+            ...transaction,
+            cardId
+        });
 
         return true;
     }

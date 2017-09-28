@@ -50,7 +50,9 @@ class Context {
      * @memberof Context
      */
     async get(id) {
-        id = parseInt(id, 10);
+        if (typeof id === 'string' || id instanceof String)
+            id = parseInt(id, 10);
+            
         const data = await this.getAll();
         return data.find(x => x.id === id);
     }
@@ -86,7 +88,9 @@ class Context {
     }
 
     async remove(id) {
-        id = parseInt(id, 10);
+        if (typeof id === 'string' || id instanceof String)
+            id = parseInt(id, 10);
+
         const item = await this.get(id);
         if (!item)
             throw new ApplicationError(`Item with id=${id} not found`, 404);

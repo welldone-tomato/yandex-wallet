@@ -51,6 +51,8 @@ describe('Cards', () => {
 
     beforeEach(done => restoreDb(done));
 
+    after(done => restoreDb(done));
+
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
             chai.request(server)
