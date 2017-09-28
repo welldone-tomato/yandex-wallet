@@ -14,7 +14,10 @@
                 "--colors",
                 "${workspaceRoot}/server/test"
             ],
-            "internalConsoleOptions": "openOnSessionStart"
+            "internalConsoleOptions": "openOnSessionStart",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },
         {
             "type": "node",

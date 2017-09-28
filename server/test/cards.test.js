@@ -49,7 +49,7 @@ describe('Cards', () => {
         ).then(() => done());
     }
 
-    before(done => restoreDb(done));
+    beforeEach(done => restoreDb(done));
 
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
@@ -112,9 +112,26 @@ describe('Cards', () => {
                 });
         });
 
-        it('it should POST new card', done => {
-            after(done => restoreDb(done));
+        it('it should POST new card with balance', done => {
+            chai.request(server)
+                .post('/cards')
+                .send({
+                    cardNumber: '5483874041820682',
+                    balance: 10000
+                })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('id').eql(2);
+                    res.body.should.have.property('cardNumber').eql('5483874041820682');
+                    res.body.should.have.property('cardType').eql('mastercard');
+                    res.body.should.have.property('balance').eql(10000);
+                    done();
+                });
+        });
 
+        it('it should POST new card with zero balance', done => {
             chai.request(server)
                 .post('/cards')
                 .send({
@@ -127,8 +144,10 @@ describe('Cards', () => {
                     res.body.should.have.property('id').eql(2);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('cardType').eql('mastercard');
+                    res.body.should.have.property('balance').eql(0);
                     done();
                 });
+
         });
     });
 
@@ -143,8 +162,6 @@ describe('Cards', () => {
         });
 
         it('it should DELETE card with real id', done => {
-            after(done => restoreDb(done));
-
             chai.request(server)
                 .delete('/cards/1')
                 .end((err, res) => {
@@ -162,8 +179,34 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
+                    res.body.length.should.be.eql(1);
+                    res.body[0].should.have.property('id').eql(1);
+                    res.body[0].should.have.property('cardId').eql(1);
+                    res.body[0].should.have.property('type').eql('prepaidCard');
+                    res.body[0].should.have.property('data').eql('220003000000003');
+                    res.body[0].should.have.property('time').eql('2017-08-9T05:28:31+03:00');
+                    res.body[0].should.have.property('sum').eql('10');
+
                     done();
                 });
+        });
+
+        it('should get empty list of transactions by card id === 2', done => {
+            chai.request(server)
+                .get('/cards/2/transactions')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('array');
+                    res.body.length.should.be.eql(0);
+                    done();
+                });
+        });
+    });
+
+    describe('/POST', () => {
+        it('', () => {
+
         });
     });
 });

@@ -8,7 +8,7 @@ router.post('/', async ctx => {
 	if (!body)
 		ctx.throw(400, 'cardNumber required');
 
-	const {cardNumber} = body;
+	const {cardNumber, balance} = body;
 	if (!cardNumber)
 		ctx.throw(400, 'cardNumber required')
 
@@ -21,14 +21,13 @@ router.post('/', async ctx => {
 
 	let newCard = {
 		cardNumber,
-		balance: 0
+		balance: balance || 0
 	};
 
 	newCard = await ctx.cards.add(newCard);
 
 	ctx.body = {
-		id: newCard.id,
-		cardNumber: newCard.cardNumber,
+		...newCard,
 		cardType
 	};
 });
