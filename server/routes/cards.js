@@ -49,4 +49,30 @@ router.get('/:id/transactions', async ctx => {
 	ctx.status = 200;
 });
 
+router.post('/:id/transactions', async ctx => {
+	const {id} = ctx.params;
+	if (!id) ctx.throw(400, 'id is required');
+
+	const {body} = ctx.request;
+	if (!body)
+		ctx.throw(400, 'missing param required');
+
+	const {type, data, time, sum} = body;
+	if (!type || !data || !time || !sum)
+		ctx.throw(400, 'missing param required')
+
+	const result = await ctx.transactions.addTransaction({
+		cardId: id,
+		type,
+		data,
+		time,
+		sum
+	}, ctx.cards);
+
+	ctx.body = {
+		status: result ? 'success' : 'failed'
+	};
+	ctx.status = 200;
+});
+
 module.exports = router;

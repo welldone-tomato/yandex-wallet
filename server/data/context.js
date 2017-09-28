@@ -50,6 +50,7 @@ class Context {
      * @memberof Context
      */
     async get(id) {
+        id = parseInt(id, 10);
         const data = await this.getAll();
         return data.find(x => x.id === id);
     }
@@ -85,12 +86,13 @@ class Context {
     }
 
     async remove(id) {
-        const item = await this.get(parseInt(id, 10));
+        id = parseInt(id, 10);
+        const item = await this.get(id);
         if (!item)
             throw new ApplicationError(`Item with id=${id} not found`, 404);
 
         let data = await this.getAll();
-        data = data.filter(item => item.id !== parseInt(id, 10));
+        data = data.filter(item => item.id !== id);
 
         await this.save(data);
     }

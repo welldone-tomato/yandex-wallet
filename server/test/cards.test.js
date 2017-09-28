@@ -39,7 +39,7 @@ describe('Cards', () => {
             "cardId": 1,
             "type": "prepaidCard",
             "data": "220003000000003",
-            "time": "2017-08-9T05:28:31+03:00",
+            "time": 1506605528500,
             "sum": "10"
         }];
 
@@ -184,7 +184,7 @@ describe('Cards', () => {
                     res.body[0].should.have.property('cardId').eql(1);
                     res.body[0].should.have.property('type').eql('prepaidCard');
                     res.body[0].should.have.property('data').eql('220003000000003');
-                    res.body[0].should.have.property('time').eql('2017-08-9T05:28:31+03:00');
+                    res.body[0].should.have.property('time').eql(1506605528500);
                     res.body[0].should.have.property('sum').eql('10');
 
                     done();
@@ -205,8 +205,67 @@ describe('Cards', () => {
     });
 
     describe('/POST', () => {
-        it('', () => {
+        it('should get 400 on post transaction on error cardId', done => {
+            chai.request(server)
+                .post('/cards/2/transactions')
+                .send({
+                    type: 'prepaidCard',
+                    data: 'YANDEX CASH',
+                    time: Date.now(),
+                    sum: '10'
+                })
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
 
+        it('should get 400 on post transaction on missing params', done => {
+            chai.request(server)
+                .post('/cards/1/transactions')
+                .send({
+                    type: 'prepaidCard'
+                })
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it('should add new transaction with phone payment', done => {
+            const time = Date.now();
+
+            chai.request(server)
+                .post('/cards/0/transactions')
+                .send({
+                    type: 'paymentMobile',
+                    data: '79213334455',
+                    time,
+                    sum: '-10'
+                })
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('status').eql('success');
+
+                    chai.request(server)
+                        .get('/cards/0/transactions')
+                        .end((err, res) => {
+                            res.should.have.status(200);
+                            res.type.should.eql('application/json');
+                            res.body.should.be.a('array');
+                            res.body.length.should.be.eql(1);
+                            res.body[0].should.have.property('id').eql(2);
+                            res.body[0].should.have.property('cardId').eql(0);
+                            res.body[0].should.have.property('type').eql('paymentMobile');
+                            res.body[0].should.have.property('data').eql('79213334455');
+                            res.body[0].should.have.property('time').eql(time);
+                            res.body[0].should.have.property('sum').eql('-10');
+
+                            done();
+                        });
+                });
         });
     });
 });
