@@ -46,7 +46,7 @@ class Context {
     /**
      * Возвращает элемент по id
      * 
-     * @param {any} id 
+     * @param {String} id 
      * @memberof Context
      */
     async get(id) {
@@ -60,7 +60,7 @@ class Context {
     /**
      * Получает следующий id из файла
      * 
-     * @param {Array} cards 
+     * @param {[]} data 
      * @returns {Integer}
      * @memberof Context
      */
@@ -73,8 +73,8 @@ class Context {
     /**
      * Добавление объекта в файл
      * 
-     * @param {{}} item 
-     * @returns {{}}
+     * @param {{Object}} item 
+     * @returns {{Object}}
      * @memberof Context
      */
     async add(item) {

@@ -1,7 +1,5 @@
 const Context = require('./context');
 
-const ApplicationError = require('../libs/application_error');
-
 const FILE_NAME = '/../db/transactions.json';
 
 /**

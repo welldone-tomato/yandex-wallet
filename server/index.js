@@ -42,17 +42,7 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-// app.get('/transfer', (req, res) => {
-// 	const {amount, from, to} = req.query;
-// 	res.json({
-// 		result: 'success',
-// 		amount,
-// 		from,
-// 		to
-// 	});
-// });
-
 const server = app.listen(3000, () => console.log('YM Node School App listening on port 3000!'))
-	.on("error", err => console.error(err));
+	.on('error', err => console.error(err));
 
 module.exports = server;
