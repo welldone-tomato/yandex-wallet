@@ -29,34 +29,6 @@ class TransactionsContext extends Context {
         const data = await this.getAll();
         return data.filter(item => item.cardId === id);
     }
-
-    /**
-     * Добавляет транзакцию в систему
-     * 
-     * @param {Object} transaction 
-     * @param {Object} cards Object
-     * @returns {Boolean}
-     * @memberof TransactionsContext
-     */
-    async addTransaction(transaction, cardsContext) {
-        if (!transaction || !cardsContext)
-            throw new ApplicationError(`missing context`, 500);
-
-        let {cardId} = transaction;
-        cardId = parseInt(cardId, 10);
-
-        const card = await cardsContext.get(cardId);
-
-        if (!card)
-            throw new ApplicationError(`Card with id=${cardId} not found`, 400);
-
-        await this.add({
-            ...transaction,
-            cardId
-        });
-
-        return true;
-    }
 }
 
 module.exports = TransactionsContext;

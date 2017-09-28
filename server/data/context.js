@@ -52,7 +52,7 @@ class Context {
     async get(id) {
         if (typeof id === 'string' || id instanceof String)
             id = parseInt(id, 10);
-            
+
         const data = await this.getAll();
         return data.find(x => x.id === id);
     }
@@ -87,6 +87,12 @@ class Context {
         return item;
     }
 
+    /**
+     * Удаление объекта из файла
+     * 
+     * @param {String} id 
+     * @memberof Context
+     */
     async remove(id) {
         if (typeof id === 'string' || id instanceof String)
             id = parseInt(id, 10);
@@ -99,6 +105,32 @@ class Context {
         data = data.filter(item => item.id !== id);
 
         await this.save(data);
+    }
+
+    /**
+     * Обновляет элемент в файле
+     * 
+     * @param {Integer} id 
+     * @param {Object} item 
+     * @memberof Context
+     */
+    async edit(id, item) {
+        if (typeof id === 'string' || id instanceof String)
+            id = parseInt(id, 10);
+
+        const items = await this.getAll();
+
+        const itemIndex = items.findIndex(item => item.id === id);
+
+        if (itemIndex === -1)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
+
+        items[itemIndex] = {
+            ...items[itemIndex],
+            item
+        };
+
+        this.save(items);
     }
 }
 

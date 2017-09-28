@@ -122,7 +122,7 @@ describe('Cards', () => {
                     balance: 10000
                 })
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
                     res.body.should.have.property('id').eql(2);
@@ -140,7 +140,7 @@ describe('Cards', () => {
                     cardNumber: '5483874041820682'
                 })
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
                     res.body.should.have.property('id').eql(2);
@@ -246,7 +246,7 @@ describe('Cards', () => {
                     sum: '-10'
                 })
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
                     res.body.should.have.property('status').eql('success');

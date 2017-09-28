@@ -30,6 +30,8 @@ router.post('/', async ctx => {
 		...newCard,
 		cardType
 	};
+
+	ctx.status = 201;
 });
 
 router.delete('/:id', async ctx => {
@@ -50,7 +52,7 @@ router.get('/:id/transactions', async ctx => {
 });
 
 router.post('/:id/transactions', async ctx => {
-	const {id} = ctx.params;
+	let {id} = ctx.params;
 	if (!id) ctx.throw(400, 'id is required');
 
 	const {body} = ctx.request;
@@ -61,18 +63,26 @@ router.post('/:id/transactions', async ctx => {
 	if (!type || !data || !time || !sum)
 		ctx.throw(400, 'missing param required')
 
-	const result = await ctx.transactions.addTransaction({
+	if (typeof id === 'string' || id instanceof String)
+		id = parseInt(id, 10);
+
+	const card = await ctx.cards.get(id);
+
+	if (!card)
+		ctx.throw(400, `Card with id=${id} not found`);
+
+	const result = await ctx.transactions.add({
 		cardId: id,
 		type,
 		data,
 		time,
 		sum
-	}, ctx.cards);
+	});
 
 	ctx.body = {
 		status: result ? 'success' : 'failed'
 	};
-	ctx.status = 200;
+	ctx.status = 201;
 });
 
 module.exports = router;
