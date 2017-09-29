@@ -109,6 +109,7 @@ class Context {
      * 
      * @param {Integer} id 
      * @param {Object} item 
+     * @return {Boolean}
      * @memberof Context
      */
     async edit(id, item) {
@@ -119,12 +120,11 @@ class Context {
         if (itemIndex === -1)
             throw new ApplicationError(`Item with id=${id} not found`, 404);
 
-        items[itemIndex] = {
-            ...items[itemIndex],
-            item
-        };
+        items[itemIndex] = item;
 
-        this.save(items);
+        await this.save(items);
+
+        return true;
     }
 }
 

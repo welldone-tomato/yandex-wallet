@@ -127,7 +127,6 @@ describe('Cards', () => {
                     res.body.should.be.a('object');
                     res.body.should.have.property('id').eql(2);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
-                    res.body.should.have.property('cardType').eql('mastercard');
                     res.body.should.have.property('balance').eql(10000);
                     done();
                 });
@@ -145,7 +144,6 @@ describe('Cards', () => {
                     res.body.should.be.a('object');
                     res.body.should.have.property('id').eql(2);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
-                    res.body.should.have.property('cardType').eql('mastercard');
                     res.body.should.have.property('balance').eql(0);
                     done();
                 });
@@ -225,7 +223,7 @@ describe('Cards', () => {
     });
 
     describe('/POST', () => {
-        it('should get 400 on post transaction on error cardId', done => {
+        it('should get 404 on post transaction on error cardId', done => {
             chai.request(server)
                 .post('/cards/2/transactions')
                 .send({
@@ -235,7 +233,7 @@ describe('Cards', () => {
                     sum: '10'
                 })
                 .end((err, res) => {
-                    res.should.have.status(400);
+                    res.should.have.status(404);
                     done();
                 });
         });
@@ -248,6 +246,21 @@ describe('Cards', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it('should get 400 on post transaction on invalid params', done => {
+            chai.request(server)
+                .post('/cards/1/transactions')
+                .send({
+                    type: 'prepaidCardsss',
+                    data: 'YANDEX CASH',
+                    time: Date.now(),
+                    sum: '10'
+                })
+                .end((err, res) => {
+                    res.should.have.status(403);
                     done();
                 });
         });

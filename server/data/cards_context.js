@@ -28,6 +28,35 @@ class CardsContext extends Context {
         const cards = await this.getAll();
         return cards.map(item => item['cardNumber']);
     }
+
+    /**
+     * Проверяет есть ли уже карта в базе
+     * 
+     * @param {any} cardNumber 
+     * @returns {Boolean}
+     * @memberof CardsContext
+     */
+    async checkCardExist(cardNumber) {
+        const cardsNumbers = await this.getCardsNumbers();
+        return cardsNumbers.includes(cardNumber);
+    }
+
+    /**
+     * Изменяет баланс карты
+     * 
+     * @param {Number} id 
+     * @param {Object} transaction 
+     * @returns {Boolean}
+     * @memberof CardsContext
+     */
+    async affectBalance(id, transaction) {
+        const card = await this.get(id);
+        card.balance += Number(transaction.sum);
+
+        const result = await this.edit(id, card);
+
+        return result;
+    }
 }
 
 module.exports = CardsContext;
