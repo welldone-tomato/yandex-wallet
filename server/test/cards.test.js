@@ -154,6 +154,24 @@ describe('Cards', () => {
     });
 
     describe('/DELETE card', () => {
+        it('it should not DELETE card with empty id', done => {
+            chai.request(server)
+                .delete('/cards/')
+                .end((err, res) => {
+                    res.should.have.status(405);
+                    done();
+                });
+        });
+
+        it('it should not DELETE card with invalid id', done => {
+            chai.request(server)
+                .delete('/cards/a')
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
         it('it should not DELETE card with not real id', done => {
             chai.request(server)
                 .delete('/cards/3')

@@ -21,9 +21,6 @@ class TransactionsContext extends Context {
      * @memberof TransactionsContext
      */
     async getByCardId(id) {
-        if (typeof id === 'string' || id instanceof String)
-            id = parseInt(id, 10);
-
         const data = await this.getAll();
         return data.filter(item => item.cardId === id);
     }

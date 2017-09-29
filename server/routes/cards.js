@@ -4,11 +4,8 @@ const bankUtils = require('../libs/utils');
 router.get('/', async ctx => ctx.body = await ctx.cards.getCardsNumbers());
 
 router.post('/', async ctx => {
-	const {body} = ctx.request;
-	if (!body)
-		ctx.throw(400, 'cardNumber required');
+	const {cardNumber, balance} = ctx.request.body;
 
-	const {cardNumber, balance} = body;
 	if (!cardNumber)
 		ctx.throw(400, 'cardNumber required')
 
@@ -36,35 +33,28 @@ router.post('/', async ctx => {
 
 router.delete('/:id', async ctx => {
 	const {id} = ctx.params;
-	if (!id) ctx.throw(400, 'id is required');
 
-	await ctx.cards.remove(id);
+	const result = await ctx.cards.remove(id);
 
+	ctx.body = {
+		result: result ? 'success' : 'failed'
+	};
 	ctx.status = 200;
 });
 
 router.get('/:id/transactions', async ctx => {
 	const {id} = ctx.params;
-	if (!id) ctx.throw(400, 'id is required');
 
 	ctx.body = await ctx.transactions.getByCardId(id);
 	ctx.status = 200;
 });
 
 router.post('/:id/transactions', async ctx => {
-	let {id} = ctx.params;
-	if (!id) ctx.throw(400, 'id is required');
+	const {id} = ctx.params;
 
-	const {body} = ctx.request;
-	if (!body)
-		ctx.throw(400, 'missing param required');
-
-	const {type, data, time, sum} = body;
+	const {type, data, time, sum} = ctx.request.body;
 	if (!type || !data || !time || !sum)
 		ctx.throw(400, 'missing param required')
-
-	if (typeof id === 'string' || id instanceof String)
-		id = parseInt(id, 10);
 
 	const card = await ctx.cards.get(id);
 

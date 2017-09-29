@@ -39,7 +39,7 @@ class Context {
      * @memberof Context
      */
     async getAll() {
-        let data = await readFile(__dirname + this.fileName, 'utf8');
+        const data = await readFile(__dirname + this.fileName, 'utf8');
         return JSON.parse(data);
     }
 
@@ -50,9 +50,6 @@ class Context {
      * @memberof Context
      */
     async get(id) {
-        if (typeof id === 'string' || id instanceof String)
-            id = parseInt(id, 10);
-
         const data = await this.getAll();
         return data.find(x => x.id === id);
     }
@@ -91,12 +88,10 @@ class Context {
      * Удаление объекта из файла
      * 
      * @param {String} id 
+     * @returns {Boolean}
      * @memberof Context
      */
     async remove(id) {
-        if (typeof id === 'string' || id instanceof String)
-            id = parseInt(id, 10);
-
         const item = await this.get(id);
         if (!item)
             throw new ApplicationError(`Item with id=${id} not found`, 404);
@@ -105,6 +100,8 @@ class Context {
         data = data.filter(item => item.id !== id);
 
         await this.save(data);
+
+        return true;
     }
 
     /**
@@ -115,9 +112,6 @@ class Context {
      * @memberof Context
      */
     async edit(id, item) {
-        if (typeof id === 'string' || id instanceof String)
-            id = parseInt(id, 10);
-
         const items = await this.getAll();
 
         const itemIndex = items.findIndex(item => item.id === id);
