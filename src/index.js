@@ -17,7 +17,7 @@ import registerServiceWorker from './registerServiceWorker';
 
 // Components
 import App from './components/app';
-import Cards from './components/cards';
+import Cards from './components/cards/';
 import Home from './components/home';
 import Err404 from './components/err404';
 import SignIn from './components/auth/signin';
