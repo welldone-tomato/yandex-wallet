@@ -2,12 +2,15 @@ const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
 const compose = require('koa-compose');
+const cors = require('koa2-cors');
 
 const cardsRoute = require('./routes/cards');
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
 
 const app = new Koa();
+
+app.use(cors());
 
 // Логгер работает только для нетестовых окружений
 if (process.env.NODE_ENV !== 'test') {
@@ -52,7 +55,7 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const server = app.listen(3000, () => console.log('YM Node School App listening on port 3000!'))
+const server = app.listen(4000, () => console.log('YM Node School App listening on port 4000!'))
 	.on('error', err => console.error(err));
 
 module.exports = server;
