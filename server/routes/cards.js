@@ -1,16 +1,20 @@
+const bankUtils = require('../libs/utils');
 const router = require('koa-router')();
 const Validators = require('../data/validators');
 
-router.get('/', async ctx => ctx.body = await ctx.cards.getCardsNumbers());
+router.get('/', async ctx => ctx.body = await ctx.cards.getCardsInfo());
 
 router.post('/', async ctx => {
-	const {cardNumber, balance} = ctx.request.body;
-	if (!cardNumber)
+	const {cardNumber, balance, exp, name} = ctx.request.body;
+	if (!cardNumber || !exp || !name)
 		ctx.throw(400, 'cardNumber required');
 
 	const card = {
 		cardNumber,
-		balance: balance || 0
+		exp,
+		name,
+		balance: balance || 0,
+		type: bankUtils.getCardType(cardNumber)
 	};
 
 	if (await Validators.cardValidator(card, ctx.cards)) {

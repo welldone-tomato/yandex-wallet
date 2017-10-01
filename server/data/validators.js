@@ -1,7 +1,6 @@
 const bankUtils = require('../libs/utils');
 const ApplicationError = require('../libs/application_error');
 
-
 module.exports = {
     /**
      * Проверяет номер карты и возращает ее тип
@@ -10,13 +9,24 @@ module.exports = {
      * @param {CardsContext} cards
      * @returns {Boolean}
      */
-    cardValidator: async ({cardNumber}, cards) => {
-        const cardType = bankUtils.getCardType(cardNumber);
-        if (cardType === '' || !bankUtils.moonCheck(cardNumber))
+    cardValidator: async ({cardNumber, type, exp} , cards) => {
+        if (type === '' || !bankUtils.moonCheck(cardNumber))
             throw new ApplicationError('valid cardNumber required', 400);
 
         if (await cards.checkCardExist(cardNumber))
             throw new ApplicationError('non doublicated cardNumber required', 400);
+
+        // проверяем срок действия карты
+        const date = new Date();
+        const currentYear = date.getFullYear();
+        const currentMonth = date.getMonth() + 1;
+        // get parts of the expiration date
+        const parts = exp.split('/');
+        const year = parseInt(parts[1], 10) + 2000;
+        const month = parseInt(parts[0], 10);
+        // compare the dates
+        if (year < currentYear || (year === currentYear && month < currentMonth))
+            throw new ApplicationError('card expired', 400);
 
         return true;
     },

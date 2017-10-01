@@ -23,14 +23,28 @@ describe('Cards', () => {
     function restoreDb(done) {
         const cards = [
             {
-                "id": 0,
+                "id": 1,
                 "cardNumber": "5106216010173049",
-                "balance": 15000
+                "balance": 15000,
+                "type": "mastercard",
+                "exp": "04/18",
+                "name": "ALYSSA LIVINGSTON"
             },
             {
-                "id": 1,
-                "cardNumber": "5106216010126757",
-                "balance": 700
+                "id": 2,
+                "cardNumber": "4024007153305544",
+                "balance": 1700,
+                "type": "visa",
+                "exp": "11/18",
+                "name": "CLAIRE MACADAM"
+            },
+            {
+                "id": 3,
+                "cardNumber": "6759836169242630",
+                "balance": 7000,
+                "type": "maestro",
+                "exp": "05/18",
+                "name": "NIK COLLIN"
             }
         ];
 
@@ -61,7 +75,12 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
-                    res.body.length.should.be.eql(2);
+                    res.body.length.should.be.eql(3);
+                    res.body[0].should.have.property('id').eql(1);
+                    res.body[0].should.have.property('cardNumber').eql('5106216010173049');
+                    res.body[0].should.have.property('type').eql('mastercard');
+                    res.body[0].should.have.property('exp').eql('04/18');
+                    res.body[0].should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });
         });
@@ -94,7 +113,23 @@ describe('Cards', () => {
             chai.request(server)
                 .post('/cards')
                 .send({
-                    cardNumber: '15133306216010173046'
+                    cardNumber: '15133306216010173046',
+                    exp: '04/18',
+                    name: 'ALYSSA LIVINGSTON',
+                })
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it('it should not POST new card with non valid exp date', done => {
+            chai.request(server)
+                .post('/cards')
+                .send({
+                    cardNumber: '5483874041820682',
+                    exp: '01/10',
+                    name: 'ALYSSA LIVINGSTON',
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
@@ -106,7 +141,9 @@ describe('Cards', () => {
             chai.request(server)
                 .post('/cards')
                 .send({
-                    cardNumber: '5106216010173049'
+                    cardNumber: '5106216010173049',
+                    exp: '04/18',
+                    name: 'ALYSSA LIVINGSTON',
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
@@ -119,15 +156,20 @@ describe('Cards', () => {
                 .post('/cards')
                 .send({
                     cardNumber: '5483874041820682',
+                    exp: '04/18',
+                    name: 'ALYSSA LIVINGSTON',
                     balance: 10000
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(2);
+                    res.body.should.have.property('id').eql(4);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(10000);
+                    res.body.should.have.property('type').eql('mastercard');
+                    res.body.should.have.property('exp').eql('04/18');
+                    res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });
         });
@@ -136,15 +178,20 @@ describe('Cards', () => {
             chai.request(server)
                 .post('/cards')
                 .send({
-                    cardNumber: '5483874041820682'
+                    cardNumber: '5483874041820682',
+                    exp: '04/18',
+                    name: 'ALYSSA LIVINGSTON',
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(2);
+                    res.body.should.have.property('id').eql(4);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(0);
+                    res.body.should.have.property('type').eql('mastercard');
+                    res.body.should.have.property('exp').eql('04/18');
+                    res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });
 
@@ -172,7 +219,7 @@ describe('Cards', () => {
 
         it('it should not DELETE card with not real id', done => {
             chai.request(server)
-                .delete('/cards/3')
+                .delete('/cards/10')
                 .end((err, res) => {
                     res.should.have.status(404);
                     done();
@@ -225,7 +272,7 @@ describe('Cards', () => {
     describe('/POST', () => {
         it('should get 404 on post transaction on error cardId', done => {
             chai.request(server)
-                .post('/cards/2/transactions')
+                .post('/cards/10/transactions')
                 .send({
                     type: 'prepaidCard',
                     data: 'YANDEX CASH',
@@ -269,7 +316,7 @@ describe('Cards', () => {
             const time = Date.now();
 
             chai.request(server)
-                .post('/cards/0/transactions')
+                .post('/cards/2/transactions')
                 .send({
                     type: 'paymentMobile',
                     data: '79213334455',
@@ -283,14 +330,14 @@ describe('Cards', () => {
                     res.body.should.have.property('status').eql('success');
 
                     chai.request(server)
-                        .get('/cards/0/transactions')
+                        .get('/cards/2/transactions')
                         .end((err, res) => {
                             res.should.have.status(200);
                             res.type.should.eql('application/json');
                             res.body.should.be.a('array');
                             res.body.length.should.be.eql(1);
                             res.body[0].should.have.property('id').eql(2);
-                            res.body[0].should.have.property('cardId').eql(0);
+                            res.body[0].should.have.property('cardId').eql(2);
                             res.body[0].should.have.property('type').eql('paymentMobile');
                             res.body[0].should.have.property('data').eql('79213334455');
                             res.body[0].should.have.property('time').eql(time);
