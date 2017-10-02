@@ -1,10 +1,10 @@
 import * as actions from '../actions/types';
 
-const initState = {
+const cardsInitialState = {
     data: []
 };
 
-const cardsReducer = (state = initState, {type, payload}) => {
+const cardsReducer = (state = cardsInitialState, {type, payload}) => {
     switch (type) {
         case actions.FETCH_CARDS_SUCCESS:
             return payload

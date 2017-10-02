@@ -26,12 +26,12 @@ export const signOutUser = () => {
     }
 };
 
-export /**
- * Вытаскивает данные по картам пользователя
- * 
- * @returns 
- */
-const fetchCards = () => {
+/**
+* Вытаскивает данные по картам пользователя
+* 
+* @returns 
+*/
+export const fetchCards = () => {
     return dispatch => {
         axios
             .get(`${ROOT_URL}/cards`, {
@@ -46,12 +46,56 @@ const fetchCards = () => {
                         data: result.data
                     }
                 });
+                if (result.data[0]) dispatch(fetchTransactions(result.data[0].id));
             })
             .catch(error => {
                 dispatch({
                     type: action.FETCH_CARDS_FAILED,
                     payload: {
                         data: [],
+                        error
+                    }
+                });
+                dispatch({
+                    type: action.FETCH_TRANS_SUCCESS,
+                    payload: {
+                        data: []
+                    }
+                });
+                console.log(error);
+            }
+        );
+    };
+};
+
+/**
+* Вытаскивает данные по картам пользователя
+* 
+* @returns 
+*/
+export const fetchTransactions = id => {
+    return dispatch => {
+        axios
+            .get(`${ROOT_URL}/cards/${id}/transactions`, {
+                headers: {
+                    authorization: 'JWT ' + localStorage.getItem('token')
+                }
+            })
+            .then(result => {
+                dispatch({
+                    type: action.FETCH_TRANS_SUCCESS,
+                    payload: {
+                        data: result.data,
+                        id
+                    }
+                });
+            })
+            .catch(error => {
+                dispatch({
+                    type: action.FETCH_TRANS_FAILED,
+                    payload: {
+                        data: [],
+                        id,
                         error
                     }
                 });

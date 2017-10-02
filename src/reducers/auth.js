@@ -1,11 +1,11 @@
 import * as actions from '../actions/types';
 
-const initialState = {
+const authInitialState = {
     isAuth: false,
     error: null
 };
 
-const authReducer = (state = initialState, {type, payload}) => {
+const authReducer = (state = authInitialState, {type, payload}) => {
     switch (type) {
         case actions.USER_LOGIN_SUCCESS:
             return {
