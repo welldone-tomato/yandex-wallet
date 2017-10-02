@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import './index.css';
+import './fonts.css';
 
 // Redux
 import { Provider } from 'react-redux';

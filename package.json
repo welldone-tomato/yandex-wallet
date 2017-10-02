@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "axios": "^0.16.2",
+    "card-info": "git+https://github.com/iniel/card-info.git",
+    "emotion": "^7.3.2",
     "koa": "^2.3.0",
     "koa-body": "^2.4.0",
     "koa-compose": "^4.0.0",
