@@ -32,5 +32,13 @@
     "mocha": "^3.5.3",
     "nyc": "^11.2.1"
   },
-  "proxy": "http://localhost:4000"
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:4000",
+      "ssl": false,
+      "pathRewrite": {
+        "^/api": "/"
+      }
+    }
+  }
 }

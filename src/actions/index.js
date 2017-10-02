@@ -4,7 +4,7 @@ import * as action from './types';
 
 import axios from 'axios';
 
-const ROOT_URL = 'http://localhost:4000';
+const ROOT_URL = '/api';
 // const LOGIN_URL = `${ROOT_URL}/signin`;
 // const SIGNUP_URL = `${ROOT_URL}/signup`;
 
