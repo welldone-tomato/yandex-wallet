@@ -3,16 +3,18 @@ process.env.NODE_ENV = 'test';
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const fs = require('fs');
-const server = require('../index');
 const should = chai.should();
 const util = require('util');
 
+const server = require('../index');
+const cards = require('./cardsData');
+const transactions = require('./transactionsData');
+
 const writeFile = util.promisify(fs.writeFile);
-
-chai.use(chaiHttp);
-
 const CARDS_FILE_NAME = '/../db/cards.json';
 const TRANSACTIONS_FILE_NAME = '/../db/transactions.json'
+
+chai.use(chaiHttp);
 
 describe('Cards', () => {
     /**
@@ -21,42 +23,6 @@ describe('Cards', () => {
      * @param {Function} done 
      */
     function restoreDb(done) {
-        const cards = [
-            {
-                "id": 1,
-                "cardNumber": "5106216010173049",
-                "balance": 15000,
-                "type": "mastercard",
-                "exp": "04/18",
-                "name": "ALYSSA LIVINGSTON"
-            },
-            {
-                "id": 2,
-                "cardNumber": "4024007153305544",
-                "balance": 1700,
-                "type": "visa",
-                "exp": "11/18",
-                "name": "CLAIRE MACADAM"
-            },
-            {
-                "id": 3,
-                "cardNumber": "6759836169242630",
-                "balance": 7000,
-                "type": "maestro",
-                "exp": "05/18",
-                "name": "NIK COLLIN"
-            }
-        ];
-
-        const transactions = [{
-            "id": 1,
-            "cardId": 1,
-            "type": "prepaidCard",
-            "data": "220003000000003",
-            "time": 1506605528500,
-            "sum": "10"
-        }];
-
         Promise.all(
             [writeFile(__dirname + CARDS_FILE_NAME, JSON.stringify(cards)),
                 writeFile(__dirname + TRANSACTIONS_FILE_NAME, JSON.stringify(transactions))]
@@ -244,7 +210,7 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
-                    res.body.length.should.be.eql(1);
+                    res.body.length.should.be.eql(3);
                     res.body[0].should.have.property('id').eql(1);
                     res.body[0].should.have.property('cardId').eql(1);
                     res.body[0].should.have.property('type').eql('prepaidCard');
@@ -256,9 +222,9 @@ describe('Cards', () => {
                 });
         });
 
-        it('should get empty list of transactions by card id === 2', done => {
+        it('should get empty list of transactions by card id === 20', done => {
             chai.request(server)
-                .get('/cards/2/transactions')
+                .get('/cards/20/transactions')
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
@@ -335,13 +301,13 @@ describe('Cards', () => {
                             res.should.have.status(200);
                             res.type.should.eql('application/json');
                             res.body.should.be.a('array');
-                            res.body.length.should.be.eql(1);
-                            res.body[0].should.have.property('id').eql(2);
-                            res.body[0].should.have.property('cardId').eql(2);
-                            res.body[0].should.have.property('type').eql('paymentMobile');
-                            res.body[0].should.have.property('data').eql('79213334455');
-                            res.body[0].should.have.property('time').eql(time);
-                            res.body[0].should.have.property('sum').eql('-10');
+                            res.body.length.should.be.eql(3);
+                            res.body[2].should.have.property('id').eql(9);
+                            res.body[2].should.have.property('cardId').eql(2);
+                            res.body[2].should.have.property('type').eql('paymentMobile');
+                            res.body[2].should.have.property('data').eql('79213334455');
+                            res.body[2].should.have.property('time').eql(time);
+                            res.body[2].should.have.property('sum').eql('-10');
 
                             done();
                         });
