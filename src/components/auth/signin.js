@@ -16,19 +16,19 @@ class SignIn extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
-    handleEmailChange(event) {
+    handleEmailChange = event => {
         this.setState({
             email: event.target.value
         });
     }
 
-    handlePasswordChange(event) {
+    handlePasswordChange = event => {
         this.setState({
             password: event.target.value
         });
     }
 
-    handleClick() {
+    handleClick = () => {
         const {email, password} = this.state;
         if (email && password) {
             this

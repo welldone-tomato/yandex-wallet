@@ -13,7 +13,7 @@ export const signingUser = () => {
         dispatch({
             type: action.USER_LOGIN_SUCCESS
         });
-        dispatch(push('/'));
+        dispatch(push('/cards'));
     }
 };
 
@@ -26,8 +26,13 @@ export const signOutUser = () => {
     }
 };
 
-export const fetchCards = () => {
-    return (dispatch) => {
+export /**
+ * Вытаскивает данные по картам пользователя
+ * 
+ * @returns 
+ */
+const fetchCards = () => {
+    return dispatch => {
         axios
             .get(`${ROOT_URL}/cards`, {
                 headers: {
@@ -37,9 +42,21 @@ export const fetchCards = () => {
             .then(result => {
                 dispatch({
                     type: action.FETCH_CARDS_SUCCESS,
-                    payload: result.data
+                    payload: {
+                        data: result.data
+                    }
                 });
             })
-            .catch(error => console.log(error));
+            .catch(error => {
+                dispatch({
+                    type: action.FETCH_CARDS_FAILED,
+                    payload: {
+                        data: [],
+                        error
+                    }
+                });
+                console.log(error);
+            }
+        );
     };
 };
