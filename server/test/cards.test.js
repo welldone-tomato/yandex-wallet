@@ -217,7 +217,7 @@ describe('Cards', () => {
                     res.body[0].should.have.property('type').eql('prepaidCard');
                     res.body[0].should.have.property('data').eql('220003000000003');
                     res.body[0].should.have.property('time').eql(1506605528500);
-                    res.body[0].should.have.property('sum').eql('10');
+                    res.body[0].should.have.property('sum').eql(10);
 
                     done();
                 });
@@ -244,7 +244,7 @@ describe('Cards', () => {
                     type: 'prepaidCard',
                     data: 'YANDEX CASH',
                     time: Date.now(),
-                    sum: '10'
+                    sum: 10
                 })
                 .end((err, res) => {
                     res.should.have.status(404);
@@ -271,7 +271,7 @@ describe('Cards', () => {
                     type: 'prepaidCardsss',
                     data: 'YANDEX CASH',
                     time: Date.now(),
-                    sum: '10'
+                    sum: 10
                 })
                 .end((err, res) => {
                     res.should.have.status(403);
@@ -288,7 +288,7 @@ describe('Cards', () => {
                     type: 'paymentMobile',
                     data: '79213334455',
                     time,
-                    sum: '-10'
+                    sum: -10
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -308,9 +308,24 @@ describe('Cards', () => {
                             res.body[2].should.have.property('type').eql('paymentMobile');
                             res.body[2].should.have.property('data').eql('79213334455');
                             res.body[2].should.have.property('time').eql(time);
-                            res.body[2].should.have.property('sum').eql('-10');
+                            res.body[2].should.have.property('sum').eql(-10);
 
-                            done();
+                            chai.request(server)
+                                .get('/cards')
+                                .end((err, res) => {
+                                    res.should.have.status(200);
+                                    res.type.should.eql('application/json');
+                                    res.body.should.be.a('array');
+                                    res.body.length.should.be.eql(3);
+                                    res.body[1].should.have.property('id').eql(2);
+                                    res.body[1].should.have.property('cardNumber').eql('4024007153305544');
+                                    res.body[1].should.have.property('type').eql('visa');
+                                    res.body[1].should.have.property('exp').eql('11/18');
+                                    res.body[1].should.have.property('balance').eql(1690);
+                                    res.body[1].should.have.property('name').eql('CLAIRE MACADAM');
+
+                                    done();
+                                });
                         });
                 });
         });

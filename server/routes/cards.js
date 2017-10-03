@@ -5,15 +5,20 @@ const Validators = require('../data/validators');
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
 
 router.post('/', async ctx => {
-	const {cardNumber, balance, exp, name} = ctx.request.body;
+	const {cardNumber, exp, name} = ctx.request.body;
+	let {balance} = ctx.request.body;
+
 	if (!cardNumber || !exp || !name)
 		ctx.throw(400, 'cardNumber required');
+
+	balance = Number(balance) || 0;
+	if (isNaN(balance)) ctx.throw(400, 'balance is invalid');
 
 	const card = {
 		cardNumber,
 		exp,
 		name,
-		balance: balance || 0,
+		balance,
 		type: bankUtils.getCardType(cardNumber)
 	};
 
@@ -47,8 +52,8 @@ router.post('/:id/transactions', async ctx => {
 		cardId: id,
 		type,
 		data,
-		time,
-		sum
+		time: Number(time) || Date.now(),
+		sum: Number(sum)
 	}
 
 	if (await Validators.transactionValidator(transaction, ctx.cards)) {

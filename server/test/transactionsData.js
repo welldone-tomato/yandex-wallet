@@ -5,7 +5,7 @@ module.exports = [
         "type": "prepaidCard",
         "data": "220003000000003",
         "time": 1506605528500,
-        "sum": "10"
+        "sum": 10
     },
     {
         "id": 2,
@@ -13,7 +13,7 @@ module.exports = [
         "type": "paymentMobile",
         "data": "89214445558",
         "time": 1506605525503,
-        "sum": "1000"
+        "sum": 1000
     },
     {
         "id": 3,
@@ -21,7 +21,7 @@ module.exports = [
         "type": "paymentMobile",
         "data": "8921355338",
         "time": 1506605528603,
-        "sum": "1001"
+        "sum": 1001
     },
     {
         "id": 4,
@@ -29,7 +29,7 @@ module.exports = [
         "type": "paymentMobile",
         "data": "89214445558",
         "time": 1506605525503,
-        "sum": "1000"
+        "sum": 1000
     },
     {
         "id": 5,
@@ -37,7 +37,7 @@ module.exports = [
         "type": "card2Card",
         "data": "5106216010173049",
         "time": 1506605528603,
-        "sum": "100"
+        "sum": 100
     },
     {
         "id": 6,
@@ -45,7 +45,7 @@ module.exports = [
         "type": "card2Card",
         "data": "5106216010173049",
         "time": 1506605526503,
-        "sum": "100"
+        "sum": 100
     },
     {
         "id": 7,
@@ -53,7 +53,7 @@ module.exports = [
         "type": "paymentMobile",
         "data": "89214445558",
         "time": 1506605528603,
-        "sum": "1000"
+        "sum": 1000
     },
     {
         "id": 8,
@@ -61,6 +61,6 @@ module.exports = [
         "type": "prepaidCard",
         "data": "220003000000003",
         "time": 1506605526500,
-        "sum": "300"
+        "sum": 300
     },
 ];
