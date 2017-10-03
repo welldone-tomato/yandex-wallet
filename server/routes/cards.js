@@ -54,14 +54,38 @@ router.post('/:id/transactions', async ctx => {
 		data,
 		time: Number(time) || Date.now(),
 		sum: Number(sum)
-	}
+	};
 
 	if (await Validators.transactionValidator(transaction, ctx.cards)) {
 		let result = await ctx.transactions.add(transaction);
 
-		if (result)
+		if (result) {
 			//Транзакция добавилась, необходимо обновить баланс карты
 			result = await ctx.cards.affectBalance(id, transaction);
+
+			// Добавляем вторую транзакцию 
+			if (result && transaction.type === 'card2Card') {
+				const fromCard = await ctx.cards.get(id);
+				const recieverCard = await ctx.cards.getByCardNumber(transaction.data);
+				if (recieverCard && fromCard) {
+					const recieverTransaction = {
+						cardId: recieverCard.id,
+						type: 'prepaidCard',
+						data: fromCard.cardNumber,
+						time: Number(time) || Date.now(),
+						sum: Number(sum) * (-1)
+					};
+
+					if (await Validators.transactionValidator(recieverTransaction, ctx.cards)) {
+						result = await ctx.transactions.add(recieverTransaction);
+
+						if (result)
+							//Транзакция добавилась, необходимо обновить баланс карты
+							result = await ctx.cards.affectBalance(recieverCard.id, recieverTransaction);
+					}
+				}
+			}
+		}
 
 		ctx.body = {
 			status: result ? 'success' : 'failed'

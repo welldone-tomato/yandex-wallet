@@ -42,6 +42,17 @@ class CardsContext extends Context {
     }
 
     /**
+     * Возвращает карту по номеру карты
+     * 
+     * @returns {Promise<Array>}
+     * @memberof CardsContext
+     */
+    async getByCardNumber(cardNumber) {
+        const cards = await this.getAll();
+        return cards.find(item => item.cardNumber === cardNumber);
+    }
+
+    /**
      * Изменяет баланс карты
      * 
      * @param {Number} id 

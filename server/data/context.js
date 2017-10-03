@@ -51,7 +51,7 @@ class Context {
      */
     async get(id) {
         const data = await this.getAll();
-        return data.find(x => x.id === id);
+        return data.find(item => item.id === id);
     }
 
     /**
