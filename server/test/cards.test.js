@@ -46,6 +46,7 @@ describe('Cards', () => {
                     res.body[0].should.have.property('cardNumber').eql('5106216010173049');
                     res.body[0].should.have.property('type').eql('mastercard');
                     res.body[0].should.have.property('exp').eql('04/18');
+                    res.body[0].should.have.property('balance').eql(15000);
                     res.body[0].should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });

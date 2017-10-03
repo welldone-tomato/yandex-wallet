@@ -19,20 +19,6 @@ class CardsContext extends Context {
     }
 
     /**
-     * Возвращает все данные, кроме баланса
-     * 
-     * @returns 
-     * @memberof CardsContext
-     */
-    async getCardsInfo() {
-        const cards = await this.getAll();
-        return cards.map(item => {
-            const {balance, ...card} = item;
-            return card;
-        })
-    }
-
-    /**
      * Возвращает массив только номеров карт, которые есть в файле
      * 
      * @returns {Promise<Array>}
