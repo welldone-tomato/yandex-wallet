@@ -1,7 +1,8 @@
 import * as actions from '../actions/types';
 
 const authInitialState = {
-    isAuth: false,
+    isAuth: true,
+    userName: 'Samuel Johnson',
     error: null
 };
 
@@ -20,11 +21,7 @@ const authReducer = (state = authInitialState, {type, payload}) => {
                 error: payload
             };
         case actions.USER_LOGOUT:
-            return {
-                ...state,
-                isAuth: false,
-                error: null
-            };
+            return authInitialState
         default:
             return state;
     }

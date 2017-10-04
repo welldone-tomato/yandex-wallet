@@ -13,6 +13,7 @@ export const signingUser = () => {
         dispatch({
             type: action.USER_LOGIN_SUCCESS
         });
+
         dispatch(push('/cards'));
     }
 };
@@ -22,6 +23,7 @@ export const signOutUser = () => {
         dispatch({
             type: action.USER_LOGOUT
         });
+
         dispatch(push('/'));
     }
 };
@@ -42,25 +44,15 @@ export const fetchCards = () => {
             .then(result => {
                 dispatch({
                     type: action.FETCH_CARDS_SUCCESS,
-                    payload: {
-                        data: result.data
-                    }
+                    payload: result.data
                 });
-                if (result.data[0]) dispatch(fetchTransactions(result.data[0].id));
+                if (result.data[0].id)
+                    dispatch(changeActiveCard(result.data[0].id));
             })
             .catch(error => {
                 dispatch({
                     type: action.FETCH_CARDS_FAILED,
-                    payload: {
-                        data: [],
-                        error
-                    }
-                });
-                dispatch({
-                    type: action.FETCH_TRANS_SUCCESS,
-                    payload: {
-                        data: []
-                    }
+                    payload: error
                 });
                 console.log(error);
             }
@@ -84,23 +76,26 @@ export const fetchTransactions = id => {
             .then(result => {
                 dispatch({
                     type: action.FETCH_TRANS_SUCCESS,
-                    payload: {
-                        data: result.data,
-                        id
-                    }
+                    payload: result.data
                 });
             })
             .catch(error => {
                 dispatch({
                     type: action.FETCH_TRANS_FAILED,
-                    payload: {
-                        data: [],
-                        id,
-                        error
-                    }
+                    payload: error
                 });
                 console.log(error);
             }
         );
     };
+};
+
+export const changeActiveCard = id => {
+    return dispatch => {
+        dispatch({
+            type: action.CHANGE_ACTIVE_CARD,
+            payload: id
+        });
+        dispatch(fetchTransactions(id));
+    }
 };

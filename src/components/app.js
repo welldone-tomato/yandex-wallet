@@ -1,16 +1,44 @@
-import React, { Component } from 'react';
+import React from 'react';
 
-import Nav from './nav/';
+import styled from 'emotion/react';
+import { injectGlobal } from 'emotion';
 
-class App extends Component {
-  render() {
-    return (
-      <div>
-        <Nav />
-        { this.props.children }
-      </div>
-      );
-  }
+import CardsBar from './cards/cards_bar';
+import Header from './header/header';
+
+injectGlobal`
+html,
+body {
+  margin: 0;
 }
+
+#root {
+  height: 100%;
+  font-family: 'Open Sans';
+  color: #000;
+}
+`;
+
+const Wallet = styled.div`
+display: flex;
+min-height: 100%;
+background-color: #fcfcfc;
+`;
+
+const CardPane = styled.div`
+flex-grow: 1;
+`;
+
+const App = props => {
+  return (
+    <Wallet>
+      <CardsBar />
+      <CardPane>
+        <Header />
+        { props.children }
+      </CardPane>
+    </Wallet>
+    );
+};
 
 export default App;

@@ -10,6 +10,11 @@
             "userDataDir": "${workspaceRoot}/.vscode/chrome",
             "sourceMapPathOverrides": {
                 "webpack:///src/*": "${webRoot}/*"
+            },
+            "windows": {
+                "runtimeArgs": [
+                    "--remote-debugging-port=9222"
+                ]
             }
         },
         {
