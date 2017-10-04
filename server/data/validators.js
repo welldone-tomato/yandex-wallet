@@ -9,8 +9,8 @@ module.exports = {
      * @param {CardsContext} cards
      * @returns {Boolean}
      */
-    cardValidator: async ({cardNumber, type, exp} , cards) => {
-        if (type === '' || !bankUtils.moonCheck(cardNumber))
+    cardValidator: async ({cardNumber, exp} , cards) => {
+        if (bankUtils.getCardType(cardNumber) === '' || !bankUtils.moonCheck(cardNumber))
             throw new ApplicationError('valid cardNumber required', 400);
 
         if (await cards.checkCardExist(cardNumber))

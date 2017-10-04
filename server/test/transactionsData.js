@@ -35,15 +35,15 @@ module.exports = [
         "id": 5,
         "cardId": 2,
         "type": "card2Card",
-        "data": "5106216010173049",
+        "data": "546925000000000",
         "time": 1506605528603,
         "sum": -100
     },
     {
         "id": 6,
         "cardId": 1,
-        "type": "card2Card",
-        "data": "4024007153305544",
+        "type": "prepaidCard",
+        "data": "405870000000000",
         "time": 1506605528605,
         "sum": 100
     },

@@ -18,8 +18,7 @@ router.post('/', async ctx => {
 		cardNumber,
 		exp,
 		name,
-		balance,
-		type: bankUtils.getCardType(cardNumber)
+		balance
 	};
 
 	if (await Validators.cardValidator(card, ctx.cards)) {

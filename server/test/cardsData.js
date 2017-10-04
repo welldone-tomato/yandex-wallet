@@ -1,26 +1,37 @@
 module.exports = [
     {
         "id": 1,
-        "cardNumber": "5106216010173049",
+        "cardNumber": "546925000000000",
         "balance": 15000,
-        "type": "mastercard",
         "exp": "04/18",
         "name": "ALYSSA LIVINGSTON"
     },
     {
         "id": 2,
-        "cardNumber": "4024007153305544",
+        "cardNumber": "405870000000000",
         "balance": 1700,
-        "type": "visa",
         "exp": "11/18",
         "name": "CLAIRE MACADAM"
     },
     {
         "id": 3,
-        "cardNumber": "6759836169242630",
+        "cardNumber": "676230000000000",
         "balance": 7000,
-        "type": "maestro",
         "exp": "05/18",
+        "name": "NIK COLLIN"
+    },
+    {
+        "id": 4,
+        "cardNumber": "437784000000000",
+        "balance": 20,
+        "exp": "08/18",
+        "name": "NIK COLLIN"
+    },
+    {
+        "id": 5,
+        "cardNumber": "676803000000000",
+        "balance": 200000,
+        "exp": "01/18",
         "name": "NIK COLLIN"
     }
 ];

@@ -41,10 +41,9 @@ describe('Cards', () => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
-                    res.body.length.should.be.eql(3);
+                    res.body.length.should.be.eql(5);
                     res.body[0].should.have.property('id').eql(1);
-                    res.body[0].should.have.property('cardNumber').eql('5106216010173049');
-                    res.body[0].should.have.property('type').eql('mastercard');
+                    res.body[0].should.have.property('cardNumber').eql('546925000000000');
                     res.body[0].should.have.property('exp').eql('04/18');
                     res.body[0].should.have.property('balance').eql(15000);
                     res.body[0].should.have.property('name').eql('ALYSSA LIVINGSTON');
@@ -108,7 +107,7 @@ describe('Cards', () => {
             chai.request(server)
                 .post('/cards')
                 .send({
-                    cardNumber: '5106216010173049',
+                    cardNumber: '546925000000000',
                     exp: '04/18',
                     name: 'ALYSSA LIVINGSTON',
                 })
@@ -131,10 +130,9 @@ describe('Cards', () => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(4);
+                    res.body.should.have.property('id').eql(6);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(10000);
-                    res.body.should.have.property('type').eql('mastercard');
                     res.body.should.have.property('exp').eql('04/18');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
@@ -153,10 +151,9 @@ describe('Cards', () => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(4);
+                    res.body.should.have.property('id').eql(6);
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(0);
-                    res.body.should.have.property('type').eql('mastercard');
                     res.body.should.have.property('exp').eql('04/18');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
@@ -356,13 +353,9 @@ describe('Cards', () => {
                                     res.should.have.status(200);
                                     res.type.should.eql('application/json');
                                     res.body.should.be.a('array');
-                                    res.body.length.should.be.eql(3);
+                                    res.body.length.should.be.eql(5);
                                     res.body[1].should.have.property('id').eql(2);
-                                    res.body[1].should.have.property('cardNumber').eql('4024007153305544');
-                                    res.body[1].should.have.property('type').eql('visa');
-                                    res.body[1].should.have.property('exp').eql('11/18');
                                     res.body[1].should.have.property('balance').eql(1690);
-                                    res.body[1].should.have.property('name').eql('CLAIRE MACADAM');
 
                                     done();
                                 });
@@ -407,7 +400,7 @@ describe('Cards', () => {
                                     res.should.have.status(200);
                                     res.type.should.eql('application/json');
                                     res.body.should.be.a('array');
-                                    res.body.length.should.be.eql(3);
+                                    res.body.length.should.be.eql(5);
                                     res.body[0].should.have.property('id').eql(1);
                                     res.body[0].should.have.property('balance').eql(15010);
 
@@ -424,7 +417,7 @@ describe('Cards', () => {
                 .post('/cards/1/transactions')
                 .send({
                     type: 'card2Card',
-                    data: '4024007153305544',
+                    data: '405870000000000',
                     time,
                     sum: -100
                 })
@@ -444,7 +437,7 @@ describe('Cards', () => {
                             res.body[4].should.have.property('id').eql(9);
                             res.body[4].should.have.property('cardId').eql(1);
                             res.body[4].should.have.property('type').eql('card2Card');
-                            res.body[4].should.have.property('data').eql('4024007153305544');
+                            res.body[4].should.have.property('data').eql('405870000000000');
                             res.body[4].should.have.property('time').eql(time);
                             res.body[4].should.have.property('sum').eql(-100);
 
@@ -458,7 +451,7 @@ describe('Cards', () => {
                                     res.body[2].should.have.property('id').eql(10);
                                     res.body[2].should.have.property('cardId').eql(2);
                                     res.body[2].should.have.property('type').eql('prepaidCard');
-                                    res.body[2].should.have.property('data').eql('5106216010173049');
+                                    res.body[2].should.have.property('data').eql('546925000000000');
                                     res.body[2].should.have.property('time').eql(time);
                                     res.body[2].should.have.property('sum').eql(100);
 
@@ -469,7 +462,7 @@ describe('Cards', () => {
                                             res.should.have.status(200);
                                             res.type.should.eql('application/json');
                                             res.body.should.be.a('array');
-                                            res.body.length.should.be.eql(3);
+                                            res.body.length.should.be.eql(5);
                                             res.body[0].should.have.property('id').eql(1);
                                             res.body[0].should.have.property('balance').eql(14900);
                                             res.body[1].should.have.property('id').eql(2);
