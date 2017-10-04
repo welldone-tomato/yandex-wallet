@@ -51,7 +51,7 @@ router.post('/:id/transactions', async ctx => {
 		cardId: id,
 		type,
 		data,
-		time: Number(time) || Date.now(),
+		time: Number(time) || Date.now() / 1000,
 		sum: Number(sum)
 	};
 
@@ -71,7 +71,7 @@ router.post('/:id/transactions', async ctx => {
 						cardId: recieverCard.id,
 						type: 'prepaidCard',
 						data: fromCard.cardNumber,
-						time: Number(time) || Date.now(),
+						time: Number(time) || Date.now() / 1000,
 						sum: Number(sum) * (-1)
 					};
 

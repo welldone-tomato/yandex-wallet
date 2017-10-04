@@ -213,7 +213,7 @@ describe('Cards', () => {
                     res.body[0].should.have.property('cardId').eql(1);
                     res.body[0].should.have.property('type').eql('prepaidCard');
                     res.body[0].should.have.property('data').eql('yandex money 33222335');
-                    res.body[0].should.have.property('time').eql(1506605528500);
+                    res.body[0].should.have.property('time').eql(1506605528);
                     res.body[0].should.have.property('sum').eql(10);
 
                     done();
@@ -317,7 +317,7 @@ describe('Cards', () => {
         });
 
         it('should add new transaction with phone payment', done => {
-            const time = Date.now();
+            const time = Date.now() / 1000;
 
             chai.request(server)
                 .post('/cards/2/transactions')
@@ -364,7 +364,7 @@ describe('Cards', () => {
         });
 
         it('should add new transaction with prepaid transaction', done => {
-            const time = Date.now();
+            const time = Date.now() / 1000;
 
             chai.request(server)
                 .post('/cards/1/transactions')
@@ -411,7 +411,7 @@ describe('Cards', () => {
         });
 
         it('should add new transaction with card2card operation', done => {
-            const time = Date.now();
+            const time = Date.now() / 1000;
 
             chai.request(server)
                 .post('/cards/1/transactions')
