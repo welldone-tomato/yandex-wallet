@@ -38,17 +38,16 @@ const Avatar = styled.img`
 
 export default ({isAuth, userName, onSignOutClick}) => {
 	if (isAuth) return (
-			<User>
-     <Avatar src="/assets/avatar.png" />
-     { userName }
-     <DropDown>
-       <a onClick={ onSignOutClick }>Выйти</a>
-     </DropDown>
-   </User>)
+		<User>
+			<Avatar src="/assets/avatar.png" />
+			{ userName }
+			<DropDown>
+			<a onClick={ onSignOutClick }>Выйти</a>
+			</DropDown>
+		</User>)
 	else return (
-			<User>
-     <Avatar src="/assets/avatar.png" />
-     <Link to="singin">Войти</Link>
-     <Link to="singup">Зарегистрироваться</Link>
-   </User>);
+		<User>
+			<Link to="singin">Войти</Link>
+			<Link to="singup">Зарегистрироваться</Link>
+		</User>)
 };
