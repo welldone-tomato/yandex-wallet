@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import styled from 'emotion/react';
-import Title from './title';
+import Title from '../misc/title';
 import UserInfo from './user-info';
 
 import { signOutUser } from '../../actions';

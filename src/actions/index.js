@@ -55,8 +55,7 @@ export const fetchCards = () => {
                     payload: error
                 });
                 console.log(error);
-            }
-        );
+            });
     };
 };
 
@@ -85,8 +84,7 @@ export const fetchTransactions = id => {
                     payload: error
                 });
                 console.log(error);
-            }
-        );
+            });
     };
 };
 
@@ -97,5 +95,39 @@ export const changeActiveCard = id => {
             payload: id
         });
         dispatch(fetchTransactions(id));
+    }
+};
+
+export const mobilePayment = (transaction, id) => {
+    // формируем транзакцию
+    const apiTransaction = {
+        type: 'paymentMobile',
+        data: transaction.phoneNumber,
+        time: Date.now() / 1000,
+        sum: transaction.sum < 0 ? transaction.sum : transaction.sum * -1
+    };
+
+    return dispatch => {
+        axios
+            .post(`${ROOT_URL}/cards/${id}/transactions`, apiTransaction, {
+                headers: {
+                    authorization: 'JWT ' + localStorage.getItem('token')
+                }
+            })
+            .then(result => {
+                if (result.status === 201) {
+                    dispatch({
+                        type: action.MOBILE_PAY_SUCCESS
+                    });
+                    dispatch(fetchTransactions(id));
+                }
+            })
+            .catch(error => {
+                dispatch({
+                    type: action.MOBILE_PAY_FAILED,
+                    payload: error
+                });
+                console.log(error);
+            });
     }
 };

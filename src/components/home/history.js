@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'emotion/react';
 import moment from 'moment';
 
-import Island from './island';
+import Island from '../misc/island';
 
 const HistoryLayout = styled(Island)`
 	width: 530px;
