@@ -1,8 +1,12 @@
-const bankUtils = require('../libs/utils');
 const router = require('koa-router')();
 const Validators = require('../data/validators');
 
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
+
+router.get('/:id', async ctx => {
+	ctx.body = await ctx.cards.get(ctx.params.id);;
+	ctx.status = 200;
+});
 
 router.post('/', async ctx => {
 	const {cardNumber, exp, name} = ctx.request.body;

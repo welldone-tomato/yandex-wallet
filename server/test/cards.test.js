@@ -50,6 +50,22 @@ describe('Cards', () => {
                     done();
                 });
         });
+
+        it('it should GET card from db with id', done => {
+            chai.request(server)
+                .get('/cards/1')
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('object');
+                    res.body.should.have.property('id').eql(1);
+                    res.body.should.have.property('cardNumber').eql('546925000000000');
+                    res.body.should.have.property('exp').eql('04/18');
+                    res.body.should.have.property('balance').eql(15000);
+                    res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
+                    done();
+                });
+        });
     });
 
     describe('/POST new card', () => {
