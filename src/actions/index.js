@@ -41,20 +41,51 @@ export const fetchCards = () => {
                     authorization: 'JWT ' + localStorage.getItem('token')
                 }
             })
-            .then(result => {
+            .then(res => {
                 dispatch({
                     type: action.FETCH_CARDS_SUCCESS,
-                    payload: result.data
+                    payload: res.data
                 });
-                if (result.data[0].id)
-                    dispatch(changeActiveCard(result.data[0].id));
+                if (res.data[0].id)
+                    dispatch(changeActiveCard(res.data[0].id));
             })
-            .catch(error => {
+            .catch(res => {
                 dispatch({
                     type: action.FETCH_CARDS_FAILED,
-                    payload: error
+                    payload: res.response.data.message ? res.response.data.message : res.response.data
                 });
-                console.log(error);
+                console.log(res.response.data.message ? res.response.data.message : res.response.data);
+            });
+    };
+};
+
+/**
+* Вытаскивает обновленные данные по карте пользователя
+* 
+* @param {Number} id 
+* @returns 
+*/
+export const fetchCard = (id) => {
+    return dispatch => {
+        axios
+            .get(`${ROOT_URL}/cards/${id}`, {
+                headers: {
+                    authorization: 'JWT ' + localStorage.getItem('token')
+                }
+            })
+            .then(res => {
+                dispatch({
+                    type: action.FETCH_CARD_SUCCESS,
+                    payload: res.data
+                });
+                dispatch(fetchTransactions(id));
+            })
+            .catch(res => {
+                dispatch({
+                    type: action.FETCH_CARD_FAILED,
+                    payload: res.response.data.message ? res.response.data.message : res.response.data
+                });
+                console.log(res.response.data.message ? res.response.data.message : res.response.data);
             });
     };
 };
@@ -72,18 +103,18 @@ export const fetchTransactions = id => {
                     authorization: 'JWT ' + localStorage.getItem('token')
                 }
             })
-            .then(result => {
+            .then(res => {
                 dispatch({
                     type: action.FETCH_TRANS_SUCCESS,
-                    payload: result.data
+                    payload: res.data
                 });
             })
-            .catch(error => {
+            .catch(res => {
                 dispatch({
                     type: action.FETCH_TRANS_FAILED,
-                    payload: error
+                    payload: res.response.data.message ? res.response.data.message : res.response.data
                 });
-                console.log(error);
+                console.log(res.response.data.message ? res.response.data.message : res.response.data);
             });
     };
 };
@@ -114,20 +145,32 @@ export const mobilePayment = (transaction, id) => {
                     authorization: 'JWT ' + localStorage.getItem('token')
                 }
             })
-            .then(result => {
-                if (result.status === 201) {
+            .then(res => {
+                if (res.status === 201) {
                     dispatch({
-                        type: action.MOBILE_PAY_SUCCESS
+                        type: action.MOBILE_PAY_SUCCESS,
+                        payload: transaction
                     });
-                    dispatch(fetchTransactions(id));
+                    dispatch(fetchCard(id));
                 }
             })
-            .catch(error => {
+            .catch(res => {
                 dispatch({
                     type: action.MOBILE_PAY_FAILED,
-                    payload: error
+                    payload: {
+                        error: res.response.data.message ? res.response.data.message : res.response.data,
+                        transaction
+                    }
                 });
-                console.log(error);
+                console.log(res.response.data.message ? res.response.data.message : res.response.data);
             });
+    }
+};
+
+export const repeateMobileTransfer = () => {
+    return dispatch => {
+        dispatch({
+            type: action.MOBILE_PAY_WISH_TO_REPEAT
+        });
     }
 };

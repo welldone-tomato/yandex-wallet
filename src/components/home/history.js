@@ -68,7 +68,9 @@ const History = ({cardHistory, activeCard}) => {
 		const result = [];
 		const today = moment().format('L');
 
-		cardHistory.forEach((arr, date)=> {
+		if (cardHistory.size ===0)
+			result.push(<HistoryItem key={today+'HistoryItem'}>Операций не найдено</HistoryItem>)
+		else cardHistory.forEach((arr, date)=> {
 			if (date === today) result.push(<HistoryTitle key={date}>Сегодня</HistoryTitle>);
 			else {
 				if (result.length === 0) 

@@ -122,7 +122,7 @@ class MobilePaymentContract extends Component {
 			sum: this.getSumWithCommission(),
 			phoneNumber,
 			commission
-		});
+		}, this.props.activeCard.id);
 	}
 
 	/**

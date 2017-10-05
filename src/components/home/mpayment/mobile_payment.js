@@ -3,45 +3,12 @@ import PropTypes from 'prop-types';
 
 import MobilePaymentContract from './mobile_payment_contract';
 import MobilePaymentSuccess from './mobile_payment_success';
+import MobilePaymentError from './mobile_payment_error';
 
 /**
  * Класс компонента MobilePayment
  */
 class MobilePayment extends Component {
-	/**
-	 * Конструктор
-	 * @param {Object} props свойства компонента MobilePayment
-	 */
-	constructor(props) {
-		super(props);
-
-		this.state = {
-			stage: 'contract'
-		};
-	}
-
-	/**
-	 * Обработка успешного платежа
-	 * @param {Object} transaction данные о транзакции
-	 */
-	onPaymentSuccess(transaction) {
-		this.props.onMobilePaymentClick(transaction, this.props.activeCard.id);
-
-		this.setState({
-			stage: 'success',
-			transaction
-		});
-	}
-
-	/**
-	 * Повторить платеж
-	 */
-	repeatPayment() {
-		this.setState({
-			stage: 'contract'
-		});
-	}
-
 	/**
 	 * Рендер компонента
 	 *
@@ -49,17 +16,19 @@ class MobilePayment extends Component {
 	 * @returns {JSX}
 	 */
 	render() {
-		const {activeCard} = this.props;
+		const {activeCard, mobilePaymentState} = this.props;
 
-		if (this.state.stage === 'success') {
+		if (mobilePaymentState.stage === 'success')
 			return (
-				<MobilePaymentSuccess activeCard={ activeCard } transaction={ this.state.transaction } repeatPayment={ () => this.repeatPayment() } />
+				<MobilePaymentSuccess transaction={ mobilePaymentState.transaction } repeatPayment={ () => this.props.onRepeatPaymentClick() } />
 				);
-		}
-
-		return (
-			<MobilePaymentContract activeCard={ activeCard } onPaymentSuccess={ (transaction) => this.onPaymentSuccess(transaction) } />
-			);
+		else if (mobilePaymentState.stage === 'contract')
+			return (
+				<MobilePaymentContract activeCard={ activeCard } onPaymentSuccess={ (transaction, id) => this.props.onMobilePaymentClick(transaction, id) } />
+				);
+		else return (
+				<MobilePaymentError transaction={ mobilePaymentState.transaction } repeatPayment={ () => this.props.onRepeatPaymentClick() } error={ mobilePaymentState.error } />
+				);
 	}
 }
 
@@ -67,7 +36,12 @@ MobilePayment.propTypes = {
 	activeCard: PropTypes.shape({
 		id: PropTypes.number,
 		theme: PropTypes.object
-	})
+	}),
+	mobilePaymentState: PropTypes.shape({
+		stage: PropTypes.string.isRequired,
+	}).isRequired,
+	onMobilePaymentClick: PropTypes.func.isRequired,
+	onRepeatPaymentClick: PropTypes.func.isRequired
 };
 
 export default MobilePayment;

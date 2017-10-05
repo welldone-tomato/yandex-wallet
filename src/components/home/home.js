@@ -5,7 +5,7 @@ import styled from 'emotion/react';
 import History from './history';
 import MobilePayment from './mpayment/mobile_payment';
 
-import { mobilePayment } from '../../actions/';
+import { mobilePayment, repeateMobileTransfer } from '../../actions/';
 
 const Workspace = styled.div`
 display: flex;
@@ -14,10 +14,11 @@ max-width: 970px;
 padding: 15px;
 `;
 
-const Home = ({transactions, activeCard, onMobilePaymentClick}) => {
+const Home = ({transactions, activeCard, onMobilePaymentClick, mobilePayment, onRepeatPaymentClick}) => {
   return ( <Workspace>
              <History cardHistory={ transactions } activeCard={ activeCard } />
-             <MobilePayment activeCard={ activeCard } onMobilePaymentClick={ onMobilePaymentClick } />
+             <MobilePayment activeCard={ activeCard } onMobilePaymentClick={ onMobilePaymentClick } onRepeatPaymentClick={ onRepeatPaymentClick } mobilePaymentState={ mobilePayment }
+             />
            </Workspace>
     );
 };
@@ -25,13 +26,23 @@ const Home = ({transactions, activeCard, onMobilePaymentClick}) => {
 const mapStateToProps = state => {
   return {
     transactions: state.transactions.data,
-    activeCard: state.cards.activeCard
+    activeCard: state.cards.activeCard,
+    mobilePayment: state.mobilePayment
   }
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onMobilePaymentClick: (transaction, id) => dispatch(mobilePayment(transaction, id))
+    /**
+	 * Обработка успешного платежа
+	 * @param {Object} transaction данные о транзакции
+	 */
+    onMobilePaymentClick: (transaction, id) => dispatch(mobilePayment(transaction, id)),
+
+    /**
+	 * Повторить платеж
+	 */
+    onRepeatPaymentClick: () => dispatch(repeateMobileTransfer())
   }
 }
 
