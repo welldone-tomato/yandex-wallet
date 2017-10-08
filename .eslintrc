@@ -2,7 +2,13 @@
     "extends": "react-app",
     "overrides": [
         {
-            "excludedFiles": ".vscode/**/*.js"
+            "files": [
+                "**/*.js",
+                "**/*.jsx"
+            ],
+            "excludedFiles": [
+                ".vscode/**/*.js"
+            ]
         }
     ],
     "env": {
