@@ -1,3 +1,13 @@
 {
-    "extends": "react-app"
+    "extends": "react-app",
+    "overrides": [
+        {
+            "excludedFiles": ".vscode/**/*.js"
+        }
+    ],
+    "env": {
+        "node": true,
+        "mocha": true,
+        "mongo": true
+    }
 }
