@@ -131,16 +131,14 @@ export const changeActiveCard = id => {
 
 export const mobilePayment = (transaction, id) => {
     // формируем транзакцию
-    const apiTransaction = {
-        type: 'paymentMobile',
-        data: transaction.phoneNumber,
-        time: Date.now() / 1000,
-        sum: transaction.sum < 0 ? transaction.sum : transaction.sum * -1
+    const data = {
+        phone: transaction.phoneNumber,
+        amount: transaction.sum < 0 ? transaction.sum * -1 : transaction.sum
     };
 
     return dispatch => {
         axios
-            .post(`${ROOT_URL}/cards/${id}/transactions`, apiTransaction, {
+            .post(`${ROOT_URL}/cards/${id}/pay`, data, {
                 headers: {
                     authorization: 'JWT ' + localStorage.getItem('token')
                 }

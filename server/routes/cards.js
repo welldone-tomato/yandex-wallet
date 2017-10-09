@@ -1,6 +1,53 @@
 const router = require('koa-router')();
 const Validators = require('../data/validators');
 
+/**
+ * Добавление транзакции через контекст, переданный в контроллер
+ * 
+ * @param {any} transaction Транзакция
+ * @param {any} ctx Контекс карт
+ * @returns 
+ */
+const addTransaction = async (transaction, ctx) => {
+	let result = false;
+
+	if (await Validators.transactionValidator(transaction, ctx.cards)) {
+		result = await ctx.transactions.add(transaction);
+
+		if (result) {
+			//Транзакция добавилась, необходимо обновить баланс карты
+			result = await ctx.cards.affectBalance(transaction.cardId, transaction);
+
+			// Добавляем вторую транзакцию 
+			if (result && transaction.type === 'card2Card') {
+				const fromCard = await ctx.cards.get(transaction.cardId);
+				const recieverCard = await ctx.cards.getByCardNumber(transaction.data);
+				if (recieverCard && fromCard) {
+					const {time, sum} = transaction;
+
+					const recieverTransaction = {
+						cardId: recieverCard.id,
+						type: 'prepaidCard',
+						data: fromCard.cardNumber,
+						time: Number(time) || Date.now() / 1000,
+						sum: Number(sum) * (-1)
+					};
+
+					if (await Validators.transactionValidator(recieverTransaction, ctx.cards)) {
+						result = await ctx.transactions.add(recieverTransaction);
+
+						if (result)
+							//Транзакция добавилась, необходимо обновить баланс карты
+							result = await ctx.cards.affectBalance(recieverCard.id, recieverTransaction);
+					}
+				}
+			}
+		}
+	}
+
+	return result;
+};
+
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
 
 router.get('/:id', async ctx => {
@@ -59,46 +106,42 @@ router.post('/:id/transactions', async ctx => {
 		sum: Number(sum)
 	};
 
-	if (await Validators.transactionValidator(transaction, ctx.cards)) {
-		let result = await ctx.transactions.add(transaction);
+	const result = await addTransaction(transaction, ctx);
 
-		if (result) {
-			//Транзакция добавилась, необходимо обновить баланс карты
-			result = await ctx.cards.affectBalance(id, transaction);
+	ctx.body = {
+		status: result ? 'success' : 'failed'
+	};
 
-			// Добавляем вторую транзакцию 
-			if (result && transaction.type === 'card2Card') {
-				const fromCard = await ctx.cards.get(id);
-				const recieverCard = await ctx.cards.getByCardNumber(transaction.data);
-				if (recieverCard && fromCard) {
-					const recieverTransaction = {
-						cardId: recieverCard.id,
-						type: 'prepaidCard',
-						data: fromCard.cardNumber,
-						time: Number(time) || Date.now() / 1000,
-						sum: Number(sum) * (-1)
-					};
+	if (result)
+		ctx.status = 201
+	else
+		ctx.status = 500;
+});
 
-					if (await Validators.transactionValidator(recieverTransaction, ctx.cards)) {
-						result = await ctx.transactions.add(recieverTransaction);
+router.post('/:id/pay', async ctx => {
+	const {id} = ctx.params;
 
-						if (result)
-							//Транзакция добавилась, необходимо обновить баланс карты
-							result = await ctx.cards.affectBalance(recieverCard.id, recieverTransaction);
-					}
-				}
-			}
-		}
+	const {phone, amount} = ctx.request.body;
 
-		ctx.body = {
-			status: result ? 'success' : 'failed'
-		};
+	const transaction = {
+		cardId: id,
+		type: 'paymentMobile',
+		data: phone,
+		time: Date.now() / 1000,
+		sum: Number(amount) * -1
+	};
 
-		if (result)
-			ctx.status = 201
-		else
-			ctx.status = 500;
-	}
+	const result = await addTransaction(transaction, ctx);
+
+	ctx.body = {
+		status: result ? 'success' : 'failed'
+	};
+
+	if (result)
+		ctx.status = 201
+	else
+		ctx.status = 500;
+
 });
 
 module.exports = router;

@@ -333,15 +333,11 @@ describe('Cards', () => {
         });
 
         it('should add new transaction with phone payment', done => {
-            const time = Date.now() / 1000;
-
             chai.request(server)
-                .post('/cards/2/transactions')
+                .post('/cards/2/pay')
                 .send({
-                    type: 'paymentMobile',
-                    data: '79213334455',
-                    time,
-                    sum: -10
+                    phone: '79213334455',
+                    amount: 10
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -360,7 +356,6 @@ describe('Cards', () => {
                             res.body[2].should.have.property('cardId').eql(2);
                             res.body[2].should.have.property('type').eql('paymentMobile');
                             res.body[2].should.have.property('data').eql('79213334455');
-                            res.body[2].should.have.property('time').eql(time);
                             res.body[2].should.have.property('sum').eql(-10);
 
                             chai.request(server)
