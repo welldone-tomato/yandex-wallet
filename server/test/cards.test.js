@@ -422,15 +422,11 @@ describe('Cards', () => {
         });
 
         it('should add new transaction with card2card operation', done => {
-            const time = Date.now() / 1000;
-
             chai.request(server)
-                .post('/cards/1/transactions')
+                .post('/cards/1/transfer')
                 .send({
-                    type: 'card2Card',
-                    data: '405870000000000',
-                    time,
-                    sum: -100
+                    to: '405870000000000',
+                    amount: 100
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
@@ -449,7 +445,6 @@ describe('Cards', () => {
                             res.body[4].should.have.property('cardId').eql(1);
                             res.body[4].should.have.property('type').eql('card2Card');
                             res.body[4].should.have.property('data').eql('405870000000000');
-                            res.body[4].should.have.property('time').eql(time);
                             res.body[4].should.have.property('sum').eql(-100);
 
                             chai.request(server)
@@ -463,7 +458,6 @@ describe('Cards', () => {
                                     res.body[2].should.have.property('cardId').eql(2);
                                     res.body[2].should.have.property('type').eql('prepaidCard');
                                     res.body[2].should.have.property('data').eql('546925000000000');
-                                    res.body[2].should.have.property('time').eql(time);
                                     res.body[2].should.have.property('sum').eql(100);
 
 

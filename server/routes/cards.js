@@ -30,7 +30,7 @@ const addTransaction = async (transaction, ctx) => {
 						type: 'prepaidCard',
 						data: fromCard.cardNumber,
 						time: Number(time) || Date.now() / 1000,
-						sum: Number(sum) * (-1)
+						sum: Number(sum) < 0 ? Number(sum) * -1 : Number(sum)
 					};
 
 					if (await Validators.transactionValidator(recieverTransaction, ctx.cards)) {
@@ -128,7 +128,33 @@ router.post('/:id/pay', async ctx => {
 		type: 'paymentMobile',
 		data: phone,
 		time: Date.now() / 1000,
-		sum: Number(amount) * -1
+		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
+	};
+
+	const result = await addTransaction(transaction, ctx);
+
+	ctx.body = {
+		status: result ? 'success' : 'failed'
+	};
+
+	if (result)
+		ctx.status = 201
+	else
+		ctx.status = 500;
+
+});
+
+router.post('/:id/transfer', async ctx => {
+	const {id} = ctx.params;
+
+	const {to, amount} = ctx.request.body;
+
+	const transaction = {
+		cardId: id,
+		type: 'card2Card',
+		data: to,
+		time: Date.now() / 1000,
+		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
 	};
 
 	const result = await addTransaction(transaction, ctx);
