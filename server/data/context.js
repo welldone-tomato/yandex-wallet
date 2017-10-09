@@ -1,6 +1,8 @@
 const fs = require('fs');
 const util = require('util');
 
+const logger = require('../libs/logger')('file-model');
+
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
@@ -29,7 +31,12 @@ class Context {
      * @memberof Context
      */
     async save(data) {
-        await writeFile(__dirname + this.fileName, JSON.stringify(data));
+        try {
+            await writeFile(__dirname + this.fileName, JSON.stringify(data));
+        } catch (err) {
+            logger.error(`Save data to ${this.fileName} error`, err);
+            throw err;
+        }
     }
 
     /**
@@ -39,7 +46,15 @@ class Context {
      * @memberof Context
      */
     async getAll() {
-        const data = await readFile(__dirname + this.fileName, 'utf8');
+        let data = {};
+
+        try {
+            data = await readFile(__dirname + this.fileName, 'utf8');
+        } catch (err) {
+            logger.error(`Load data from ${this.fileName} error`, err);
+            throw err;
+        }
+
         return JSON.parse(data);
     }
 

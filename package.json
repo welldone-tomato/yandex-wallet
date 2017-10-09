@@ -12,6 +12,7 @@
     "koa-compose": "^4.0.0",
     "koa-router": "^7.2.1",
     "koa2-cors": "^2.0.3",
+    "log4js": "^2.3.4",
     "moment": "^2.18.1",
     "prop-types": "^15.6.0",
     "react": "^16.0.0",

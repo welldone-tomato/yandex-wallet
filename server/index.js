@@ -4,6 +4,7 @@ const koaBody = require('koa-body')();
 const compose = require('koa-compose');
 const cors = require('koa2-cors');
 
+const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
@@ -18,7 +19,8 @@ if (process.env.NODE_ENV !== 'test') {
 		const start = new Date();
 		await next();
 		const ms = new Date() - start;
-		console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
+		console.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
+		logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 	});
 }
 
@@ -40,6 +42,7 @@ app.use(async (ctx, next) => {
 		ctx.body = {
 			message: err.message
 		};
+		logger.error('Error detected', err);
 	}
 });
 
@@ -55,7 +58,9 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const server = app.listen(4000, () => console.log('YM Node School App listening on port 4000!'))
-	.on('error', err => console.error(err));
+const server = app.listen(4000, () => {
+	console.log('YM Node School App listening on port 4000!')
+	logger.log('YM Node School App listening on port 4000!');
+});
 
 module.exports = server;
