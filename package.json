@@ -30,8 +30,7 @@
     "start:server": "node ./server/index.js",
     "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --timeout 10000",
     "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000",
-    "precommit": "npm run test:server",
-    "prepush": "npm run test:server"
+    "precommit": "npm run test:server"
   },
   "devDependencies": {
     "chai": "^4.1.2",
