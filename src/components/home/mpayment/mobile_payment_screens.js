@@ -6,9 +6,25 @@ import Island from '../../misc/island';
 
 const MobilePaymentLayout = styled(Island)`
 	width: 440px;
-	background: #871616;
+	background: #108051;
 	position: relative;
 	color: #fff;
+`;
+
+const MobilePaymentErrorLayout = styled(Island)`
+width: 440px;
+background: #871616;
+position: relative;
+color: #fff;
+`;
+
+const SuccessIcon = styled.div`
+	width: 48px;
+	height: 48px;
+	background-image: url(/assets/round-check.svg);
+	position: absolute;
+	top: 27;
+	right: 32;
 `;
 
 const Header = styled.div`
@@ -62,11 +78,45 @@ const RepeatPayment = styled.button`
 	text-transform: uppercase;
 `;
 
-const MobilePaymentError = ({transaction, repeatPayment, error}) => {
+export const MobilePaymentSuccess = ({transaction, repeatPayment}) => {
 	const {sum, phoneNumber, commission} = transaction;
 
 	return (
 		<MobilePaymentLayout>
+			<SuccessIcon />
+			<Header>МегаФон (Россия)</Header>
+			<Sum>{sum} ₽</Sum>
+			<CommissionTips>В том числе комиссия {commission} ₽</CommissionTips>
+			<Section>
+				<SectionLabel>Номер транзакции</SectionLabel>
+				<SectionValue>200580211311</SectionValue>
+			</Section>
+			<Section>
+				<SectionLabel>Номер телефона</SectionLabel>
+				<SectionValue>{phoneNumber}</SectionValue>
+			</Section>
+			<Instruction>
+				Мы пришлем чек на sam@yandex.ru. Вы можете изменить email в «Настройках».
+			</Instruction>
+			<RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
+		</MobilePaymentLayout>
+	);
+};
+
+MobilePaymentSuccess.propTypes = {
+	transaction: PropTypes.shape({
+		sum: PropTypes.number,
+		phoneNumber: PropTypes.string,
+		commission: PropTypes.number
+	}).isRequired,
+	repeatPayment: PropTypes.func.isRequired
+};
+
+export const MobilePaymentError = ({transaction, repeatPayment, error}) => {
+	const {sum, phoneNumber, commission} = transaction;
+
+	return (
+		<MobilePaymentErrorLayout>
 			<Header>МегаФон (Россия)</Header>
 			<Sum>{sum} ₽</Sum>
 			<CommissionTips>В том числе комиссия {commission} ₽</CommissionTips>
@@ -82,7 +132,7 @@ const MobilePaymentError = ({transaction, repeatPayment, error}) => {
 				Произошла ошибка платежа. {error}
 			</Instruction>
 			<RepeatPayment onClick={repeatPayment}>Повторить перевод</RepeatPayment>
-		</MobilePaymentLayout>
+		</MobilePaymentErrorLayout>
 	);
 };
 
@@ -95,5 +145,3 @@ MobilePaymentError.propTypes = {
 	error:PropTypes.string.isRequired,
 	repeatPayment: PropTypes.func.isRequired
 };
-
-export default MobilePaymentError;
