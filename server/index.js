@@ -11,6 +11,8 @@ const TransactionsContext = require('./data/transactions_context');
 
 const app = new Koa();
 
+const port = process.env.NODE_PORT || 4000;
+
 app.use(cors());
 
 // Логгер работает только для нетестовых окружений
@@ -19,7 +21,7 @@ if (process.env.NODE_ENV !== 'test') {
 		const start = new Date();
 		await next();
 		const ms = new Date() - start;
-		console.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
+		// console.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 		logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 	});
 }
@@ -43,6 +45,7 @@ app.use(async (ctx, next) => {
 			message: err.message
 		};
 		logger.error('Error detected', err);
+		if (process.env.NODE_ENV !== 'test') console.error('Error detected', err);
 	}
 });
 
@@ -58,9 +61,9 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const server = app.listen(4000, () => {
-	console.log('YM Node School App listening on port 4000!')
-	logger.log('YM Node School App listening on port 4000!');
+const server = app.listen(port, () => {
+	console.log(`YM Node School App listening on port ${port}!`)
+	logger.log(`YM Node School App listening on port ${port}!`);
 });
 
 module.exports = server;

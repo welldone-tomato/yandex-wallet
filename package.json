@@ -6,6 +6,7 @@
     "antd": "^2.13.4",
     "axios": "^0.16.2",
     "card-info": "git+https://github.com/iniel/card-info.git",
+    "cross-env": "^5.0.5",
     "emotion": "^7.3.2",
     "koa": "^2.3.0",
     "koa-body": "^2.4.0",
@@ -28,12 +29,15 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "start:server": "node ./server/index.js",
-    "test:server": "mocha ./server/test --timeout 10000",
-    "cover:server": "nyc mocha ./server/test --timeout 10000"
+    "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --timeout 10000",
+    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000",
+    "precommit": "npm run test:server",
+    "prepush": "npm run test:server"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "husky": "^0.14.3",
     "mocha": "^3.5.3",
     "nyc": "^11.2.1",
     "react-app-rewire-emotion": "^2.0.0",
