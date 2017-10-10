@@ -3,34 +3,39 @@ const ApplicationError = require('../libs/application_error');
 
 module.exports = {
     /**
-     * Проверяет номер карты и возращает ее тип
+     * Проверяет номер карты
      * 
      * @param {String} cardNumber 
      * @param {CardsContext} cards
-     * @returns {Boolean}
      */
-    cardValidator: async ({cardNumber, exp} , cards) => {
+    cardValidator: async ({cardNumber, exp, balance} , cards) => {
         if (bankUtils.getCardType(cardNumber) === '' || !bankUtils.moonCheck(cardNumber))
             throw new ApplicationError('valid cardNumber required', 400);
 
         if (await cards.checkCardExist(cardNumber))
             throw new ApplicationError('non doublicated cardNumber required', 400);
 
+        if (isNaN(balance) || balance < 0)
+            throw new ApplicationError('balance is invalid', 400);
+
         // проверяем срок действия карты
         const date = new Date();
         const currentYear = date.getFullYear();
         const currentMonth = date.getMonth() + 1;
-        // get parts of the expiration date
         const parts = exp.split('/');
         const year = parseInt(parts[1], 10) + 2000;
         const month = parseInt(parts[0], 10);
-        // compare the dates
+
         if (year < currentYear || (year === currentYear && month < currentMonth))
             throw new ApplicationError('card expired', 400);
-
-        return true;
     },
 
+    /**
+     * Проверяет транзакцию
+     * 
+     * @param {Object} transaction 
+     * @param {CardsContext} cards
+     */
     transactionValidator: async (transaction, cards) => {
         const allowedTypes = ['prepaidCard', 'paymentMobile', 'card2Card'];
         const requiredFields = ['sum', 'type', 'data'];
@@ -40,7 +45,6 @@ module.exports = {
 
         if (missingFields.length)
             throw new ApplicationError(`No required fields: ${missingFields.join()}`, 400);
-
 
         if (!allowedTypes.includes(transaction.type))
             throw new ApplicationError(`Forbidden transaction type: ${transaction.type}`, 403);
@@ -64,7 +68,5 @@ module.exports = {
 
         if (transaction.type === 'prepaidCard' && transaction.sum <= 0)
             throw new ApplicationError(`Invalid transaction sum`, 400);
-
-        return true;
     }
 };

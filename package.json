@@ -29,14 +29,12 @@
     "test": "react-app-rewired test --env=jsdom",
     "start:server": "node ./server/index.js",
     "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --timeout 10000",
-    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000",
-    "precommit": "npm run test:server"
+    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000"
   },
   "devDependencies": {
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
     "cross-env": "^5.0.5",
-    "husky": "^0.14.3",
     "mocha": "^3.5.3",
     "nyc": "^11.2.1",
     "react-app-rewire-emotion": "^2.0.0",

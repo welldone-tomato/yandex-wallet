@@ -35,7 +35,7 @@ class Context {
             await writeFile(__dirname + this.fileName, JSON.stringify(data));
         } catch (err) {
             logger.error(`Save data to ${this.fileName} error`, err);
-            throw err;
+            throw new ApplicationError(`Save data to ${this.fileName} error, ${err}`, 500, false);
         }
     }
 
@@ -52,7 +52,7 @@ class Context {
             data = await readFile(__dirname + this.fileName, 'utf8');
         } catch (err) {
             logger.error(`Load data from ${this.fileName} error`, err);
-            throw err;
+            throw new ApplicationError(`Load data from ${this.fileName} error, ${err}`, 500, false);
         }
 
         return JSON.parse(data);
@@ -111,12 +111,9 @@ class Context {
         if (!item)
             throw new ApplicationError(`Item with id=${id} not found`, 404);
 
-        let data = await this.getAll();
-        data = data.filter(item => item.id !== id);
+        const data = await this.getAll();
 
-        await this.save(data);
-
-        return true;
+        await this.save(data.filter(item => item.id !== id));
     }
 
     /**
@@ -138,8 +135,6 @@ class Context {
         items[itemIndex] = item;
 
         await this.save(items);
-
-        return true;
     }
 }
 

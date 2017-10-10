@@ -1,5 +1,6 @@
 const router = require('koa-router')();
 const Validators = require('../data/validators');
+const ApplicationError = require('../libs/application_error');
 
 /**
  * Добавление транзакции через контекст, переданный в контроллер
@@ -9,82 +10,70 @@ const Validators = require('../data/validators');
  * @returns 
  */
 const addTransaction = async (transaction, ctx) => {
-	let result = false;
+	// проверяем транзакцию
+	await Validators.transactionValidator(transaction, ctx.cards);
 
-	if (await Validators.transactionValidator(transaction, ctx.cards)) {
-		result = await ctx.transactions.add(transaction);
+	// добавляем транзакцию
+	await ctx.transactions.add(transaction);
 
-		if (result) {
-			//Транзакция добавилась, необходимо обновить баланс карты
-			result = await ctx.cards.affectBalance(transaction.cardId, transaction);
+	// транзакция добавилась, необходимо обновить баланс карты
+	await ctx.cards.affectBalance(transaction.cardId, transaction);
 
-			// Добавляем вторую транзакцию 
-			if (result && transaction.type === 'card2Card') {
-				const fromCard = await ctx.cards.get(transaction.cardId);
-				const recieverCard = await ctx.cards.getByCardNumber(transaction.data);
-				if (recieverCard && fromCard) {
-					const {time, sum} = transaction;
+	// добавляем вторую транзакцию, если надо 
+	if (transaction.type === 'card2Card') {
+		const fromCard = await ctx.cards.get(transaction.cardId);
+		const toCard = await ctx.cards.getByCardNumber(transaction.data);
 
-					const recieverTransaction = {
-						cardId: recieverCard.id,
-						type: 'prepaidCard',
-						data: fromCard.cardNumber,
-						time: Number(time) || Date.now() / 1000,
-						sum: Number(sum) < 0 ? Number(sum) * -1 : Number(sum)
-					};
+		if (!toCard)
+			throw new ApplicationError(`Card with cardNumber=${transaction.data} not found`, 404);
 
-					if (await Validators.transactionValidator(recieverTransaction, ctx.cards)) {
-						result = await ctx.transactions.add(recieverTransaction);
+		const {time, sum} = transaction;
 
-						if (result)
-							//Транзакция добавилась, необходимо обновить баланс карты
-							result = await ctx.cards.affectBalance(recieverCard.id, recieverTransaction);
-					}
-				}
-			}
-		}
+		const recieverTransaction = {
+			cardId: toCard.id,
+			type: 'prepaidCard',
+			data: fromCard.cardNumber,
+			time: time || Date.now() / 1000,
+			sum: sum < 0 ? sum * -1 : sum
+		};
+
+		await Validators.transactionValidator(recieverTransaction, ctx.cards);
+		await ctx.transactions.add(recieverTransaction);
+
+		await ctx.cards.affectBalance(toCard.id, recieverTransaction);
 	}
-
-	return result;
 };
 
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
 
-router.get('/:id', async ctx => {
-	ctx.body = await ctx.cards.get(ctx.params.id);;
-	ctx.status = 200;
-});
+router.get('/:id', async ctx => ctx.body = await ctx.cards.get(ctx.params.id));
 
 router.post('/', async ctx => {
-	const {cardNumber, exp, name} = ctx.request.body;
-	let {balance} = ctx.request.body;
+	const {cardNumber, exp, name, balance} = ctx.request.body;
 
 	if (!cardNumber || !exp || !name)
-		ctx.throw(400, 'cardNumber required');
-
-	balance = Number(balance) || 0;
-	if (isNaN(balance)) ctx.throw(400, 'balance is invalid');
+		ctx.throw(400, 'properties required');
 
 	const card = {
 		cardNumber,
 		exp,
 		name,
-		balance
+		balance: Number(balance) || 0
 	};
 
-	if (await Validators.cardValidator(card, ctx.cards)) {
-		ctx.body = await ctx.cards.add(card);
-		ctx.status = 201;
-	} else
-		ctx.status = 400;
+	await Validators.cardValidator(card, ctx.cards)
+
+	ctx.body = await ctx.cards.add(card);
+	ctx.status = 201;
 });
 
 router.delete('/:id', async ctx => {
-	const result = await ctx.cards.remove(ctx.params.id);
+	await ctx.cards.remove(ctx.params.id);
 
 	ctx.body = {
-		result: result ? 'success' : 'failed'
+		result: 'success'
 	};
+
 	ctx.status = 200;
 });
 
@@ -106,16 +95,13 @@ router.post('/:id/transactions', async ctx => {
 		sum: Number(sum)
 	};
 
-	const result = await addTransaction(transaction, ctx);
+	await addTransaction(transaction, ctx);
 
 	ctx.body = {
-		status: result ? 'success' : 'failed'
+		status: 'success'
 	};
 
-	if (result)
-		ctx.status = 201
-	else
-		ctx.status = 500;
+	ctx.status = 201;
 });
 
 router.post('/:id/pay', async ctx => {
@@ -131,17 +117,13 @@ router.post('/:id/pay', async ctx => {
 		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
 	};
 
-	const result = await addTransaction(transaction, ctx);
+	await addTransaction(transaction, ctx);
 
 	ctx.body = {
-		status: result ? 'success' : 'failed'
-	};
+		status: 'success'
+	}
 
-	if (result)
-		ctx.status = 201
-	else
-		ctx.status = 500;
-
+	ctx.status = 201;
 });
 
 router.post('/:id/transfer', async ctx => {
@@ -157,17 +139,13 @@ router.post('/:id/transfer', async ctx => {
 		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
 	};
 
-	const result = await addTransaction(transaction, ctx);
+	await addTransaction(transaction, ctx);
 
 	ctx.body = {
-		status: result ? 'success' : 'failed'
+		status: 'success'
 	};
 
-	if (result)
-		ctx.status = 201
-	else
-		ctx.status = 500;
-
+	ctx.status = 201;
 });
 
 module.exports = router;

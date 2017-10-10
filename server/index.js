@@ -29,7 +29,7 @@ if (process.env.NODE_ENV !== 'test') {
 // id param auto-loading
 router.param('id', async (id, ctx, next) => {
 	id = Number(id);
-	if (id < 0 || isNaN(id)) ctx.throw(400, 'id is invalid');
+	if (id <= 0 || isNaN(id)) ctx.throw(400, 'id is invalid');
 	ctx.params.id = id;
 
 	await next();
@@ -44,7 +44,7 @@ app.use(async (ctx, next) => {
 		ctx.body = {
 			message: err.message
 		};
-		logger.error('Error detected', err);
+		if (err.isNotLogged) logger.error('Error detected', err);
 		if (process.env.NODE_ENV !== 'test') console.error('Error detected', err);
 	}
 });

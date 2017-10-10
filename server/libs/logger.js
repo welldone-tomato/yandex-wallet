@@ -1,10 +1,10 @@
 const path = require('path');
 const log4js = require('log4js');
 
-let level
+let level;
 
 switch (process.env.NODE_ENV) {
-    case 'DEV':
+    case 'dev':
         level = 'debug';
         break;
 

@@ -64,9 +64,7 @@ class CardsContext extends Context {
         const card = await this.get(id);
         card.balance += Number(transaction.sum);
 
-        const result = await this.edit(id, card);
-
-        return result;
+        await this.edit(id, card);
     }
 }
 
