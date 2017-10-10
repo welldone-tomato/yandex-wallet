@@ -42,14 +42,17 @@ const separateByDates = data => {
 
         const key = moment.unix(time).format('L');
 
-        let value = result.get(key);
+        let row = result.find(item => item.key === key);
 
-        if (!value) {
-            value = [];
-            result.set(key, value);
+        if (!row) {
+            row = {
+                key,
+                data: []
+            };
+            result.push(row);
         }
 
-        value.push({
+        row.data.push({
             id,
             time,
             hhmm: moment.unix(time).format('HH:mm'),
@@ -62,7 +65,7 @@ const separateByDates = data => {
 
         return result;
 
-    }, new Map());
+    }, []);
 };
 
 const transactionsReducer = (state = transactionsInitialState, {type, payload}) => {

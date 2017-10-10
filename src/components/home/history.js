@@ -63,15 +63,15 @@ const HistoryItemSum = styled.div`
 	text-overflow: ellipsis;
 `;
 
-const History = ({cardHistory, activeCard}) => {
+const History = ({transactions, activeCard}) => {
 	const renderCardsHistory = () => {
 		const result = [];
 		const today = moment().format('L');
 
-		if (cardHistory.size ===0)
+		if (transactions.length === 0)
 			result.push(<HistoryItem key={today+'HistoryItem'}>Операций не найдено</HistoryItem>)
-		else cardHistory.forEach((arr, date)=> {
-			if (date === today) result.push(<HistoryTitle key={date}>Сегодня</HistoryTitle>);
+		else transactions.forEach(item=> {
+			if (item.key === today) result.push(<HistoryTitle key={item.key}>Сегодня</HistoryTitle>);
 			else {
 				if (result.length === 0) 
 					{
@@ -79,30 +79,30 @@ const History = ({cardHistory, activeCard}) => {
 						result.push(<HistoryItem key={today+'HistoryItem'}>Операций за этот день нет</HistoryItem>)
 					}
 
-				result.push(<HistoryTitle key={date}>{date}</HistoryTitle>);}
+				result.push(<HistoryTitle key={item.key}>{item.key}</HistoryTitle>);}
 
-			result.push(renderCardsDay(arr));
+			result.push(renderCardsDay(item.data));
 		});
 
 		return result;
 	};
 
 	const renderCardsDay = (arr) => 
-	arr.map(item => {
-		return (
-			<HistoryItem key={ item.id }>
-				<HistoryItemIcon bankSmLogoUrl={ activeCard.theme.bankSmLogoUrl } />
-					<HistoryItemTitle>
-						{item.title}
-					</HistoryItemTitle>
-				<HistoryItemTime>
-					{ item.hhmm}
-				</HistoryItemTime>
-				<HistoryItemSum>
-					{ `${item.sum} ₽` }
-				</HistoryItemSum>
-			</HistoryItem>
-	);
+		arr.map(item => {
+			return (
+				<HistoryItem key={ item.id }>
+					<HistoryItemIcon bankSmLogoUrl={ activeCard.theme.bankSmLogoUrl } />
+						<HistoryItemTitle>
+							{item.title}
+						</HistoryItemTitle>
+					<HistoryItemTime>
+						{ item.hhmm}
+					</HistoryItemTime>
+					<HistoryItemSum>
+						{ `${item.sum} ₽` }
+					</HistoryItemSum>
+				</HistoryItem>
+		);
 	});
 
 	return (

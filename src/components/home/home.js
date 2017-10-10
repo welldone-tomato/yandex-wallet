@@ -16,7 +16,7 @@ padding: 15px;
 
 const Home = ({transactions, activeCard, onMobilePaymentClick, mobilePayment, onRepeatPaymentClick}) => {
   return ( <Workspace>
-             <History cardHistory={ transactions } activeCard={ activeCard } />
+             <History transactions={ transactions } activeCard={ activeCard } />
              <MobilePayment activeCard={ activeCard } onMobilePaymentClick={ onMobilePaymentClick } onRepeatPaymentClick={ onRepeatPaymentClick } mobilePaymentState={ mobilePayment }
              />
            </Workspace>
