@@ -118,11 +118,11 @@ class MobilePaymentContract extends Component {
 			return;
 		}
 
-		this.props.onPaymentSuccess({
+		this.props.onPaymentSubmit({
 			sum: this.getSumWithCommission(),
 			phoneNumber,
 			commission
-		}, this.props.activeCard.id);
+		}, this.props.activeCardId);
 	}
 
 	/**
@@ -177,11 +177,7 @@ class MobilePaymentContract extends Component {
 }
 
 MobilePaymentContract.propTypes = {
-	activeCard: PropTypes.shape({
-		id: PropTypes.number,
-		theme: PropTypes.object
-	}),
-	onPaymentSuccess: PropTypes.func.isRequired
+	onPaymentSubmit: PropTypes.func.isRequired
 };
 
 export default MobilePaymentContract;

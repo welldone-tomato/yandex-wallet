@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
@@ -45,22 +46,28 @@ class CardsBar extends Component {
     .props
     .onStart();
 
-  render() {
-    return (
-      <Layout>
-        <Logo />
-        <Edit />
-        <CardsList>
-          { this.props.cards.map(card => (
-              <Card key={ card.id } data={ card } active={ card.id === this.props.activeCardId } onClick={ () => this.props.onClick(card.id) } />
-            )) }
-          <Card type='new' />
-        </CardsList>
-        <Footer>Yamoney Node School</Footer>
-      </Layout>
-      );
-  }
+  render = () => (
+    <Layout>
+      <Logo />
+      <Edit />
+      <CardsList>
+        { this.props.cards.map(card => (
+            <Card key={ card.id } data={ card } active={ card.id === this.props.activeCardId } onClick={ () => this.props.onClick(card.id) } />
+          )) }
+        <Card type='new' />
+      </CardsList>
+      <Footer>Yamoney Node School</Footer>
+    </Layout>
+  )
 }
+
+CardsBar.propTypes = {
+  cards: PropTypes.array.isRequired,
+  activeCardId: PropTypes.number,
+  error: PropTypes.object,
+  onClick: PropTypes.func.isRequired,
+  onStart: PropTypes.func.isRequired
+};
 
 const mapStateToProps = state => ({
   cards: getPreparedCards(state),
@@ -68,11 +75,9 @@ const mapStateToProps = state => ({
   activeCardId: state.cards.activeCardId
 });
 
-const mapDispatchToProps = dispatch => {
-  return {
-    onClick: (id) => dispatch(changeActiveCard(id)),
-    onStart: () => dispatch(fetchCards())
-  }
-}
+const mapDispatchToProps = dispatch => ({
+  onClick: (id) => dispatch(changeActiveCard(id)),
+  onStart: () => dispatch(fetchCards())
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardsBar);

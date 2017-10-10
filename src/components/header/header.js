@@ -6,6 +6,8 @@ import UserInfo from './user-info';
 
 import { signOutUser } from '../../actions/auth';
 
+import { getActiveCard } from '../../selectors/cards';
+
 const HeaderLayout = styled.header`
 	display: flex;
 	justify-content: space-between;
@@ -26,7 +28,7 @@ const BalanceSum = styled.span`
 `;
 
 const Header = ({activeCard, auth, dispatch}) => {
-	const renderBalance=()=> {
+	const renderBalance = () => {
 		if (activeCard) return (
 		<Balance>
 			{`${activeCard.bankName}: `}
@@ -35,17 +37,16 @@ const Header = ({activeCard, auth, dispatch}) => {
 	};
 
 	return (
-	<HeaderLayout>
-		{renderBalance()}
-		<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
-	</HeaderLayout>
-)};
+		<HeaderLayout>
+			{renderBalance()}
+			<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
+		</HeaderLayout>
+	)
+};
 
-const mapStateToProps = state => {
-	return {
-		activeCard:state.cards.activeCard,
-		auth: state.auth
-	}
-}
+const mapStateToProps = state => ({
+	activeCard: getActiveCard(state),
+	auth: state.auth
+});
 
 export default connect(mapStateToProps)(Header);

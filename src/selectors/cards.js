@@ -18,6 +18,7 @@ const prepareCardData = card => {
         id: card.id,
         balance: card.balance,
         number: numberNice,
+        cardNumber: card.cardNumber,
         bankName: bankName,
         theme: {
             bgColor: backgroundColor,
@@ -47,4 +48,9 @@ export const getPreparedCards = createSelector(
 export const getActiveCard = createSelector(
     [getActiveCardId, getPreparedCards],
     (activeCardId, cards) => cards.find(item => item.id === activeCardId)
+);
+
+export const getFilteredCards = createSelector(
+    [getActiveCardId, getPreparedCards],
+    (activeCardId, cards) => cards.filter(card => card.id !== activeCardId)
 );

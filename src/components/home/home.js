@@ -4,8 +4,8 @@ import styled from 'emotion/react';
 
 import History from './history';
 import MobilePayment from './mpayment/mobile_payment';
+import Prepaid from './prepaid/prepaid';
 
-import { payMobile, repeateMobileTransfer } from '../../actions/payments';
 import { getActiveCard } from '../../selectors/cards';
 import { getTransactionsByDays } from '../../selectors/transactions';
 
@@ -16,36 +16,16 @@ max-width: 970px;
 padding: 15px;
 `;
 
-const Home = ({transactions, activeCard, onMobilePaymentClick, mobilePayment, onRepeatPaymentClick}) => {
-  return ( <Workspace>
-             <History transactions={ transactions } activeCard={ activeCard } />
-             <MobilePayment activeCard={ activeCard } onMobilePaymentClick={ onMobilePaymentClick } onRepeatPaymentClick={ onRepeatPaymentClick } mobilePaymentState={ mobilePayment }
-             />
-           </Workspace>
-    );
-};
+const Home = ({transactions, activeCard}) => ( <Workspace>
+                                                 <History transactions={ transactions } activeCard={ activeCard } />
+                                                 <Prepaid />
+                                                 <MobilePayment />
+                                               </Workspace>
+);
 
-const mapStateToProps = state => {
-  return {
-    transactions: getTransactionsByDays(state),
-    activeCard: getActiveCard(state),
-    mobilePayment: state.mobilePayment
-  }
-};
+const mapStateToProps = state => ({
+  transactions: getTransactionsByDays(state),
+  activeCard: getActiveCard(state)
+});
 
-const mapDispatchToProps = dispatch => {
-  return {
-    /**
-	 * Обработка успешного платежа
-	 * @param {Object} transaction данные о транзакции
-	 */
-    onMobilePaymentClick: (transaction, id) => dispatch(payMobile(transaction, id)),
-
-    /**
-	 * Повторить платеж
-	 */
-    onRepeatPaymentClick: () => dispatch(repeateMobileTransfer())
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
+export default connect(mapStateToProps)(Home);

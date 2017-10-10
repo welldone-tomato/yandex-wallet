@@ -5,13 +5,17 @@ import authReducer from './auth_reducer';
 import cardsReducer from './cards_reducer';
 import transactionReducer from './transactions_reducer';
 import mobilePaymentReducer from './mobile_payment_reducer';
+import prepaidPaymentReducer from './prepaid_payment_reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
     routing: routerReducer,
     cards: cardsReducer,
     transactions: transactionReducer,
-    mobilePayment: mobilePaymentReducer
+    payments: combineReducers({
+        mobilePayment: mobilePaymentReducer,
+        prepaidPayment: prepaidPaymentReducer
+    })
 });
 
 export default rootReducer;

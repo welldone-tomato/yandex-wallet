@@ -1,46 +1,56 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import MobilePaymentContract from './mobile_payment_contract';
 import { MobilePaymentSuccess, MobilePaymentError } from './mobile_payment_screens';
 
+import { payMobile, repeateMobileTransfer } from '../../../actions/payments';
+
 /**
  * Класс компонента MobilePayment
  */
-class MobilePayment extends Component {
-	/**
-	 * Рендер компонента
-	 *
-	 * @override
-	 * @returns {JSX}
-	 */
-	render() {
-		const {activeCard, mobilePaymentState} = this.props;
+const MobilePayment = props => {
+	const {paymentState, onRepeatPaymentClick, onPaymentSubmit, activeCardId} = props;
 
-		if (mobilePaymentState.stage === 'success')
-			return (
-				<MobilePaymentSuccess transaction={ mobilePaymentState.transaction } repeatPayment={ () => this.props.onRepeatPaymentClick() } />
-				);
-		else if (mobilePaymentState.stage === 'contract')
-			return (
-				<MobilePaymentContract activeCard={ activeCard } onPaymentSuccess={ (transaction, id) => this.props.onMobilePaymentClick(transaction, id) } />
-				);
-		else return (
-				<MobilePaymentError transaction={ mobilePaymentState.transaction } repeatPayment={ () => this.props.onRepeatPaymentClick() } error={ mobilePaymentState.error } />
-				);
-	}
+	if (paymentState.stage === 'success')
+		return (
+			<MobilePaymentSuccess transaction={ paymentState.transaction } repeatPayment={ () => onRepeatPaymentClick() } />
+			);
+	else if (paymentState.stage === 'contract')
+		return (
+			<MobilePaymentContract activeCardId={ activeCardId } onPaymentSubmit={ (transaction, id) => onPaymentSubmit(transaction, id) } />
+			);
+	else return (
+			<MobilePaymentError transaction={ paymentState.transaction } repeatPayment={ () => onRepeatPaymentClick() } error={ paymentState.error } />
+			);
 }
 
 MobilePayment.propTypes = {
-	activeCard: PropTypes.shape({
-		id: PropTypes.number,
-		theme: PropTypes.object
-	}),
-	mobilePaymentState: PropTypes.shape({
+	paymentState: PropTypes.shape({
 		stage: PropTypes.string.isRequired,
 	}).isRequired,
-	onMobilePaymentClick: PropTypes.func.isRequired,
+	activeCardId: PropTypes.number,
+	onPaymentSubmit: PropTypes.func.isRequired,
 	onRepeatPaymentClick: PropTypes.func.isRequired
 };
 
-export default MobilePayment;
+const mapStateToProps = state => ({
+	paymentState: state.payments.mobilePayment,
+	activeCardId: state.cards.activeCardId
+});
+
+const mapDispatchToProps = dispatch => ({
+	/**
+	   * Обработка успешного платежа
+	   * @param {Object} transaction данные о транзакции
+	   */
+	onPaymentSubmit: (transaction, id) => dispatch(payMobile(transaction, id)),
+
+	/**
+	   * Повторить платеж
+	   */
+	onRepeatPaymentClick: () => dispatch(repeateMobileTransfer())
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MobilePayment);
