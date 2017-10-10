@@ -47,7 +47,7 @@ const prepareCardsData = cardsData => cardsData.map(card => prepareCardData(card
  * @returns {Array}
  */
 const updateObjectInArray = (array, newItem) => array.map(item => {
-    if (item.id !== newItem.id) return item;
+    if (item.id !== newItem.id) return item
     else return newItem;
 });
 
@@ -74,7 +74,7 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.USER_LOGOUT:
             return cardsInitialState
 
-        case actions.CHANGE_ACTIVE_CARD:
+        case actions.ACTIVE_CARD_CHANGE:
             return {
                 ...state,
                 activeId: payload,

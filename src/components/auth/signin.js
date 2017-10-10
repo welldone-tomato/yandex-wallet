@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
-import { signingUser } from '../../actions/index';
+import { signInUser } from '../../actions/auth';
 
 class SignIn extends Component {
     constructor(props) {
@@ -33,7 +33,7 @@ class SignIn extends Component {
         if (email && password) {
             this
                 .props
-                .dispatch(signingUser({
+                .dispatch(signInUser({
                     email,
                     password
                 }));

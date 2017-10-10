@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
-import { fetchCards, changeActiveCard } from '../../actions';
+import { fetchCards, changeActiveCard } from '../../actions/cards';
 
 import Card from './card';
 

@@ -8,7 +8,7 @@ const mobilePaymentReducerInitialState = {
 
 const mobilePaymentReducer = (state = mobilePaymentReducerInitialState, {type, payload}) => {
     switch (type) {
-        case actions.MOBILE_PAY_WISH_TO_REPEAT:
+        case actions.MOBILE_PAY_REPEAT:
             return mobilePaymentReducerInitialState
         case actions.MOBILE_PAY_SUCCESS:
             return {

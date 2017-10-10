@@ -5,7 +5,7 @@ import styled from 'emotion/react';
 import History from './history';
 import MobilePayment from './mpayment/mobile_payment';
 
-import { mobilePayment, repeateMobileTransfer } from '../../actions/';
+import { payMobile, repeateMobileTransfer } from '../../actions/payments';
 
 const Workspace = styled.div`
 display: flex;
@@ -37,7 +37,7 @@ const mapDispatchToProps = dispatch => {
 	 * Обработка успешного платежа
 	 * @param {Object} transaction данные о транзакции
 	 */
-    onMobilePaymentClick: (transaction, id) => dispatch(mobilePayment(transaction, id)),
+    onMobilePaymentClick: (transaction, id) => dispatch(payMobile(transaction, id)),
 
     /**
 	 * Повторить платеж

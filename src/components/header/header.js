@@ -4,7 +4,7 @@ import styled from 'emotion/react';
 import Title from '../misc/title';
 import UserInfo from './user-info';
 
-import { signOutUser } from '../../actions';
+import { signOutUser } from '../../actions/auth';
 
 const HeaderLayout = styled.header`
 	display: flex;
