@@ -6,6 +6,8 @@ import History from './history';
 import MobilePayment from './mpayment/mobile_payment';
 
 import { payMobile, repeateMobileTransfer } from '../../actions/payments';
+import { getActiveCard } from '../../selectors/cards';
+import { getTransactionsByDays } from '../../selectors/transactions';
 
 const Workspace = styled.div`
 display: flex;
@@ -25,8 +27,8 @@ const Home = ({transactions, activeCard, onMobilePaymentClick, mobilePayment, on
 
 const mapStateToProps = state => {
   return {
-    transactions: state.transactions.data,
-    activeCard: state.cards.activeCard,
+    transactions: getTransactionsByDays(state),
+    activeCard: getActiveCard(state),
     mobilePayment: state.mobilePayment
   }
 };

@@ -58,6 +58,7 @@ export const fetchCard = id => {
                 type: action.FETCH_CARD_SUCCESS,
                 payload: response.data
             });
+
             dispatch(fetchTransactions(id));
 
         } catch (response) {

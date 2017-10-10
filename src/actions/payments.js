@@ -48,8 +48,6 @@ export const payMobile = (transaction, id) => {
     }
 }
 
-export const repeateMobileTransfer = () => {
-    return dispatch => dispatch({
-        type: action.MOBILE_PAY_FAILED
-    });
-}
+export const repeateMobileTransfer = () => dispatch => dispatch({
+    type: action.MOBILE_PAY_REPEAT
+});

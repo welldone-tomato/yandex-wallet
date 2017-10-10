@@ -1,43 +1,4 @@
-import CardInfo from 'card-info';
-
 import * as actions from '../actions/types';
-
-/**
-	 * Подготавливает данные карты
-	 *
-	 * @param {Object} card данные карты
-	 * @returns {Object[]}
-	 */
-const prepareCardData = card => {
-    const cardInfo = new CardInfo(card.cardNumber, {
-        banksLogosPath: '/assets/',
-        brandsLogosPath: '/assets/'
-    });
-
-    return {
-        id: card.id,
-        balance: card.balance,
-        number: cardInfo.numberNice,
-        bankName: cardInfo.bankName,
-        theme: {
-            bgColor: cardInfo.backgroundColor,
-            textColor: cardInfo.textColor,
-            bankLogoUrl: cardInfo.bankLogoSvg,
-            brandLogoUrl: cardInfo.brandLogoSvg,
-            bankSmLogoUrl: `/assets/${cardInfo.bankAlias}-history.svg`
-        }
-    };
-};
-
-
-/**
-	 * Подготавливает данные карт
-	 *
-	 * @param {Object} cardsData данные карт
-	 * @returns {Object[]}
-	 */
-const prepareCardsData = cardsData => cardsData.map(card => prepareCardData(card));
-
 
 /**
  * Возвращает массив с обновленным элементом
@@ -46,10 +7,7 @@ const prepareCardsData = cardsData => cardsData.map(card => prepareCardData(card
  * @param {Object} action 
  * @returns {Array}
  */
-const updateObjectInArray = (array, newItem) => array.map(item => {
-    if (item.id !== newItem.id) return item
-    else return newItem;
-});
+const updateObjectInArray = (array, newItem) => array.map(item => item.id !== newItem.id ? item : newItem);
 
 const cardsInitialState = {
     data: [],
@@ -61,7 +19,7 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.FETCH_CARDS_SUCCESS:
             return {
                 ...state,
-                data: prepareCardsData(payload),
+                data: payload,
                 error: null
             }
 
@@ -77,21 +35,24 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.ACTIVE_CARD_CHANGE:
             return {
                 ...state,
-                activeId: payload,
-                activeCard: state.data.find(item => item.id === payload)
+                activeCardId: payload
             }
 
         case actions.FETCH_CARD_SUCCESS:
-            const card = prepareCardData(payload);
             return {
                 ...state,
-                data: updateObjectInArray(state.data, card),
-                activeCard: state.activeCard.id === card.id ? card : state.activeCard
+                data: updateObjectInArray(state.data, payload)
+            }
+
+        case actions.FETCH_CARD_FAILED:
+            return {
+                ...state,
+                error: payload
             }
 
         default:
             return state
     }
-};
+}
 
 export default cardsReducer;

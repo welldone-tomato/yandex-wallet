@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
 import { fetchCards, changeActiveCard } from '../../actions/cards';
+import { getPreparedCards } from '../../selectors/cards';
 
 import Card from './card';
 
@@ -51,7 +52,7 @@ class CardsBar extends Component {
         <Edit />
         <CardsList>
           { this.props.cards.map(card => (
-              <Card key={ card.id } data={ card } active={ card.id === this.props.activeId } onClick={ () => this.props.onClick(card.id) } />
+              <Card key={ card.id } data={ card } active={ card.id === this.props.activeCardId } onClick={ () => this.props.onClick(card.id) } />
             )) }
           <Card type='new' />
         </CardsList>
@@ -61,10 +62,10 @@ class CardsBar extends Component {
   }
 }
 
-const mapStateToProps = ({cards}) => ({
-  cards: cards.data,
-  error: cards.error,
-  activeId: cards.activeId
+const mapStateToProps = state => ({
+  cards: getPreparedCards(state),
+  error: state.cards.error,
+  activeCardId: state.cards.activeCardId
 });
 
 const mapDispatchToProps = dispatch => {
