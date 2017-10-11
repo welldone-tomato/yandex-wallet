@@ -46,15 +46,18 @@ class CardsBar extends Component {
     .props
     .onStart();
 
+  renderCards = () => this.props.isLoading ? (<div/>)
+    : (this.props.cards.map(card => (
+      <Card key={ card.id } data={ card } active={ card.id === this.props.activeCardId } onClick={ () => this.props.onClick(card.id) } />
+    )));
+
   render = () => (
     <Layout>
       <Logo />
       <Edit />
       <CardsList>
-        { this.props.cards.map(card => (
-            <Card key={ card.id } data={ card } active={ card.id === this.props.activeCardId } onClick={ () => this.props.onClick(card.id) } />
-          )) }
-        <Card type='new' />
+        { this.renderCards() }
+        { this.props.isLoading ? <div/> : <Card type='new' /> }
       </CardsList>
       <Footer>Yamoney Node School</Footer>
     </Layout>
@@ -66,18 +69,20 @@ CardsBar.propTypes = {
   activeCardId: PropTypes.number,
   error: PropTypes.object,
   onClick: PropTypes.func.isRequired,
-  onStart: PropTypes.func.isRequired
+  onStart: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 const mapStateToProps = state => ({
   cards: getPreparedCards(state),
   error: state.cards.error,
-  activeCardId: state.cards.activeCardId
+  activeCardId: state.cards.activeCardId,
+  isLoading: state.cards.isLoading
 });
 
 const mapDispatchToProps = dispatch => ({
   onClick: (id) => dispatch(changeActiveCard(id)),
   onStart: () => dispatch(fetchCards())
-})
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardsBar);

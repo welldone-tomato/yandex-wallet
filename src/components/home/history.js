@@ -63,8 +63,10 @@ const HistoryItemSum = styled.div`
 	text-overflow: ellipsis;
 `;
 
-const History = ({transactions, activeCard}) => {
+const History = ({transactions, activeCard, isLoading}) => {
 	const renderCardsHistory = () => {
+		if (isLoading) return (<HistoryItem>Загрузка...</HistoryItem>);
+
 		const result = [];
 		const today = moment().format('L');
 

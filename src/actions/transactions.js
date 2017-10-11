@@ -12,6 +12,10 @@ const ROOT_URL = '/api';
 export const fetchTransactions = id => {
     return async dispatch => {
         try {
+            dispatch({
+                type: action.FETCH_TRANS,
+            });
+
             const response = await axios
                 .get(`${ROOT_URL}/cards/${id}/transactions`, {
                     headers: {

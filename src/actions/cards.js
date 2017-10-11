@@ -13,6 +13,10 @@ const ROOT_URL = '/api';
 export const fetchCards = () => {
     return async dispatch => {
         try {
+            dispatch({
+                type: action.FETCH_CARDS
+            });
+
             const response = await axios
                 .get(`${ROOT_URL}/cards`, {
                     headers: {
@@ -68,12 +72,14 @@ export const fetchCard = id => {
     }
 }
 
-export const changeActiveCard = id => {
-    return dispatch => {
-        dispatch({
-            type: action.ACTIVE_CARD_CHANGE,
-            payload: id
-        });
-        dispatch(fetchTransactions(id));
-    }
+export const changeActiveCard = id => (dispatch, getState) => {
+    const {activeCardId} = getState().cards;
+
+    if (activeCardId === id) return;
+
+    dispatch({
+        type: action.ACTIVE_CARD_CHANGE,
+        payload: id
+    });
+    dispatch(fetchTransactions(id));
 }

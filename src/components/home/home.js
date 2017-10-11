@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
@@ -17,17 +18,28 @@ max-width: 970px;
 padding: 15px;
 `;
 
-const Home = ({transactions, activeCard}) => ( <Workspace>
-                                                 <History transactions={ transactions } activeCard={ activeCard } />
-                                                 <Prepaid />
-                                                 <MobilePayment />
-                                                 <Withdraw />
-                                               </Workspace>
-);
+const Home = ({transactions, activeCard, transactionsIsLoading}) => {
+  if (activeCard) return (
+      <Workspace>
+        <History transactions={ transactions } activeCard={ activeCard } isLoading={ transactionsIsLoading } />
+        <Prepaid />
+        <MobilePayment />
+        <Withdraw />
+      </Workspace>
+  )
+  else return (<Workspace/>);
+}
+
+Home.PropTypes = {
+  transactions: PropTypes.arrayOf(PropTypes.object),
+  activeCard: PropTypes.object,
+  transactionsIsLoading: PropTypes.bool.isRequired
+}
 
 const mapStateToProps = state => ({
   transactions: getTransactionsByDays(state),
-  activeCard: getActiveCard(state)
+  activeCard: getActiveCard(state),
+  transactionsIsLoading: state.transactions.isLoading
 });
 
 export default connect(mapStateToProps)(Home);

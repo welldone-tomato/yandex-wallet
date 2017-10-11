@@ -11,22 +11,31 @@ const updateObjectInArray = (array, newItem) => array.map(item => item.id !== ne
 
 const cardsInitialState = {
     data: [],
-    error: null
+    error: null,
+    isLoading: false
 };
 
 const cardsReducer = (state = cardsInitialState, {type, payload}) => {
     switch (type) {
+        case actions.FETCH_CARDS:
+            return {
+                ...state,
+                isLoading: true
+            }
+
         case actions.FETCH_CARDS_SUCCESS:
             return {
                 ...state,
                 data: payload,
-                error: null
+                error: null,
+                isLoading: false
             }
 
         case actions.FETCH_CARDS_FAILED:
             return {
                 ...state,
-                error: payload
+                error: payload,
+                isLoading: false
             }
 
         case actions.USER_LOGOUT:
