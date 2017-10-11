@@ -14,7 +14,7 @@ const separateByDates = data => {
                 typeTitle = 'Пополнение с карты';
                 break;
             }
-            case 'card2card': {
+            case 'card2Card': {
                 typeTitle = 'Перевод на карту';
                 break;
             }

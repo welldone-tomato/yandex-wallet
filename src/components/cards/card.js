@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'emotion/react';
-// import Select from './select';
+import Select from './select';
 
 const CardLayout = styled.div`
 position: relative;
@@ -11,6 +11,7 @@ margin-bottom: 15px;
 padding: 25px 20px 20px 25px;
 border-radius: 4px;
 background-color: ${({bgColor, active}) => active ? bgColor : 'rgba(255, 255, 255, 0.1)'};
+cursor:pointer;
 `;
 
 const CardLogo = styled.div`
@@ -47,20 +48,35 @@ box-sizing: border-box;
 border: 2px dashed rgba(255, 255, 255, 0.2);
 `;
 
-// const CardSelect = styled(Select)`
-// width: 100%;
-// margin-bottom: 15px;
-// `;
+const CardSelect = styled(Select)`
+width: 100%;
+margin-bottom: 15px;
+`;
 
 class Card extends Component {
-    render() {
+	render() {
         const {data, active, type, onClick} = this.props;
 
-        if (type === 'new') {
-            return (
-                <NewCardLayout />
-                );
-        }
+        if (type === 'new')
+            return (<NewCardLayout />);
+
+        if (type === 'select') {
+			const {activeCardIndex} = this.props;
+			const selectedCard = data[activeCardIndex];
+			const {bgColor, bankLogoUrl, brandLogoUrl} = selectedCard.theme;
+
+			return (
+				<CardLayout active={true} bgColor={bgColor}>
+					<CardLogo url={bankLogoUrl} active={true} />
+					<CardSelect value={selectedCard.number} onChange={id => this.props.onCardChange(id)}>
+						{data.map((card, index) => (
+							<Select.Option key={index} value={`${index}`}>{card.number}</Select.Option>
+						))}
+					</CardSelect>
+					<CardType url={brandLogoUrl} active={true} />
+				</CardLayout>
+			);
+		}
 
         const {number, theme} = data;
         const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;

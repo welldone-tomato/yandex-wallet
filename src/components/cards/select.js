@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'emotion/react';
 import {Select as AntdSelect} from 'antd';
+import 'antd/dist/antd.min.css';
 
 const StyledSelect = styled(AntdSelect)`
 	&.ant-select {
@@ -28,9 +29,7 @@ const StyledSelect = styled(AntdSelect)`
 	}
 `;
 
-const Select = (props) => (
-	<StyledSelect {...props} />
-);
+const Select = props => (<StyledSelect {...props} />);
 
 Select.Option = AntdSelect.Option;
 

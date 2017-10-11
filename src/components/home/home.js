@@ -5,6 +5,7 @@ import styled from 'emotion/react';
 import History from './history';
 import MobilePayment from './mpayment/mobile_payment';
 import Prepaid from './prepaid/prepaid';
+import Withdraw from './withdraw/withdraw';
 
 import { getActiveCard } from '../../selectors/cards';
 import { getTransactionsByDays } from '../../selectors/transactions';
@@ -20,6 +21,7 @@ const Home = ({transactions, activeCard}) => ( <Workspace>
                                                  <History transactions={ transactions } activeCard={ activeCard } />
                                                  <Prepaid />
                                                  <MobilePayment />
+                                                 <Withdraw />
                                                </Workspace>
 );
 

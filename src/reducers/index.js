@@ -6,6 +6,7 @@ import cardsReducer from './cards_reducer';
 import transactionReducer from './transactions_reducer';
 import mobilePaymentReducer from './mobile_payment_reducer';
 import prepaidPaymentReducer from './prepaid_payment_reducer';
+import withdrawPaymentReducer from './withdraw_payment_reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     transactions: transactionReducer,
     payments: combineReducers({
         mobilePayment: mobilePaymentReducer,
-        prepaidPayment: prepaidPaymentReducer
+        prepaidPayment: prepaidPaymentReducer,
+        withdrawPayment: withdrawPaymentReducer
     })
 });
 

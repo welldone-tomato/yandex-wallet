@@ -15,17 +15,10 @@ const Prepaid = props => {
 	const {paymentState, onRepeatPaymentClick, onPaymentSubmit, activeCard, inactiveCardsList} = props;
 
 	if (paymentState.stage === 'success')
-		return (
-			<PrepaidSuccess transaction={ paymentState.transaction } repeatPayment={ () => onRepeatPaymentClick() } />
-			);
+		return (<PrepaidSuccess transaction={ paymentState.transaction } repeatPayment={ () => onRepeatPaymentClick() } />);
 	else if (paymentState.stage === 'contract')
-		return (
-			<PrepaidContract activeCard={ activeCard } inactiveCardsList={ inactiveCardsList } onPaymentSubmit={ (transaction, id, activeId) => onPaymentSubmit(transaction, id, activeId) } />
-			);
-	else
-		return (
-			<PrepaidError transaction={ paymentState.transaction } error={ paymentState.error } repeatPayment={ () => onRepeatPaymentClick() } />
-			);
+		return (<PrepaidContract activeCard={ activeCard } inactiveCardsList={ inactiveCardsList } onPaymentSubmit={ (transaction, id, activeId) => onPaymentSubmit(transaction, id, activeId) } />);
+	else return (<PrepaidError transaction={ paymentState.transaction } error={ paymentState.error } repeatPayment={ () => onRepeatPaymentClick() } />);
 }
 
 Prepaid.propTypes = {

@@ -103,3 +103,53 @@ export const payPrepaid = (transaction, id, currentId) => {
 export const repeatePrepaidTransfer = () => dispatch => dispatch({
     type: action.PREPAID_PAY_REPEAT
 });
+
+/**
+* Проводит withdraw транзакцию
+* 
+* @param {any} transaction 
+* @param {any} id 
+* @returns 
+*/
+export const payWithdraw = (transaction, id, toId) => {
+    // формируем транзакцию
+    const data = {
+        to: transaction.to,
+        amount: transaction.sum < 0 ? transaction.sum * -1 : transaction.sum
+    };
+
+    return async dispatch => {
+        try {
+            const response = await axios
+                .post(`${ROOT_URL}/cards/${id}/transfer`, data, {
+                    headers: {
+                        authorization: 'JWT ' + localStorage.getItem('token')
+                    }
+                });
+
+            if (response.status === 201) {
+                dispatch({
+                    type: action.WITHDRAW_PAY_SUCCESS,
+                    payload: transaction
+                });
+                dispatch(fetchCard(id));
+                dispatch(fetchCard(toId));
+
+                dispatch(fetchTransactions(id));
+            }
+        } catch (response) {
+            dispatch({
+                type: action.WITHDRAW_PAY_FAILED,
+                payload: {
+                    error: response.response.data.message ? response.response.data.message : response.response.data,
+                    transaction
+                }
+            });
+            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+        }
+    }
+}
+
+export const repeateWithdrawTransfer = () => dispatch => dispatch({
+    type: action.WITHDRAW_PAY_REPEAT
+});
