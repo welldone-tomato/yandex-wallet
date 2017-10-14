@@ -1,7 +1,6 @@
 import React from 'react';
 
-import styled from 'emotion/react';
-import { injectGlobal } from 'emotion';
+import styled, { injectGlobal } from 'react-emotion';
 
 import CardsBar from './cards/cards_bar';
 import Header from './header/header';

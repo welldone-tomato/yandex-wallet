@@ -1,6 +1,6 @@
 import * as actions from '../actions/types';
 
-const transactionsInitialState = {
+export const transactionsInitialState = {
     data: [],
     error: null,
     isLoading: true

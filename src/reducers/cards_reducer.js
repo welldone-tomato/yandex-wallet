@@ -9,10 +9,11 @@ import * as actions from '../actions/types';
  */
 const updateObjectInArray = (array, newItem) => array.map(item => item.id !== newItem.id ? item : newItem);
 
-const cardsInitialState = {
+export const cardsInitialState = {
     data: [],
     error: null,
-    isLoading: false
+    isLoading: false,
+    activeCardId: null
 };
 
 const cardsReducer = (state = cardsInitialState, {type, payload}) => {
