@@ -104,6 +104,8 @@ router.post('/:id/transactions', async ctx => {
 	ctx.status = 201;
 });
 
+router.delete('/:id/transactions/:tranId', async ctx => ctx.status = 405);
+
 router.post('/:id/pay', async ctx => {
 	const {id} = ctx.params;
 
