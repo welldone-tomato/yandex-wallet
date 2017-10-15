@@ -33,6 +33,7 @@
     "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.9.0",
     "babel-plugin-emotion": "^7.3.2",
     "babel-preset-react-app": "^3.0.3",
     "chai": "^4.1.2",
@@ -41,7 +42,6 @@
     "enzyme": "^3.1.0",
     "enzyme-adapter-react-15": "^1.0.1",
     "mocha": "^3.5.3",
-    "moxios": "^0.4.0",
     "nyc": "^11.2.1",
     "react-app-rewire-emotion": "^2.0.0",
     "react-app-rewired": "^1.3.2",

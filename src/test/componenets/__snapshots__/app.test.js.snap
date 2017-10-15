@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Render whole App with initital state +++ capturing Snapshot of App 1`] = `
+<div
+  className="css-Wallet-34j4y90 css-46dg62"
+>
+  <div
+    className="css-Layout-n62tmw0 css-oqhttl"
+  >
+    <div
+      className="css-Logo-n62tmw1 css-g3dddy"
+    />
+    <div
+      className="css-Edit-n62tmw2 css-1rly8q8"
+      onClick={[Function]}
+    />
+    <div
+      className="css-CardsList-n62tmw3 css-14qlmqd"
+    >
+      <div
+        className="css-CardLayout-1ezavq10 css-NewCardLayout-1ezavq14 css-9okkk3"
+      />
+    </div>
+    <footer
+      className="css-Footer-n62tmw4 css-1s8mtv6"
+    >
+      Yamoney Node School
+    </footer>
+  </div>
+  <div
+    className="css-CardPane-34j4y91 css-i5j6vn"
+  >
+    <header
+      className="css-HeaderLayout-1f0bsvn0 css-6irvbk"
+    >
+      <div
+        className="css-User-1so6ulr1 css-1l3dfk3"
+      >
+        <img
+          className="css-Avatar-1so6ulr2 css-1xfhnhw"
+          src="/assets/avatar.png"
+        />
+        Samuel Johnson
+        <div
+          className="css-DropDown-1so6ulr0 css-1qvsddu"
+        >
+          <a
+            onClick={[Function]}
+          >
+            Выйти
+          </a>
+        </div>
+      </div>
+    </header>
+  </div>
+</div>
+`;

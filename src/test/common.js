@@ -32,3 +32,9 @@ export const transactions = [{
     time: 1506605528,
     sum: 10
 }];
+
+export const testAsyncAction = () => async dispatch => {
+    setTimeout(() => dispatch({
+        type: 'TEST_ASYNC_ACTION'
+    }), 1);
+}
