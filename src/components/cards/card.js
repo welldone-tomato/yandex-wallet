@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import Select from './select';
+import CardEdit from './card_edit';
 
 const CardLayout = styled.div`
 	position: relative;
 	width: 260px;
 	height: 164px;
 	box-sizing: border-box;
-	margin-bottom: 15px;
+	margin-bottom: ${({isSingle}) => (isSingle ? 0 : '15px')};
 	padding: 25px 20px 20px 25px;
 	border-radius: 4px;
 	background-color: ${({bgColor, active}) => active ? bgColor : 'rgba(255, 255, 255, 0.1)'};
@@ -55,7 +57,7 @@ const CardSelect = styled(Select)`
 
 class Card extends Component {
 	render() {
-        const {data, active, type, onClick} = this.props;
+        const {data, active, type, onClick, isCardsEditable, onChangeBarMode, isSingle} = this.props;
 
         if (type === 'new')
 			return (<NewCardLayout />);
@@ -66,7 +68,7 @@ class Card extends Component {
 			const {bgColor, bankLogoUrl, brandLogoUrl} = selectedCard.theme;
 
 			return (
-				<CardLayout active={true} bgColor={bgColor}>
+				<CardLayout active={true} bgColor={bgColor} isCardsEditable={isCardsEditable} isSingle={isSingle}>
 					<CardLogo url={bankLogoUrl} active={true} />
 					<CardSelect value={selectedCard.number} onChange={id => this.props.onCardChange(id)}>
 						{data.map((card, index) => (
@@ -78,12 +80,13 @@ class Card extends Component {
 			);
 		}
 
-        const {number, theme} = data;
+        const {number, theme, id} = data;
         const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
         const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
 
         return (
-			<CardLayout active={active} bgColor={bgColor} onClick={onClick} >
+			<CardLayout active={active} bgColor={bgColor} onClick={onClick} isCardsEditable={isCardsEditable} isSingle={isSingle}>
+				<CardEdit editable={isCardsEditable} id={id} onChangeBarMode={onChangeBarMode}/>
 				<CardLogo url={bankLogoUrl} active={active} />
 				<CardNumber textColor={textColor} active={active}>
 					{number}
@@ -92,6 +95,16 @@ class Card extends Component {
 			</CardLayout>
 		);
     }
+}
+
+Card.propTypes = {
+	data: PropTypes.oneOfType([PropTypes.array, PropTypes.object]),
+	type: PropTypes.string,
+	active: PropTypes.bool,
+	isCardsEditable: PropTypes.bool,
+	onClick: PropTypes.func,
+	onChangeBarMode:PropTypes.func,
+	isSingle: PropTypes.bool,
 }
 
 export default Card;

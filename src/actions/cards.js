@@ -8,7 +8,6 @@ const ROOT_URL = '/api';
 /**
 * Вытаскивает данные по картам пользователя
 * 
-* @returns 
 */
 export const fetchCards = () => {
     return async dispatch => {
@@ -46,7 +45,6 @@ export const fetchCards = () => {
 * Вытаскивает данные по карте пользователя
 * 
 * @param {Number} id 
-* @returns 
 */
 export const fetchCard = id => {
     return async dispatch => {
@@ -65,6 +63,46 @@ export const fetchCard = id => {
         } catch (response) {
             dispatch({
                 type: action.FETCH_CARD_FAILED,
+                payload: response.response.data.message ? response.response.data.message : response.response.data
+            });
+            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+        }
+    }
+}
+
+/**
+* Удаляет карту пользователя
+* 
+* @param {Number} id 
+* @returns 
+*/
+export const deleteCard = id => {
+    return async dispatch => {
+        try {
+            dispatch({
+                type: action.DELETE_CARD
+            });
+
+            const response = await axios
+                .delete(`${ROOT_URL}/cards/${id}`, {
+                    headers: {
+                        authorization: 'JWT ' + localStorage.getItem('token')
+                    }
+                });
+
+            if (response.status === 200) {
+                dispatch({
+                    type: action.DELETE_CARD_SUCCESS
+                });
+                dispatch(fetchCards());
+            }
+            else dispatch({
+                    type: action.DELETE_CARD_FAILED,
+                    payload: 'Что то пошло не так...'
+                });
+        } catch (response) {
+            dispatch({
+                type: action.DELETE_CARD_FAILED,
                 payload: response.response.data.message ? response.response.data.message : response.response.data
             });
             console.log(response.response.data.message ? response.response.data.message : response.response.data);

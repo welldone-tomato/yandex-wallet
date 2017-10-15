@@ -10,6 +10,8 @@ const HistoryLayout = styled(Island)`
 	overflow-y: scroll;
 	padding: 0;
 	background-color: rgba(0, 0, 0, 0.05);
+	display: flex;
+	flex-direction: column;
 `;
 
 const HistoryTitle = styled.div`
@@ -25,7 +27,9 @@ const HistoryItem = styled.div`
 	justify-content: space-around;
 	align-items: center;
 	height: 74px;
+	min-height: 74px;
 	font-size: 15px;
+	font-weight: bold;
 	white-space: nowrap;
 
 	&:nth-child(even) {

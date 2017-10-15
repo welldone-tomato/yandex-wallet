@@ -21,7 +21,7 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.FETCH_CARDS:
             return {
                 ...state,
-                isLoading: true
+                isLoading: state.data.length === 0 ? true : false
             }
 
         case actions.FETCH_CARDS_SUCCESS:
