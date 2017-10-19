@@ -28,7 +28,8 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceRoot}/server/test"
+                "${workspaceRoot}/server/test",
+                "--recursive"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": [

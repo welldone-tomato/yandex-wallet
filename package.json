@@ -5,6 +5,7 @@
   "dependencies": {
     "antd": "^2.13.6",
     "axios": "^0.16.2",
+    "bcrypt-nodejs": "0.0.3",
     "card-info": "git+https://github.com/iniel/card-info.git",
     "koa": "^2.3.0",
     "koa-body": "^2.5.0",
@@ -13,6 +14,8 @@
     "koa2-cors": "^2.0.3",
     "log4js": "^2.3.5",
     "moment": "^2.19.1",
+    "mongoose": "^4.12.3",
+    "mongoose-unique-validator": "^1.0.6",
     "prop-types": "^15.6.0",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
@@ -29,8 +32,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "start:server": "node ./server/index.js",
-    "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --timeout 10000",
-    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --timeout 10000"
+    "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --recursive --timeout 10000",
+    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --recursive --timeout 10000"
   },
   "devDependencies": {
     "axios-mock-adapter": "^1.9.0",
