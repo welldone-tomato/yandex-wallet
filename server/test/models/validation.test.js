@@ -80,6 +80,5 @@ describe('Card model validation tests', () => {
 
             done();
         });
-
     });
 });

@@ -20,6 +20,23 @@ class Context {
     }
 
     /**
+     * Валидация модели и возврат статусов
+     * 
+     * @param {any} data 
+     * @memberof Context
+     */
+    validate(data) {
+        const model = new this.model(data);
+
+        return new Promise((resolve, reject) => {
+            model.validate(validationResult => {
+                if (!validationResult) resolve()
+                else reject(validationResult.message);
+            });
+        });
+    }
+
+    /**
      * Возвращает данные из БД в [] 
      * 
      * @returns {[{"id":String}]} 
@@ -27,8 +44,8 @@ class Context {
      */
     async getAll() {
         try {
-            const result = await this.model.find({});
-            return result.map(item => item.toObject());
+            const data = await this.model.find({});
+            return data.map(item => item.toObject());
         } catch (err) {
             logger.error(`Loading data from ${this.model} failed `, err);
             throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
@@ -43,11 +60,9 @@ class Context {
      */
     async get(id) {
         try {
-            const item = await this.model.findOne({
-                _id: new ObjectId(id)
-            });
+            const data = await this.model.findById(id);
 
-            return item ? item.toObject() : item;
+            return data ? data.toObject() : data;
         } catch (err) {
             logger.error(`Loading data from ${this.model} failed `, err);
             throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
@@ -61,8 +76,9 @@ class Context {
      * @returns {{Object}}
      * @memberof Context
      */
-    async add(item) {
+    async add(data) {
         try {
+            const item = new this.model(data);
             await item.save();
             return item.toObject();
         } catch (err) {
@@ -71,22 +87,20 @@ class Context {
         }
     }
 
-    // /**
-    //  * Удаление объекта из файла
-    //  * 
-    //  * @param {String} id 
-    //  * @returns {Boolean}
-    //  * @memberof Context
-    //  */
-    // async remove(id) {
-    //     const item = await this.get(id);
-    //     if (!item)
-    //         throw new ApplicationError(`Item with id=${id} not found`, 404);
+    /**
+     * Удаление объекта из файла
+     * 
+     * @param {String} id 
+     * @returns {Boolean}
+     * @memberof Context
+     */
+    async remove(id) {
+        const item = await this.model.findById(id);
+        if (!item)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
 
-    //     const data = await this.getAll();
-
-    //     await this.save(data.filter(item => item.id !== id));
-    // }
+        await item.remove();
+    }
 
     // /**
     //  * Обновляет элемент в файле

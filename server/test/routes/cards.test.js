@@ -46,6 +46,7 @@ describe('Cards routes tests', () => {
                 .get('/cards/555f5d5fd5f5df')
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('id is invalid');
                     done();
                 });
         });
@@ -55,6 +56,7 @@ describe('Cards routes tests', () => {
                 .get('/cards/59e952a6372cf01550abe904')
                 .end((err, res) => {
                     res.should.have.status(404);
+                    res.body.should.have.property('message').eql('card with id=59e952a6372cf01550abe904 not found');
                     done();
                 });
         });
@@ -67,6 +69,7 @@ describe('Cards routes tests', () => {
                 .send({})
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('properties required');
                     done();
                 });
         });
@@ -79,6 +82,7 @@ describe('Cards routes tests', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('properties required');
                     done();
                 });
         });
@@ -93,6 +97,7 @@ describe('Cards routes tests', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('card validation failed: cardNumber: valid cardNumber required');
                     done();
                 });
         });
@@ -107,6 +112,7 @@ describe('Cards routes tests', () => {
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('card validation failed: exp: non expired card required');
                     done();
                 });
         });
@@ -115,12 +121,13 @@ describe('Cards routes tests', () => {
             chai.request(server)
                 .post('/cards')
                 .send({
-                    cardNumber: '546925000000000',
-                    exp: '04/18',
+                    cardNumber: '5469259469067206',
+                    exp: '04/30',
                     name: 'ALYSSA LIVINGSTON',
                 })
                 .end((err, res) => {
                     res.should.have.status(400);
+                    res.body.should.have.property('message').eql('card validation failed: cardNumber: Error, expected `cardNumber` to be unique. Value: `5469259469067206`')
                     done();
                 });
         });
@@ -130,7 +137,7 @@ describe('Cards routes tests', () => {
                 .post('/cards')
                 .send({
                     cardNumber: '5483874041820682',
-                    exp: '04/18',
+                    exp: '04/30',
                     name: 'ALYSSA LIVINGSTON',
                     balance: 10000
                 })
@@ -138,10 +145,10 @@ describe('Cards routes tests', () => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(6);
+                    res.body.should.have.property('id');
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(10000);
-                    res.body.should.have.property('exp').eql('04/18');
+                    res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });
@@ -152,17 +159,17 @@ describe('Cards routes tests', () => {
                 .post('/cards')
                 .send({
                     cardNumber: '5483874041820682',
-                    exp: '04/18',
+                    exp: '04/30',
                     name: 'ALYSSA LIVINGSTON',
                 })
                 .end((err, res) => {
                     res.should.have.status(201);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(6);
+                    res.body.should.have.property('id');
                     res.body.should.have.property('cardNumber').eql('5483874041820682');
                     res.body.should.have.property('balance').eql(0);
-                    res.body.should.have.property('exp').eql('04/18');
+                    res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     done();
                 });
@@ -191,7 +198,7 @@ describe('Cards routes tests', () => {
 
         it('it should not DELETE card with not real id', done => {
             chai.request(server)
-                .delete('/cards/10')
+                .delete('/cards/59e9ce16131a183238cc7844')
                 .end((err, res) => {
                     res.should.have.status(404);
                     done();
@@ -200,7 +207,7 @@ describe('Cards routes tests', () => {
 
         it('it should DELETE card with real id', done => {
             chai.request(server)
-                .delete('/cards/1')
+                .delete('/cards/59e9ce16131a183238cc784e')
                 .end((err, res) => {
                     res.should.have.status(200);
                     done();

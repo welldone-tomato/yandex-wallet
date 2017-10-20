@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const async = require('async');
 
 const Card = require('../models/card');
-const cardsJson = require('./cards_data');
+const cardsJson = require('./data_cards');
 
 // const transactions = require('../transactionsData');
 mongoose.Promise = global.Promise;

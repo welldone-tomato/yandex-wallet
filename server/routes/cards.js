@@ -67,7 +67,11 @@ router.post('/', async ctx => {
 		balance: Number(balance) || 0
 	};
 
-	await Validators.cardValidator(card, ctx.cards)
+	try {
+		await ctx.cards.validate(card);
+	} catch (err) {
+		ctx.throw(400, err);
+	}
 
 	ctx.body = await ctx.cards.add(card);
 	ctx.status = 201;

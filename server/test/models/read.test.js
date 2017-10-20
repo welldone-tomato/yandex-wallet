@@ -2,7 +2,7 @@ const assert = require('assert');
 const ObjectId = require('mongoose').Types.ObjectId;
 
 const Card = require('../../models/card');
-const cardsJson = require('../cards_data');
+const cardsJson = require('../data_cards');
 
 describe('Cards model reading test', () => {
     it('it should get all cards', async () => {
