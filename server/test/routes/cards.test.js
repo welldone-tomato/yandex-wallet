@@ -1,19 +1,12 @@
-process.env.NODE_ENV = 'test';
-
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
-const restoreDb = require('./common');
 
 const should = chai.should();
 chai.use(chaiHttp);
 
-describe('Cards', () => {
-    beforeEach(done => restoreDb(done));
-
-    after(done => restoreDb(done));
-
+describe('Cards routes tests', () => {
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
             chai.request(server)
@@ -23,8 +16,8 @@ describe('Cards', () => {
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(5);
-                    res.body[0].should.have.property('id').eql(1);
-                    res.body[0].should.have.property('cardNumber').eql('546925000000000');
+                    res.body[0].should.have.property('id').eql('59e9ce16131a183238cc784e');
+                    res.body[0].should.have.property('cardNumber').eql('5469259469067206');
                     res.body[0].should.have.property('exp').eql('04/18');
                     res.body[0].should.have.property('balance').eql(15000);
                     res.body[0].should.have.property('name').eql('ALYSSA LIVINGSTON');
@@ -34,16 +27,34 @@ describe('Cards', () => {
 
         it('it should GET card from db with id', done => {
             chai.request(server)
-                .get('/cards/1')
+                .get('/cards/59e9ce16131a183238cc784e')
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
                     res.body.should.be.a('object');
-                    res.body.should.have.property('id').eql(1);
-                    res.body.should.have.property('cardNumber').eql('546925000000000');
+                    res.body.should.have.property('id').eql('59e9ce16131a183238cc784e');
+                    res.body.should.have.property('cardNumber').eql('5469259469067206');
                     res.body.should.have.property('exp').eql('04/18');
                     res.body.should.have.property('balance').eql(15000);
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
+                    done();
+                });
+        });
+
+        it('it should GET 400 status with invalid id', done => {
+            chai.request(server)
+                .get('/cards/555f5d5fd5f5df')
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    done();
+                });
+        });
+
+        it('it should GET 404 status with not real id', done => {
+            chai.request(server)
+                .get('/cards/59e952a6372cf01550abe904')
+                .end((err, res) => {
+                    res.should.have.status(404);
                     done();
                 });
         });

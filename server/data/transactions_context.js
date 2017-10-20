@@ -1,6 +1,5 @@
 const Context = require('./context');
-
-const FILE_NAME = '/../db/transactions.json';
+const Transaction = require('../models/transactions');
 
 /**
  * Контекст работы с транзакциями пользователя
@@ -10,20 +9,20 @@ const FILE_NAME = '/../db/transactions.json';
  */
 class TransactionsContext extends Context {
     constructor() {
-        super(FILE_NAME);
+        super(Transaction);
     }
 
-    /**
-     * Возращает массив транзакций по id карты пользователя
-     * 
-     * @param {any} id 
-     * @returns 
-     * @memberof TransactionsContext
-     */
-    async getByCardId(id) {
-        const data = await this.getAll();
-        return data.filter(item => item.cardId === id);
-    }
+// /**
+//  * Возращает массив транзакций по id карты пользователя
+//  * 
+//  * @param {any} id 
+//  * @returns 
+//  * @memberof TransactionsContext
+//  */
+// async getByCardId(id) {
+//     const data = await this.getAll();
+//     return data.filter(item => item.cardId === id);
+// }
 }
 
 module.exports = TransactionsContext;

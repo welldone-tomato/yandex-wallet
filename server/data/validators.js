@@ -1,35 +1,6 @@
-const bankUtils = require('../libs/utils');
 const ApplicationError = require('../libs/application_error');
 
 module.exports = {
-    /**
-     * Проверяет номер карты
-     * 
-     * @param {String} cardNumber 
-     * @param {CardsContext} cards
-     */
-    cardValidator: async ({cardNumber, exp, balance} , cards) => {
-        if (bankUtils.getCardType(cardNumber) === '' || !bankUtils.moonCheck(cardNumber))
-            throw new ApplicationError('valid cardNumber required', 400);
-
-        if (await cards.checkCardExist(cardNumber))
-            throw new ApplicationError('non doublicated cardNumber required', 400);
-
-        if (isNaN(balance) || balance < 0)
-            throw new ApplicationError('balance is invalid', 400);
-
-        // проверяем срок действия карты
-        const date = new Date();
-        const currentYear = date.getFullYear();
-        const currentMonth = date.getMonth() + 1;
-        const parts = exp.split('/');
-        const year = parseInt(parts[1], 10) + 2000;
-        const month = parseInt(parts[0], 10);
-
-        if (year < currentYear || (year === currentYear && month < currentMonth))
-            throw new ApplicationError('card expired', 400);
-    },
-
     /**
      * Проверяет транзакцию
      * 

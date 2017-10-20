@@ -46,7 +46,13 @@ const addTransaction = async (transaction, ctx) => {
 
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
 
-router.get('/:id', async ctx => ctx.body = await ctx.cards.get(ctx.params.id));
+router.get('/:id', async ctx => {
+	const {id} = ctx.params;
+	const doc = await ctx.cards.get(id);
+
+	if (!doc) ctx.throw(404, `card with id=${id} not found`);
+	ctx.body = doc;
+});
 
 router.post('/', async ctx => {
 	const {cardNumber, exp, name, balance} = ctx.request.body;

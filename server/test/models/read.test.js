@@ -1,25 +1,22 @@
 const assert = require('assert');
+const ObjectId = require('mongoose').Types.ObjectId;
+
 const Card = require('../../models/card');
+const cardsJson = require('../cards_data');
 
 describe('Cards model reading test', () => {
-    let card;
-
-    beforeEach(done => {
-        card = new Card({
-            cardNumber: "5483874041820682",
-            balance: 20,
-            exp: "08/18",
-            name: "NIK COLLIN"
-        });
-
-        card.save().then(() => done()).catch(err => done(err));
+    it('it should get all cards', async () => {
+        const cards = await Card.find({});
+        assert(cards.length === 5);
+        assert(cards[0].cardNumber === cardsJson[0].cardNumber);
     });
 
-    it('finds all cards', done => {
-        Card.find({})
-            .then(cards => {
-                assert(cards[0]._id.toString() === card._id.toString());
-                done();
-            });
+    it('it should get a card by id', async () => {
+        const card = await Card.findOne({})
+        const result = await Card.findOne({
+            _id: new ObjectId(card.id)
+        });
+
+        assert(result.cardNumber === cardsJson[0].cardNumber);
     });
 });

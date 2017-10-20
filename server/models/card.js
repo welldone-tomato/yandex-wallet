@@ -50,12 +50,22 @@ const cardSchema = new Schema({
         validate: {
             validator: value => {
                 const [name, surname] = value.split(' ');
-                return name.length > 2 && surname.length > 2
+                return name.length > 1 && surname.length > 1
             },
-            message: 'name must greater then 4 length'
+            message: 'name must contains two words'
         }
     },
-});
+},
+    {
+        toObject: {
+            transform: (doc, ret) => {
+                ret.id = ret._id.toString();
+                delete ret._id;
+                delete ret.__v;
+            }
+        }
+    }
+);
 
 cardSchema.plugin(uniqueValidator);
 

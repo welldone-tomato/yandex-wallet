@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "antd": "^2.13.6",
+    "async": "^2.5.0",
     "axios": "^0.16.2",
     "bcrypt-nodejs": "0.0.3",
     "card-info": "git+https://github.com/iniel/card-info.git",
@@ -32,8 +33,8 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "start:server": "node ./server/index.js",
-    "test:server": "cross-env NODE_PORT=4080 mocha ./server/test --recursive --timeout 10000",
-    "cover:server": "cross-env NODE_PORT=4080 nyc mocha ./server/test --recursive --timeout 10000"
+    "test:server": "cross-env NODE_PORT=4080 NODE_ENV=test mocha ./server/test --recursive --timeout 10000",
+    "cover:server": "cross-env NODE_PORT=4080 NODE_ENV=test nyc mocha ./server/test --recursive --timeout 10000"
   },
   "devDependencies": {
     "axios-mock-adapter": "^1.9.0",

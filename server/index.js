@@ -28,8 +28,9 @@ if (process.env.NODE_ENV !== 'test') {
 
 // id param auto-loading
 router.param('id', async (id, ctx, next) => {
-	id = Number(id);
-	if (id <= 0 || isNaN(id)) ctx.throw(400, 'id is invalid');
+	var checkForHexRegExp = new RegExp("^[0-9a-fA-F]{24}$");
+
+	if (!checkForHexRegExp.test(id)) ctx.throw(400, 'id is invalid');
 	ctx.params.id = id;
 
 	await next();

@@ -4,16 +4,12 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
-const restoreDb = require('./common');
+
 
 const should = chai.should();
 chai.use(chaiHttp);
 
-describe('Transactions', () => {
-    beforeEach(done => restoreDb(done));
-
-    after(done => restoreDb(done));
-
+describe('Transactions routes test', () => {
     describe('/GET transactions by card id', () => {
         it('should get all transactions by card id === 1', done => {
             chai.request(server)
