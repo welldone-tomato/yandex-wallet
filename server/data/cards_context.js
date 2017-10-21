@@ -1,6 +1,8 @@
 const Context = require('./context');
 const Card = require('../models/card');
 
+const ApplicationError = require('../libs/application_error');
+
 /**
  * Контекст работы с картами пользователя
  * 
@@ -17,31 +19,38 @@ class CardsContext extends Context {
         super(Card);
     }
 
-    // /**
-    //  * Возвращает карту по номеру карты
-    //  * 
-    //  * @returns {Promise<Array>}
-    //  * @memberof CardsContext
-    //  */
-    // async getByCardNumber(cardNumber) {
-    //     const cards = await this.getAll();
-    //     return cards.find(item => item.cardNumber === cardNumber);
-    // }
+    /**
+     * Возвращает карту по номеру карты
+     * 
+     * @param {String} cardNumber 
+     * @returns {Promise<Object>}
+     * @memberof CardsContext
+     */
+    async getByCardNumber(cardNumber) {
+        const card = await this.model.findOne({
+            cardNumber
+        });
+        return card.toObject();
+    }
 
-    // /**
-    //  * Изменяет баланс карты
-    //  * 
-    //  * @param {Number} id 
-    //  * @param {Object} transaction 
-    //  * @returns {Boolean}
-    //  * @memberof CardsContext
-    //  */
-    // async affectBalance(id, transaction) {
-    //     const card = await this.get(id);
-    //     card.balance += Number(transaction.sum);
+    /**
+     * Изменяет баланс карты
+     * 
+     * @param {String} id 
+     * @param {Object} transaction 
+     * @returns {Promise}
+     * @memberof CardsContext
+     */
+    async affectBalance(id, transaction) {
+        const card = await this.model.findById(id);
 
-//     await this.edit(id, card);
-// }
+        if (!card)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
+
+        card.balance += transaction.sum;
+
+        await card.save();
+    }
 }
 
 module.exports = CardsContext;

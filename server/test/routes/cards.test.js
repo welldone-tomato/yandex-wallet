@@ -16,11 +16,11 @@ describe('Cards routes tests', () => {
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(5);
-                    res.body[0].should.have.property('id').eql('59e9ce16131a183238cc784e');
-                    res.body[0].should.have.property('cardNumber').eql('5469259469067206');
-                    res.body[0].should.have.property('exp').eql('04/18');
-                    res.body[0].should.have.property('balance').eql(15000);
-                    res.body[0].should.have.property('name').eql('ALYSSA LIVINGSTON');
+                    res.body[0].should.have.property('id');
+                    res.body[0].should.have.property('cardNumber');
+                    res.body[0].should.have.property('exp');
+                    res.body[0].should.have.property('balance');
+                    res.body[0].should.have.property('name');
                     done();
                 });
         });

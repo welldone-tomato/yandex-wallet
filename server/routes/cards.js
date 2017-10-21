@@ -1,5 +1,4 @@
 const router = require('koa-router')();
-const Validators = require('../data/validators');
 const ApplicationError = require('../libs/application_error');
 
 /**
@@ -11,7 +10,11 @@ const ApplicationError = require('../libs/application_error');
  */
 const addTransaction = async (transaction, ctx) => {
 	// проверяем транзакцию
-	await Validators.transactionValidator(transaction, ctx.cards);
+	try {
+		await ctx.transactions.validate(transaction);
+	} catch (err) {
+		ctx.throw(400, err);
+	}
 
 	// добавляем транзакцию
 	await ctx.transactions.add(transaction);
@@ -33,14 +36,11 @@ const addTransaction = async (transaction, ctx) => {
 			cardId: toCard.id,
 			type: 'prepaidCard',
 			data: fromCard.cardNumber,
-			time: time || Date.now() / 1000,
+			time: time || Math.floor(Date.now() / 1000),
 			sum: sum < 0 ? sum * -1 : sum
 		};
 
-		await Validators.transactionValidator(recieverTransaction, ctx.cards);
-		await ctx.transactions.add(recieverTransaction);
-
-		await ctx.cards.affectBalance(toCard.id, recieverTransaction);
+		await addTransaction(recieverTransaction, ctx);
 	}
 };
 
@@ -97,11 +97,14 @@ router.post('/:id/transactions', async ctx => {
 
 	const {type, data, time, sum} = ctx.request.body;
 
+	if (!type || !data || !sum)
+		ctx.throw(400, 'properties required');
+
 	const transaction = {
 		cardId: id,
 		type,
 		data,
-		time: Number(time) || Date.now() / 1000,
+		time: Number(time) || Math.floor(Date.now() / 1000),
 		sum: Number(sum)
 	};
 
@@ -120,12 +123,14 @@ router.post('/:id/pay', async ctx => {
 	const {id} = ctx.params;
 
 	const {phone, amount} = ctx.request.body;
+	if (!phone || !amount)
+		ctx.throw(400, 'properties required');
 
 	const transaction = {
 		cardId: id,
 		type: 'paymentMobile',
 		data: phone,
-		time: Date.now() / 1000,
+		time: Math.floor(Date.now() / 1000),
 		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
 	};
 
@@ -142,12 +147,14 @@ router.post('/:id/transfer', async ctx => {
 	const {id} = ctx.params;
 
 	const {to, amount} = ctx.request.body;
+	if (!to || !amount)
+		ctx.throw(400, 'properties required');
 
 	const transaction = {
 		cardId: id,
 		type: 'card2Card',
 		data: to,
-		time: Date.now() / 1000,
+		time: Math.floor(Date.now() / 1000),
 		sum: Number(amount) > 0 ? Number(amount) * -1 : Number(amount)
 	};
 

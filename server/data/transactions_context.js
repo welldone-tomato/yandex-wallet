@@ -1,5 +1,7 @@
+const ObjectId = require('mongoose').Types.ObjectId;
+
 const Context = require('./context');
-const Transaction = require('../models/transactions');
+const Transaction = require('../models/transaction');
 
 /**
  * Контекст работы с транзакциями пользователя
@@ -12,17 +14,19 @@ class TransactionsContext extends Context {
         super(Transaction);
     }
 
-// /**
-//  * Возращает массив транзакций по id карты пользователя
-//  * 
-//  * @param {any} id 
-//  * @returns 
-//  * @memberof TransactionsContext
-//  */
-// async getByCardId(id) {
-//     const data = await this.getAll();
-//     return data.filter(item => item.cardId === id);
-// }
+    /**
+     * Возращает массив транзакций по id карты пользователя
+     * 
+     * @param {String} id 
+     * @returns []
+     * @memberof TransactionsContext
+     */
+    async getByCardId(id) {
+        const data = await this.model.find({
+            cardId: new ObjectId(id)
+        });
+        return data.map(item => item.toObject());
+    }
 }
 
 module.exports = TransactionsContext;

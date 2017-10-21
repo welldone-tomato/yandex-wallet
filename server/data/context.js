@@ -1,4 +1,4 @@
-const ObjectId = require('mongoose').Types.ObjectId;
+// const ObjectId = require('mongoose').Types.ObjectId;
 
 const logger = require('../libs/logger')('context');
 const ApplicationError = require('../libs/application_error');
@@ -20,9 +20,19 @@ class Context {
     }
 
     /**
+     * Возвращает саму модель для доступа к low level функциям.
+     * 
+     * @returns {Model}
+     * @memberof Context
+     */
+    self() {
+        return this.model;
+    }
+
+    /**
      * Валидация модели и возврат статусов
      * 
-     * @param {any} data 
+     * @param {Object} data 
      * @memberof Context
      */
     validate(data) {
@@ -91,7 +101,7 @@ class Context {
      * Удаление объекта из файла
      * 
      * @param {String} id 
-     * @returns {Boolean}
+     * @returns {Promise}
      * @memberof Context
      */
     async remove(id) {
@@ -101,27 +111,6 @@ class Context {
 
         await item.remove();
     }
-
-    // /**
-    //  * Обновляет элемент в файле
-    //  * 
-    //  * @param {Integer} id 
-    //  * @param {Object} item 
-    //  * @return {Boolean}
-    //  * @memberof Context
-    //  */
-    // async edit(id, item) {
-    //     const items = await this.getAll();
-
-    //     const itemIndex = items.findIndex(item => item.id === id);
-
-    //     if (itemIndex === -1)
-    //         throw new ApplicationError(`Item with id=${id} not found`, 404);
-
-    //     items[itemIndex] = item;
-
-//     await this.save(items);
-// }
 }
 
 module.exports = Context;

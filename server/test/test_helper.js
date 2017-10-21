@@ -1,21 +1,24 @@
 const mongoose = require('mongoose');
-const async = require('async');
 
 const Card = require('../models/card');
+const Transaction = require('../models/transaction');
 const cardsJson = require('./data_cards');
+const transactionsJson = require('./data_transactions');
 
-// const transactions = require('../transactionsData');
 mongoose.Promise = global.Promise;
+process.env.NODE_ENV = 'test';
 
 const cleanDatabase = () => mongoose.connection.db.dropDatabase();
 
 const restoreDatabase = done => {
     cleanDatabase().then(() => {
-        const cards = cardsJson.map(card => new Card(card));
-        async.eachSeries(cards, (card, done) => card.save(done), err => {
-            if (err) return done(err);
-            done();
-        });
+        const cards = cardsJson.map(item => new Card(item));
+        const transactions = transactionsJson.map(item => new Transaction(item));
+
+        Promise.all(cards.map(item => item.save()))
+            .then(results => Promise.all(transactions.map(item => item.save())))
+            .then(results => done())
+            .catch(err => done(err));
     })
 };
 
