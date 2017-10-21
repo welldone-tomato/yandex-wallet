@@ -1,3 +1,7 @@
+const http = require('http');
+const https = require('https');
+const fs = require('fs');
+
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
@@ -64,7 +68,7 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const server = app.listen(port, () => {
+const startCallback = port => {
 	const mongo = 'mongodb://docker/test_yandex_wallet';
 	mongoose.connect(mongo, {
 		useMongoClient: true
@@ -82,6 +86,14 @@ const server = app.listen(port, () => {
 
 	console.log(`YM Node School App listening on port ${port}!`)
 	logger.log(`YM Node School App listening on port ${port}!`);
-});
+};
+
+const options = {
+	key: fs.readFileSync('./ssl/key.pem', 'utf8'),
+	cert: fs.readFileSync('./ssl/cert.pem', 'utf8')
+};
+
+const server = http.createServer(app.callback()).listen(port, startCallback(port));
+https.createServer(options, app.callback()).listen(port + 1, startCallback(port + 1));
 
 module.exports = server;
