@@ -3,12 +3,14 @@ const router = require('koa-router')();
 const koaBody = require('koa-body')();
 const compose = require('koa-compose');
 const cors = require('koa2-cors');
+const mongoose = require('mongoose');
 
 const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
 
+mongoose.Promise = global.Promise;
 const app = new Koa();
 
 const port = process.env.NODE_PORT || 4000;
@@ -63,6 +65,21 @@ app.use(router.routes());
 app.use(router.allowedMethods());
 
 const server = app.listen(port, () => {
+	const mongo = 'mongodb://docker/test_yandex_wallet';
+	mongoose.connect(mongo, {
+		useMongoClient: true
+	});
+
+	mongoose.connection
+		.once('open', () => {
+			console.log(`YM Node School DB connection success. ${mongo}`)
+			logger.log(`YM Node School DB connection success. ${mongo}`);
+		})
+		.once('error', error => {
+			console.error('Mongo Error: ', error);
+			logger.error('Mongo error: ', error);
+		});
+
 	console.log(`YM Node School App listening on port ${port}!`)
 	logger.log(`YM Node School App listening on port ${port}!`);
 });
