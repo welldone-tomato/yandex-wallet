@@ -71,7 +71,10 @@ app.use(router.allowedMethods());
 const startCallback = port => {
 	const mongo = 'mongodb://docker/test_yandex_wallet';
 	mongoose.connect(mongo, {
-		useMongoClient: true
+		useMongoClient: true,
+		config: {
+			autoIndex: true
+		}
 	});
 
 	mongoose.connection

@@ -24,7 +24,10 @@ const restoreDatabase = done => {
 
 before(done => {
     mongoose.connect('mongodb://docker/test_yandex_wallet', {
-        useMongoClient: true
+        useMongoClient: true,
+        config: {
+            autoIndex: false
+        }
     });
 
     mongoose.connection
