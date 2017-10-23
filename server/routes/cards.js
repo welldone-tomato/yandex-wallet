@@ -1,4 +1,6 @@
 const router = require('koa-router')();
+const moment = require('moment');
+const PassThrough = require('stream').PassThrough;
 const ApplicationError = require('../libs/application_error');
 
 /**
@@ -44,6 +46,45 @@ const addTransaction = async (transaction, ctx) => {
 	}
 };
 
+const transactionsToCSV = (cursor, stream, ctx) => {
+	const fieldToString = field => '"' + String(field || "").replace(/\"/g, '""') + '"';
+
+	const headers = [
+		'Id',
+		'Time',
+		'Sum',
+		'Type',
+		'Data'
+	].map(fieldToString).join(',');
+
+	const transactionsToCSV = doc => [
+		doc.id,
+		doc.time,
+		doc.sum,
+		doc.type,
+		doc.data,
+	].map(fieldToString).join(',');
+
+	let started = false;
+
+	const start = stream => {
+		stream.write(headers + '\n');
+		started = true;
+	}
+
+	cursor
+		.on('data', transaction => {
+			if (!started)
+				start(stream);
+			stream.write(transactionsToCSV(transaction) + '\n')
+		})
+		.on('close', () => ctx.res.end())
+		.once('error', err => ctx.throw(500, {
+			msg: "Failed to get CSV"
+		}));
+};
+
+//****************************** ROUTES *************************************/
 router.get('/', async ctx => ctx.body = await ctx.cards.getAll());
 
 router.get('/:id', async ctx => {
@@ -90,6 +131,16 @@ router.delete('/:id', async ctx => {
 router.get('/:id/transactions', async ctx => {
 	ctx.body = await ctx.transactions.getByCardId(ctx.params.id);
 	ctx.status = 200;
+});
+
+router.get('/:id/file-transactions', async ctx => {
+	const cursor = await ctx.transactions.getByCardIdStream(ctx.params.id);
+	const stream = new PassThrough();
+
+	transactionsToCSV(cursor, stream, ctx);
+	ctx.type = 'csv';
+	ctx.set('Content-disposition', `attachment; filename=${moment().format('DD-MM-YYYY')}-transactions-history.csv`);
+	ctx.body = stream;
 });
 
 router.post('/:id/transactions', async ctx => {

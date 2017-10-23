@@ -27,6 +27,20 @@ class TransactionsContext extends Context {
         });
         return data.map(item => item.toObject());
     }
+
+    /**
+     * Возращает strean массив транзакций по id карты пользователя
+     * 
+     * @param {String} id 
+     * @returns {Stream}
+     * @memberof TransactionsContext
+     */
+    async getByCardIdStream(id) {
+        const data = await this.model.find({
+            cardId: new ObjectId(id)
+        }).cursor();
+        return data;
+    }
 }
 
 module.exports = TransactionsContext;
