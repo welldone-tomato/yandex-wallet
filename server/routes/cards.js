@@ -46,6 +46,13 @@ const addTransaction = async (transaction, ctx) => {
 	}
 };
 
+/**
+ * Трансформирует поток транзакций в потом CSV строк
+ * 
+ * @param {any} cursor 
+ * @param {any} stream 
+ * @param {any} ctx 
+ */
 const transactionsToCSV = (cursor, stream, ctx) => {
 	const fieldToString = field => '"' + String(field || "").replace(/\"/g, '""') + '"';
 
@@ -57,7 +64,7 @@ const transactionsToCSV = (cursor, stream, ctx) => {
 		'Data'
 	].map(fieldToString).join(',');
 
-	const transactionsToCSV = doc => [
+	const docToString = doc => [
 		doc.id,
 		doc.time,
 		doc.sum,
@@ -76,7 +83,7 @@ const transactionsToCSV = (cursor, stream, ctx) => {
 		.on('data', transaction => {
 			if (!started)
 				start(stream);
-			stream.write(transactionsToCSV(transaction) + '\n')
+			stream.write(docToString(transaction) + '\n')
 		})
 		.on('close', () => ctx.res.end())
 		.once('error', err => ctx.throw(500, {

@@ -35,11 +35,10 @@ class TransactionsContext extends Context {
      * @returns {Stream}
      * @memberof TransactionsContext
      */
-    async getByCardIdStream(id) {
-        const data = await this.model.find({
+    getByCardIdStream(id) {
+        return this.model.find({
             cardId: new ObjectId(id)
         }).cursor();
-        return data;
     }
 }
 
