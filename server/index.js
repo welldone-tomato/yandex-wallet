@@ -17,7 +17,12 @@ const TransactionsContext = require('./data/transactions_context');
 mongoose.Promise = global.Promise;
 const app = new Koa();
 
-const port = process.env.NODE_PORT || 4000;
+
+/*** Define CONST */
+const PORT = process.env.NODE_PORT || 4000;
+const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
+const MONGO = process.env.NODE_MONGO || 'mongodb://docker/test_yandex_wallet';
+const HTTPS = process.env.NODE_HTTPS || false;
 
 app.use(cors());
 
@@ -68,35 +73,44 @@ router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-const startCallback = port => {
-	const mongo = 'mongodb://docker/test_yandex_wallet';
-	mongoose.connect(mongo, {
-		useMongoClient: true,
-		config: {
-			autoIndex: true
-		}
-	});
 
-	mongoose.connection
-		.once('open', () => {
-			console.log(`YM Node School DB connection success. ${mongo}`)
-			logger.log(`YM Node School DB connection success. ${mongo}`);
-		})
-		.once('error', error => {
-			console.error('Mongo Error: ', error);
-			logger.error('Mongo error: ', error);
-		});
+//********************** Mongo connections and server starts ***************************** */
+let server;
 
+const notifyStarting = port => {
 	console.log(`YM Node School App listening on port ${port}!`)
 	logger.log(`YM Node School App listening on port ${port}!`);
+}
+
+const startServer = () => {
+	const options = {
+		key: fs.readFileSync('./ssl/key.pem', 'utf8'),
+		cert: fs.readFileSync('./ssl/cert.pem', 'utf8')
+	};
+
+	server = http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
+
+	if (HTTPS)
+		https.createServer(options, app.callback()).listen(PORT_SSL, notifyStarting(PORT_SSL));
 };
 
-const options = {
-	key: fs.readFileSync('./ssl/key.pem', 'utf8'),
-	cert: fs.readFileSync('./ssl/cert.pem', 'utf8')
-};
+mongoose.connect(MONGO, {
+	useMongoClient: true,
+	config: {
+		autoIndex: true
+	}
+});
 
-const server = http.createServer(app.callback()).listen(port, startCallback(port));
-https.createServer(options, app.callback()).listen(port + 1, startCallback(port + 1));
+mongoose.connection
+	.once('open', () => {
+		console.log(`YM Node School APP connected to DB successfully. ADDR= ${MONGO}`)
+		logger.log(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
+
+		startServer(PORT);
+	})
+	.once('error', error => {
+		console.error('Mongo Error: ', error);
+		logger.error('Mongo error: ', error);
+	});
 
 module.exports = server;
