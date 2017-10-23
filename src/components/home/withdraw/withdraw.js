@@ -20,7 +20,7 @@ const Withdraw = props => {
 
 Withdraw.propTypes = {
     paymentState: PropTypes.object,
-    activeCardId: PropTypes.number,
+    activeCardId: PropTypes.string,
     inactiveCardsList: PropTypes.arrayOf(PropTypes.object),
     onPaymentSubmit: PropTypes.func.isRequired,
     onRepeatPaymentClick: PropTypes.func.isRequired

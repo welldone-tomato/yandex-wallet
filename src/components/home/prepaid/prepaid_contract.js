@@ -201,7 +201,7 @@ class PrepaidContract extends Component {
 
 PrepaidContract.propTypes = {
 	activeCard: PropTypes.shape({
-		id: PropTypes.number,
+		id: PropTypes.string,
 		theme: PropTypes.object
 	}),
 	inactiveCardsList: PropTypes.arrayOf(PropTypes.object),

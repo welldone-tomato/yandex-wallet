@@ -136,7 +136,7 @@ class CardsBar extends Component {
 
 CardsBar.propTypes = {
   cards: PropTypes.array.isRequired,
-  activeCardId: PropTypes.number,
+  activeCardId: PropTypes.string,
   error: PropTypes.object,
   onClick: PropTypes.func.isRequired,
   onStart: PropTypes.func.isRequired,

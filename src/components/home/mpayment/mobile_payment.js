@@ -30,7 +30,7 @@ MobilePayment.propTypes = {
 	paymentState: PropTypes.shape({
 		stage: PropTypes.string.isRequired,
 	}).isRequired,
-	activeCardId: PropTypes.number,
+	activeCardId: PropTypes.string,
 	onPaymentSubmit: PropTypes.func.isRequired,
 	onRepeatPaymentClick: PropTypes.func.isRequired
 };

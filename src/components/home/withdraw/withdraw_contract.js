@@ -135,7 +135,7 @@ class WithdrawContract extends Component {
 }
 
 WithdrawContract.propTypes = {
-	activeCardId: PropTypes.number,
+	activeCardId: PropTypes.string,
 	inactiveCardsList: PropTypes.arrayOf(PropTypes.object)
 }
 
