@@ -21,7 +21,7 @@ describe('Cards model reading tests', () => {
 });
 
 describe('Transactions model reading tests', () => {
-    it('it should get a transactionby card id', async () => {
+    it('it should get a transaction by card id', async () => {
         const card = await Card.findOne({})
         const result = await Transaction.find({
             cardId: new ObjectId(card.id)
