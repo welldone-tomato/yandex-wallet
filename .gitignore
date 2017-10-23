@@ -9,7 +9,8 @@
 
 # production
 /build
-*.pem
+*.key
+*.crt
 
 # misc
 .DS_Store
