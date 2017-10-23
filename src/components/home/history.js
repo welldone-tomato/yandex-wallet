@@ -76,19 +76,22 @@ const History = ({transactions, activeCard, isLoading}) => {
 
 		if (transactions.length === 0)
 			result.push(<HistoryItem key={today+'HistoryItem'}>Операций не найдено</HistoryItem>)
-		else transactions.forEach(item=> {
-			if (item.key === today) result.push(<HistoryTitle key={item.key}>Сегодня</HistoryTitle>);
-			else {
-				if (result.length === 0) 
-					{
-						result.push(<HistoryTitle key={today+'HistoryTitle'}>Сегодня</HistoryTitle>)
-						result.push(<HistoryItem key={today+'HistoryItem'}>Операций за этот день нет</HistoryItem>)
-					}
+		else {
+			transactions.forEach(item=> {
+				if (item.key === today) result.push(<HistoryTitle key={item.key}>Сегодня</HistoryTitle>);
+				else {
+					if (result.length === 0) 
+						{
+							result.push(<HistoryTitle key={today+'HistoryTitle'}>Сегодня</HistoryTitle>)
+							result.push(<HistoryItem key={today+'HistoryItem'}>Операций за этот день нет</HistoryItem>)
+						}
 
-				result.push(<HistoryTitle key={item.key}>{item.key}</HistoryTitle>);}
+					result.push(<HistoryTitle key={item.key}>{item.key}</HistoryTitle>);}
 
-			result.push(renderCardsDay(item.data));
-		});
+				result.push(renderCardsDay(item.data));
+			});
+			result.push(<HistoryItem key={today+'LoadItem'}><a href={`/api/cards/${activeCard.id}/file-transactions`}>Зарузить в CSV</a></HistoryItem>);
+		}
 
 		return result;
 	};

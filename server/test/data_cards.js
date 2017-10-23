@@ -24,16 +24,16 @@ module.exports = [
     },
     {
         _id: new ObjectId("59e9ce16131a183238cc7851"),
-        cardNumber: "6766258944254098",
+        cardNumber: "4377725938711552",
         balance: 20,
         exp: "08/18",
         name: "NIK COLLIN"
     },
     {
         _id: new ObjectId("59e9ce16131a183238cc7852"),
-        cardNumber: "5474905376481848",
+        cardNumber: "5501431362464075",
         balance: 200000,
         exp: "01/18",
         name: "NIK COLLIN"
-    }
+    } // 5290256799199944
 ];

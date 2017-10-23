@@ -82,8 +82,8 @@ if (process.env.NODE_ENV !== 'test') {
 
 	const startServer = () => {
 		const options = {
-			key: fs.readFileSync('./ssl/key.pem', 'utf8'),
-			cert: fs.readFileSync('./ssl/cert.pem', 'utf8')
+			key: fs.readFileSync('./ssl/crt/key.key', 'utf8'),
+			cert: fs.readFileSync('./ssl/crt/cert.crt', 'utf8')
 		};
 
 		http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));

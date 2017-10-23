@@ -6,7 +6,7 @@ import CardEdit from './card_edit';
 
 const CardLayout = styled.div`
 	position: relative;
-	width: 264px;
+	width: 270px;
 	height: 164px;
 	box-sizing: border-box;
 	margin-bottom: ${({isSingle}) => (isSingle ? 0 : '15px')};
