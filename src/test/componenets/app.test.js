@@ -69,18 +69,18 @@ describe('Render whole App with initital state', () => {
 
     const expectedActions = [
       {
-        type: types.FETCH_CARDS
+        type: types.CARDS_FETCH_STARTED
       },
       {
-        type: types.FETCH_CARDS_SUCCESS,
+        type: types.CARDS_FETCH_SUCCESS,
         payload: cards
       },
       {
-        type: types.ACTIVE_CARD_CHANGE,
+        type: types.ACTIVE_CARD_CHANGED,
         payload: id
       },
       {
-        type: types.FETCH_TRANS
+        type: types.TRANS_FETCH_STARTED
       }
     ];
 

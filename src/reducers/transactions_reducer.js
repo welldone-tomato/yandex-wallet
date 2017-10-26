@@ -8,13 +8,13 @@ export const transactionsInitialState = {
 
 const transactionsReducer = (state = transactionsInitialState, {type, payload}) => {
     switch (type) {
-        case actions.FETCH_TRANS:
+        case actions.TRANS_FETCH_STARTED:
             return {
                 ...state,
                 isLoading: state.data.length === 0 ? true : false
             }
 
-        case actions.FETCH_TRANS_SUCCESS:
+        case actions.TRANS_FETCH_SUCCESS:
             return {
                 ...state,
                 data: payload,
@@ -22,14 +22,14 @@ const transactionsReducer = (state = transactionsInitialState, {type, payload}) 
                 isLoading: false
             }
 
-        case actions.FETCH_TRANS_FAILED:
+        case actions.TRANS_FETCH_FAILED:
             return {
                 ...state,
                 error: payload,
                 isLoading: false
             }
 
-        case actions.FETCH_CARDS_FAILED:
+        case actions.CARDS_FETCH_FAILED:
             return transactionsInitialState
 
         case actions.USER_LOGOUT:

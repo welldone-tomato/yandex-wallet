@@ -13,7 +13,7 @@ export const fetchCards = () => {
     return async dispatch => {
         try {
             dispatch({
-                type: action.FETCH_CARDS
+                type: action.CARDS_FETCH_STARTED
             });
 
             const response = await axios
@@ -24,7 +24,7 @@ export const fetchCards = () => {
                 });
 
             dispatch({
-                type: action.FETCH_CARDS_SUCCESS,
+                type: action.CARDS_FETCH_SUCCESS,
                 payload: response.data
             });
 
@@ -33,7 +33,7 @@ export const fetchCards = () => {
 
         } catch (response) {
             dispatch({
-                type: action.FETCH_CARDS_FAILED,
+                type: action.CARDS_FETCH_FAILED,
                 payload: response.response.data.message ? response.response.data.message : response.response.data
             });
             console.log(response.response.data.message ? response.response.data.message : response.response.data);
@@ -57,12 +57,12 @@ export const fetchCard = id => {
                 });
 
             dispatch({
-                type: action.FETCH_CARD_SUCCESS,
+                type: action.CARD_FETCH_SUCCESS,
                 payload: response.data
             });
         } catch (response) {
             dispatch({
-                type: action.FETCH_CARD_FAILED,
+                type: action.CARD_FETCH_FAILED,
                 payload: response.response.data.message ? response.response.data.message : response.response.data
             });
             console.log(response.response.data.message ? response.response.data.message : response.response.data);
@@ -80,7 +80,7 @@ export const deleteCard = id => {
     return async dispatch => {
         try {
             dispatch({
-                type: action.DELETE_CARD
+                type: action.CARD_DELETE_STARTED
             });
 
             const response = await axios
@@ -92,17 +92,17 @@ export const deleteCard = id => {
 
             if (response.status === 200) {
                 dispatch({
-                    type: action.DELETE_CARD_SUCCESS
+                    type: action.CARD_DELETE_SUCCESS
                 });
                 dispatch(fetchCards());
             }
             else dispatch({
-                    type: action.DELETE_CARD_FAILED,
+                    type: action.CARD_DELETE_FAILED,
                     payload: 'Что то пошло не так...'
                 });
         } catch (response) {
             dispatch({
-                type: action.DELETE_CARD_FAILED,
+                type: action.CARD_DELETE_FAILED,
                 payload: response.response.data.message ? response.response.data.message : response.response.data
             });
             console.log(response.response.data.message ? response.response.data.message : response.response.data);
@@ -116,7 +116,7 @@ export const changeActiveCard = id => (dispatch, getState) => {
     if (activeCardId === id) return;
 
     dispatch({
-        type: action.ACTIVE_CARD_CHANGE,
+        type: action.ACTIVE_CARD_CHANGED,
         payload: id
     });
     dispatch(fetchTransactions(id));

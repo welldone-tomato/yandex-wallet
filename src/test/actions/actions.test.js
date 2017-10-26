@@ -32,18 +32,18 @@ describe('async cards actions', () => {
     it('fetch cards', () => {
         const expectedActions = [
             {
-                type: types.FETCH_CARDS
+                type: types.CARDS_FETCH_STARTED
             },
             {
-                type: types.FETCH_CARDS_SUCCESS,
+                type: types.CARDS_FETCH_SUCCESS,
                 payload: cards
             },
             {
-                type: types.ACTIVE_CARD_CHANGE,
+                type: types.ACTIVE_CARD_CHANGED,
                 payload: id
             },
             {
-                type: types.FETCH_TRANS
+                type: types.TRANS_FETCH_STARTED
             }
         ];
 
@@ -54,7 +54,7 @@ describe('async cards actions', () => {
     it('fetch card', () => {
         const expectedActions = [
             {
-                type: types.FETCH_CARD_SUCCESS,
+                type: types.CARD_FETCH_SUCCESS,
                 payload: cards[0]
             }
         ];
@@ -66,13 +66,13 @@ describe('async cards actions', () => {
     it('delete cards', () => {
         const expectedActions = [
             {
-                type: types.DELETE_CARD
+                type: types.CARD_DELETE_STARTED
             },
             {
-                type: types.DELETE_CARD_SUCCESS
+                type: types.CARD_DELETE_SUCCESS
             },
             {
-                type: types.FETCH_CARDS
+                type: types.CARDS_FETCH_STARTED
             }
         ];
 
@@ -85,10 +85,10 @@ describe('async transactions actions', () => {
     it('fetch transactions', () => {
         const expectedActions = [
             {
-                type: types.FETCH_TRANS
+                type: types.TRANS_FETCH_STARTED
             },
             {
-                type: types.FETCH_TRANS_SUCCESS,
+                type: types.TRANS_FETCH_SUCCESS,
                 payload: transactions
             }
         ];

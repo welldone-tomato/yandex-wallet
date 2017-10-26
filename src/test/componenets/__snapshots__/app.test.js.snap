@@ -2,47 +2,47 @@
 
 exports[`Render whole App with initital state +++ capturing Snapshot of App 1`] = `
 <div
-  className="css-Wallet-34j4y90 css-46dg62"
+  className="css-Wallet-1ifwlbe0 css-46dg62"
 >
   <div
-    className="css-Layout-n62tmw0 css-oqhttl"
+    className="css-Layout-1j9vhhe0 css-oqhttl"
   >
     <div
-      className="css-Logo-n62tmw1 css-g3dddy"
+      className="css-Logo-1j9vhhe1 css-g3dddy"
     />
     <div
-      className="css-Edit-n62tmw2 css-1rly8q8"
+      className="css-Edit-1j9vhhe2 css-1rly8q8"
       onClick={[Function]}
     />
     <div
-      className="css-CardsList-n62tmw3 css-14qlmqd"
+      className="css-CardsList-1j9vhhe3 css-14qlmqd"
     >
       <div
-        className="css-CardLayout-1ezavq10 css-NewCardLayout-1ezavq14 css-9okkk3"
+        className="css-CardLayout-n1ghoi0 css-NewCardLayout-n1ghoi4 css-192ifp5"
       />
     </div>
     <footer
-      className="css-Footer-n62tmw4 css-1s8mtv6"
+      className="css-Footer-1j9vhhe4 css-1s8mtv6"
     >
       Yamoney Node School
     </footer>
   </div>
   <div
-    className="css-CardPane-34j4y91 css-i5j6vn"
+    className="css-CardPane-1ifwlbe1 css-i5j6vn"
   >
     <header
-      className="css-HeaderLayout-1f0bsvn0 css-6irvbk"
+      className="css-HeaderLayout-adoyc80 css-6irvbk"
     >
       <div
-        className="css-User-1so6ulr1 css-1l3dfk3"
+        className="css-User-117zrye1 css-1dm8jyy"
       >
         <img
-          className="css-Avatar-1so6ulr2 css-1xfhnhw"
+          className="css-Avatar-117zrye2 css-1xfhnhw"
           src="/assets/avatar.png"
         />
         Samuel Johnson
         <div
-          className="css-DropDown-1so6ulr0 css-1qvsddu"
+          className="css-DropDown-117zrye0 css-1qvsddu"
         >
           <a
             onClick={[Function]}

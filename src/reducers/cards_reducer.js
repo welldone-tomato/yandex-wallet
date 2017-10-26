@@ -18,13 +18,13 @@ export const cardsInitialState = {
 
 const cardsReducer = (state = cardsInitialState, {type, payload}) => {
     switch (type) {
-        case actions.FETCH_CARDS:
+        case actions.CARDS_FETCH_STARTED:
             return {
                 ...state,
                 isLoading: state.data.length === 0 ? true : false
             }
 
-        case actions.FETCH_CARDS_SUCCESS:
+        case actions.CARDS_FETCH_SUCCESS:
             return {
                 ...state,
                 data: payload,
@@ -32,7 +32,7 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
                 isLoading: false
             }
 
-        case actions.FETCH_CARDS_FAILED:
+        case actions.CARDS_FETCH_FAILED:
             return {
                 ...state,
                 error: payload,
@@ -42,19 +42,19 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.USER_LOGOUT:
             return cardsInitialState
 
-        case actions.ACTIVE_CARD_CHANGE:
+        case actions.ACTIVE_CARD_CHANGED:
             return {
                 ...state,
                 activeCardId: payload
             }
 
-        case actions.FETCH_CARD_SUCCESS:
+        case actions.CARD_FETCH_SUCCESS:
             return {
                 ...state,
                 data: updateObjectInArray(state.data, payload)
             }
 
-        case actions.FETCH_CARD_FAILED:
+        case actions.CARD_FETCH_FAILED:
             return {
                 ...state,
                 error: payload
