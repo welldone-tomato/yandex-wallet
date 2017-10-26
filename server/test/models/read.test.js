@@ -22,12 +22,12 @@ describe('Cards model reading tests', () => {
 
 describe('Transactions model reading tests', () => {
     it('it should get a transaction by card id', async () => {
-        const card = await Card.findOne({})
         const result = await Transaction.find({
-            cardId: new ObjectId(card.id)
+            cardId: new ObjectId('59e9ce16131a183238cc784e')
         });
 
-        assert(result[0].cardId.toString() === card.id);
-        assert(result[1].cardId.toString() === card.id);
+        assert(result[0].cardId.toString() === '59e9ce16131a183238cc784e');
+        assert(result[1].cardId.toString() === '59e9ce16131a183238cc784e');
+        assert(result[2].cardId.toString() === '59e9ce16131a183238cc784e');
     });
 });

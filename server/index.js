@@ -17,7 +17,6 @@ const TransactionsContext = require('./data/transactions_context');
 mongoose.Promise = global.Promise;
 const app = new Koa();
 
-
 /*** Define CONST */
 const PORT = process.env.NODE_PORT || 4000;
 const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
