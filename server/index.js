@@ -5,14 +5,19 @@ const fs = require('fs');
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
-const compose = require('koa-compose');
 const cors = require('koa2-cors');
 const mongoose = require('mongoose');
 
+// Turn on auth strategies
+const passport = require('koa-passport');
+
 const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
+const authRoute = require('./routes/auth');
+
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
+const UsersContext = require('./data/users_context');
 
 mongoose.Promise = global.Promise;
 const app = new Koa();
@@ -24,6 +29,10 @@ const MONGO = process.env.NODE_MONGO || 'mongodb://docker/test_yandex_wallet';
 const HTTPS = process.env.NODE_HTTPS || false;
 
 app.use(cors());
+app.use(koaBody);
+app.use(passport.initialize());
+
+require('./services/passport');
 
 // Логгер работает только для нетестовых окружений
 if (process.env.NODE_ENV !== 'test') {
@@ -60,14 +69,26 @@ app.use(async (ctx, next) => {
 	}
 });
 
-// inject Context
-const contextInjector = async (ctx, next) => {
+/************************ Middlewares **********************/
+// Вставка контекста
+app.use(async (ctx, next) => {
 	ctx.cards = new CardsContext();
 	ctx.transactions = new TransactionsContext();
+	ctx.users = new UsersContext();
 	await next();
-};
+});
 
-router.use('/cards', compose([koaBody, contextInjector]), cardsRoute.routes());
+// Вставка данных пользователя
+const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
+		if (!user)
+			ctx.throw(401, 'auth is required');
+
+		ctx.params.userId = user.id;
+		await next();
+	})(ctx, next);
+
+router.use('/cards', requiredAuth, cardsRoute.routes());
+router.use('/auth', authRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());

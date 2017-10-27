@@ -55,17 +55,15 @@ const cardSchema = new Schema({
             message: 'name must contains two words'
         }
     },
-},
-    {
-        toObject: {
-            transform: (doc, ret) => {
-                ret.id = ret._id.toString();
-                delete ret._id;
-                delete ret.__v;
-            }
+}, {
+    toObject: {
+        transform: (doc, ret) => {
+            ret.id = ret._id.toString();
+            delete ret._id;
+            delete ret.__v;
         }
     }
-);
+});
 
 cardSchema.plugin(uniqueValidator);
 

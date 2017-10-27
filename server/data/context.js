@@ -1,5 +1,3 @@
-// const ObjectId = require('mongoose').Types.ObjectId;
-
 const logger = require('../libs/logger')('context');
 const ApplicationError = require('../libs/application_error');
 

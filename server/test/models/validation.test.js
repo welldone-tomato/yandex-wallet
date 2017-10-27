@@ -1,9 +1,10 @@
 const assert = require('assert');
 const Card = require('../../models/card');
 const Transaction = require('../../models/transaction');
+const User = require('../../models/user');
 
 describe('Card model validation tests', () => {
-    it('it should get errors with massages about requeries fields', done => {
+    it('it should get errors with messages about requeries fields', done => {
         const card = new Card({});
 
         card.validate(validationResult => {
@@ -14,7 +15,7 @@ describe('Card model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about invalid fields', done => {
+    it('it should get errors with messages about invalid fields', done => {
         const card = new Card({
             cardNumber: '15133306216010173046',
             balance: -1,
@@ -34,7 +35,7 @@ describe('Card model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about invalid fields 2', done => {
+    it('it should get errors with messages about invalid fields 2', done => {
         const card = new Card({
             cardNumber: '5483874041820682',
             balance: '-1',
@@ -53,7 +54,7 @@ describe('Card model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about doublicated cardNumber', done => {
+    it('it should get errors with messages about doublicated cardNumber', done => {
         const card = new Card({
             cardNumber: '5469259469067206',
             balance: 10,
@@ -85,7 +86,7 @@ describe('Card model validation tests', () => {
 });
 
 describe('Transaction model validation tests', () => {
-    it('it should get errors with massages about requeries fields', done => {
+    it('it should get errors with messages about requeries fields', done => {
         const transaction = new Transaction({});
 
         transaction.validate(validationResult => {
@@ -96,7 +97,7 @@ describe('Transaction model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about invalid fields', done => {
+    it('it should get errors with messages about invalid fields', done => {
         const transaction = new Transaction({
             cardId: '59c784e',
             type: 'prepaidCard2ee',
@@ -115,7 +116,7 @@ describe('Transaction model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about not founded card', done => {
+    it('it should get errors with messages about not founded card', done => {
         const transaction = new Transaction({
             cardId: '59e9ce16131a183238cc7845',
             type: 'prepaidCard',
@@ -132,7 +133,7 @@ describe('Transaction model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about not founded card in card2card transaction', done => {
+    it('it should get errors with messages about not founded card in card2card transaction', done => {
         const transaction = new Transaction({
             cardId: '59e9ce16131a183238cc784e',
             type: 'card2Card',
@@ -147,7 +148,7 @@ describe('Transaction model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about invalid sum of the transaction', done => {
+    it('it should get errors with messages about invalid sum of the transaction', done => {
         const transaction = new Transaction({
             cardId: '59e9ce16131a183238cc784e',
             type: 'paymentMobile',
@@ -162,7 +163,7 @@ describe('Transaction model validation tests', () => {
         });
     });
 
-    it('it should get errors with massages about invalid balance on the card', done => {
+    it('it should get errors with messages about invalid balance on the card', done => {
         const transaction = new Transaction({
             cardId: '59e9ce16131a183238cc784e',
             type: 'paymentMobile',
@@ -173,6 +174,59 @@ describe('Transaction model validation tests', () => {
         transaction.validate(validationResult => {
             assert(validationResult.message === 'transaction validation failed: sum: invalid transaction sum');
 
+            done();
+        });
+    });
+});
+
+describe('User model validation tests', () => {
+    it('it should get errors with messages about requeries fields', done => {
+        const user = new User({});
+
+        user.validate(validationResult => {
+            const {message} = validationResult;
+
+            assert(message === 'users validation failed: password: password is required, email: email is required');
+            done();
+        });
+    });
+
+    it('it should get errors with messages about email field', done => {
+        const user = new User({
+            email: 'test',
+            password: ''
+        });
+
+        user.validate(validationResult => {
+            const {message} = validationResult;
+
+            assert(message === 'users validation failed: password: password is required, email: valid email address is requered');
+            done();
+        });
+    });
+
+    it('it should get errors with messages about password field', done => {
+        const user = new User({
+            email: 'test@test.ru',
+            password: '123'
+        });
+
+        user.validate(validationResult => {
+            const {message} = validationResult;
+
+            assert(message === 'users validation failed: password: valid password field is required');
+            done();
+        });
+    });
+
+    it('it should not get errors with messages', done => {
+        const user = new User({
+            email: 'test@test.ru',
+            password: 'jjsKKskjdkK45&'
+        });
+
+        user.validate(validationResult => {
+            assert.equal(validationResult, null);
             done();
         });
     });
