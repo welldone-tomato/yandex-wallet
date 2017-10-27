@@ -70,25 +70,26 @@ app.use(async (ctx, next) => {
 });
 
 /************************ Middlewares **********************/
-// Вставка контекста
+// Вставка контекста пользователей
 app.use(async (ctx, next) => {
-	ctx.cards = new CardsContext();
-	ctx.transactions = new TransactionsContext();
 	ctx.users = new UsersContext();
 	await next();
 });
 
-// Вставка данных пользователя
+// Вставка данных пользователя и связанных контекстов
 const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
 		if (!user)
 			ctx.throw(401, 'auth is required');
 
 		ctx.params.userId = user.id;
+		ctx.cards = new CardsContext(user.id);
+		ctx.transactions = new TransactionsContext(user.id);
+
 		await next();
 	})(ctx, next);
 
-router.use('/cards', requiredAuth, cardsRoute.routes());
 router.use('/auth', authRoute.routes());
+router.use('/cards', requiredAuth, cardsRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());

@@ -59,10 +59,7 @@ describe('Transactions routes test', () => {
                 .get('/cards/59e9ce16131a183238cc7846/transactions')
                 .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
-                    res.should.have.status(200);
-                    res.type.should.eql('application/json');
-                    res.body.should.be.a('array');
-                    res.body.length.should.be.eql(0);
+                    res.should.have.status(404);
                     done();
                 });
         });
@@ -79,7 +76,7 @@ describe('Transactions routes test', () => {
                     sum: 10
                 })
                 .end((err, res) => {
-                    res.should.have.status(400);
+                    res.should.have.status(404);
                     done();
                 });
         });

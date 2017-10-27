@@ -1,3 +1,6 @@
+const ObjectId = require('mongoose').Types.ObjectId;
+
+const logger = require('../libs/logger')('cards-context');
 const Context = require('./context');
 const Card = require('../models/card');
 
@@ -15,8 +18,80 @@ class CardsContext extends Context {
      * Creates an instance of CardsContext.
      * @memberof CardsContext
      */
-    constructor() {
+    constructor(userId) {
+        if (!userId)
+            throw new ApplicationError('user id is required', 500);
+
         super(Card);
+
+        this.userId = new ObjectId(userId);
+    }
+
+    /**
+     * Возвращает данные из БД в [] 
+     * 
+     * @returns {[{"id":String}]} 
+     * @memberof Context
+     */
+    async getAll() {
+        const {userId} = this;
+        try {
+            const data = await this.model.find({
+                userId
+            });
+            return data.map(item => item.toObject());
+        } catch (err) {
+            logger.error(`Loading data from ${this.model} failed `, err);
+            throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
+        }
+    }
+
+    /**
+     * Возвращает элемент по id
+     * 
+     * @param {String} id 
+     * @memberof Context
+     */
+    async get(id) {
+        const data = await this.getModelById(id);
+        return data ? data.toObject() : data;
+    }
+
+    /**
+     * Возвращает элемент по id
+     * 
+     * @param {String} id 
+     * @memberof Context
+     */
+    async getModelById(id) {
+        const {userId} = this;
+
+        try {
+            return this.model.findOne({
+                _id: new ObjectId(id),
+                userId
+            });
+
+        } catch (err) {
+            logger.error(`Loading data from ${this.model} failed `, err);
+            throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
+        }
+    }
+
+    /**
+     * Удаление объекта
+     * 
+     * @param {String} id 
+     * @returns {Promise}
+     * @memberof Context
+     */
+    async remove(id) {
+        const data = await this.getModelById(id);
+
+        if (!data)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
+
+        await data.remove();
     }
 
     /**
@@ -27,10 +102,12 @@ class CardsContext extends Context {
      * @memberof CardsContext
      */
     async getByCardNumber(cardNumber) {
-        const card = await this.model.findOne({
-            cardNumber
+        const {userId} = this;
+        const data = await this.model.findOne({
+            cardNumber,
+            userId
         });
-        return card.toObject();
+        return data ? data.toObject() : data;
     }
 
     /**
@@ -41,13 +118,13 @@ class CardsContext extends Context {
      * @returns {Promise}
      * @memberof CardsContext
      */
-    async affectBalance(id, transaction) {
-        const card = await this.model.findById(id);
+    async affectBalance(id, {sum}) {
+        const card = await this.getModelById(id);
 
         if (!card)
             throw new ApplicationError(`Item with id=${id} not found`, 404);
 
-        card.balance += transaction.sum;
+        card.balance += sum;
 
         await card.save();
     }

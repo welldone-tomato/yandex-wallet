@@ -10,7 +10,7 @@ describe('Card model validation tests', () => {
         card.validate(validationResult => {
             const {message} = validationResult;
 
-            assert(message === 'card validation failed: name: name is required, exp: exp date is required, balance: balance is required, cardNumber: cardNumber is required');
+            assert(message === "card validation failed: name: name is required, exp: exp date is required, balance: balance is required, cardNumber: cardNumber is required, userId: userId is required");
             done();
         });
     });
@@ -20,16 +20,18 @@ describe('Card model validation tests', () => {
             cardNumber: '15133306216010173046',
             balance: -1,
             exp: '04/17',
-            name: 'ALYSSALIVINGSTON'
+            name: 'ALYSSALIVINGSTON',
+            userId: 'jdjdkdk22'
         });
 
         card.validate(validationResult => {
-            const {balance, cardNumber, exp, name} = validationResult.errors;
+            const {balance, cardNumber, exp, name, userId} = validationResult.errors;
 
             assert(balance.message === 'balance must be greater then 0 and must be a number');
             assert(cardNumber.message === 'valid cardNumber required');
             assert(exp.message === 'non expired card required');
             assert(name.message === 'name must contains two words');
+            assert(userId.message === 'Cast to ObjectID failed for value "jdjdkdk22" at path "userId"');
 
             done();
         });
@@ -40,7 +42,8 @@ describe('Card model validation tests', () => {
             cardNumber: '5483874041820682',
             balance: '-1',
             exp: '04/ss17',
-            name: 'A A'
+            name: 'A A',
+            userId: '59f299a4d611ad01d0115b09'
         });
 
         card.validate(validationResult => {
@@ -59,11 +62,28 @@ describe('Card model validation tests', () => {
             cardNumber: '5469259469067206',
             balance: 10,
             exp: '12/18',
-            name: 'AM AM'
+            name: 'AM AM',
+            userId: '59f299a4d611ad01d0115b09'
         });
 
         card.validate(validationResult => {
             assert(validationResult.message === 'card validation failed: cardNumber: Error, expected `cardNumber` to be unique. Value: `5469259469067206`');
+
+            done();
+        });
+    });
+
+    it('it should get error about userId', done => {
+        const card = new Card({
+            cardNumber: '5483874041820682',
+            balance: 10,
+            exp: '10/20',
+            name: 'AM AM',
+            userId: '59f299a4d611ad01d0115b03'
+        });
+
+        card.validate(validationResult => {
+            assert(validationResult.message === 'card validation failed: userId: user not found');
 
             done();
         });
@@ -74,7 +94,8 @@ describe('Card model validation tests', () => {
             cardNumber: '5483874041820682',
             balance: 10,
             exp: '10/20',
-            name: 'AM AM'
+            name: 'AM AM',
+            userId: '59f299a4d611ad01d0115b09'
         });
 
         card.validate(validationResult => {

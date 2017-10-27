@@ -112,7 +112,8 @@ router.post('/', async ctx => {
 		cardNumber,
 		exp,
 		name,
-		balance: Number(balance) || 0
+		balance: Number(balance) || 0,
+		userId: ctx.params.userId
 	};
 
 	try {
@@ -158,6 +159,9 @@ router.post('/:id/transactions', async ctx => {
 	if (!type || !data || !sum)
 		ctx.throw(400, 'properties required');
 
+	const card = await ctx.cards.get(id);
+	if (!card) ctx.throw(404, 'card not found');
+
 	const transaction = {
 		cardId: id,
 		type,
@@ -184,6 +188,9 @@ router.post('/:id/pay', async ctx => {
 	if (!phone || !amount)
 		ctx.throw(400, 'properties required');
 
+	const card = await ctx.cards.get(id);
+	if (!card) ctx.throw(404, 'card not found');
+
 	const transaction = {
 		cardId: id,
 		type: 'paymentMobile',
@@ -207,6 +214,9 @@ router.post('/:id/transfer', async ctx => {
 	const {to, amount} = ctx.request.body;
 	if (!to || !amount)
 		ctx.throw(400, 'properties required');
+
+	const card = await ctx.cards.get(id);
+	if (!card) ctx.throw(404, 'card not found');
 
 	const transaction = {
 		cardId: id,

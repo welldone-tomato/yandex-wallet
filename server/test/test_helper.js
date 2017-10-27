@@ -18,8 +18,8 @@ const restoreDatabase = done => {
         const transactions = transactionsJson.map(item => new Transaction(item));
         const users = usersJson.map(item => new User(item));
 
-        Promise.all(cards.map(item => item.save()))
-            .then(results => Promise.all(users.map(item => item.save())))
+        Promise.all(users.map(item => item.save()))
+            .then(results => Promise.all(cards.map(item => item.save())))
             .then(results => Promise.all(transactions.map(item => item.save())))
             .then(results => done())
             .catch(err => done(err));

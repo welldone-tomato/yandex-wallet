@@ -2,9 +2,24 @@ const mongoose = require('mongoose');
 const bankUtils = require('../libs/utils');
 const uniqueValidator = require('mongoose-unique-validator');
 
+const User = require('./user');
+
 const Schema = mongoose.Schema;
 
 const cardSchema = new Schema({
+    userId: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: [true, 'userId is required'],
+        index: true,
+        validate: {
+            validator: async value => {
+                const card = await User.findById(value);
+                return card;
+            },
+            message: 'user not found'
+        }
+    },
     cardNumber: {
         type: String,
         required: [true, 'cardNumber is required'],

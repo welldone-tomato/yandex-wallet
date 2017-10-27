@@ -186,6 +186,8 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(10000);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
+                    res.body.should.have.property('userId').eql(userJson[0]._id.toString());
+
                     done();
                 });
         });
@@ -208,6 +210,8 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(0);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
+                    res.body.should.have.property('userId').eql(userJson[0]._id.toString());
+                    
                     done();
                 });
 

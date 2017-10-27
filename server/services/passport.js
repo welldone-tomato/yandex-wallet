@@ -19,7 +19,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
     try {
         const user = await User.findById(payload.id);
         if (user)
-            return done(null, user);
+            return done(null, user.toObject());
 
         done({
             message: 'Нет такого пользователя или пароль неверен.'
@@ -56,7 +56,7 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
                         message: 'Нет такого пользователя или пароль неверен.'
                     }, false);
 
-                done(null, user);
+                done(null, user.toObject());
             });
     } catch (err) {
         done(err, false)
