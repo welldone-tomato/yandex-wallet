@@ -2,15 +2,42 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
+const userJson = require('../data_users');
 
 const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Cards routes tests', () => {
+    let token;
+
+    before(done => {
+        chai.request(server)
+            .post('/auth/login')
+            .send({
+                email: userJson[0].email,
+                password: userJson[0].password
+            })
+            .end((err, res) => {
+                token = res.body.token;
+                done();
+            });
+    });
+
+    it('it should get 401 with cards route match', done => {
+        chai.request(server)
+            .get('/cards')
+            .set('Authorization', 'JWT ')
+            .end((err, res) => {
+                res.should.have.status(401);
+                done();
+            });
+    });
+
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
             chai.request(server)
                 .get('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
@@ -28,6 +55,7 @@ describe('Cards routes tests', () => {
         it('it should GET card from db with id', done => {
             chai.request(server)
                 .get('/cards/59e9ce16131a183238cc784e')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
@@ -44,6 +72,7 @@ describe('Cards routes tests', () => {
         it('it should GET 400 status with invalid id', done => {
             chai.request(server)
                 .get('/cards/555f5d5fd5f5df')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(400);
                     res.body.should.have.property('message').eql('id is invalid');
@@ -54,6 +83,7 @@ describe('Cards routes tests', () => {
         it('it should GET 404 status with not real id', done => {
             chai.request(server)
                 .get('/cards/59e952a6372cf01550abe904')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(404);
                     res.body.should.have.property('message').eql('card with id=59e952a6372cf01550abe904 not found');
@@ -66,6 +96,7 @@ describe('Cards routes tests', () => {
         it('it should not POST new card with empty body', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({})
                 .end((err, res) => {
                     res.should.have.status(400);
@@ -77,6 +108,7 @@ describe('Cards routes tests', () => {
         it('it should not POST new card with empty cardNumber', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: ''
                 })
@@ -90,6 +122,7 @@ describe('Cards routes tests', () => {
         it('it should not POST new card with non valid cardNumber', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: '15133306216010173046',
                     exp: '04/18',
@@ -105,6 +138,7 @@ describe('Cards routes tests', () => {
         it('it should not POST new card with non valid exp date', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: '5483874041820682',
                     exp: '01/10',
@@ -120,6 +154,7 @@ describe('Cards routes tests', () => {
         it('it should not POST new card with existing cardNumber', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: '5469259469067206',
                     exp: '04/30',
@@ -135,6 +170,7 @@ describe('Cards routes tests', () => {
         it('it should POST new card with balance', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: '5483874041820682',
                     exp: '04/30',
@@ -157,6 +193,7 @@ describe('Cards routes tests', () => {
         it('it should POST new card with zero balance', done => {
             chai.request(server)
                 .post('/cards')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     cardNumber: '5483874041820682',
                     exp: '04/30',
@@ -181,6 +218,7 @@ describe('Cards routes tests', () => {
         it('it should not DELETE card with empty id', done => {
             chai.request(server)
                 .delete('/cards/')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(405);
                     done();
@@ -190,6 +228,7 @@ describe('Cards routes tests', () => {
         it('it should not DELETE card with invalid id', done => {
             chai.request(server)
                 .delete('/cards/a')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(400);
                     done();
@@ -199,6 +238,7 @@ describe('Cards routes tests', () => {
         it('it should not DELETE card with not real id', done => {
             chai.request(server)
                 .delete('/cards/59e9ce16131a183238cc7844')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(404);
                     done();
@@ -208,6 +248,7 @@ describe('Cards routes tests', () => {
         it('it should DELETE card with real id', done => {
             chai.request(server)
                 .delete('/cards/59e9ce16131a183238cc784e')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     done();

@@ -2,15 +2,42 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
+const userJson = require('../data_users');
 
 const should = chai.should();
 chai.use(chaiHttp);
 
 describe('Transactions routes test', () => {
+    let token;
+
+    before(done => {
+        chai.request(server)
+            .post('/auth/login')
+            .send({
+                email: userJson[0].email,
+                password: userJson[0].password
+            })
+            .end((err, res) => {
+                token = res.body.token;
+                done();
+            });
+    });
+
+    it('it should get 401 with cards route match', done => {
+        chai.request(server)
+            .get('/cards')
+            .set('Authorization', 'JWT ')
+            .end((err, res) => {
+                res.should.have.status(401);
+                done();
+            });
+    });
+
     describe('/GET transactions by card id', () => {
         it('should get all transactions by card id', done => {
             chai.request(server)
                 .get('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
@@ -30,6 +57,7 @@ describe('Transactions routes test', () => {
         it('should get empty list of transactions by card id === 59e9ce16131a183238cc7846', done => {
             chai.request(server)
                 .get('/cards/59e9ce16131a183238cc7846/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(200);
                     res.type.should.eql('application/json');
@@ -44,6 +72,7 @@ describe('Transactions routes test', () => {
         it('should get 400 on post transaction on error cardId', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc7846/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'prepaidCard',
                     data: 'YANDEX CASH',
@@ -58,6 +87,7 @@ describe('Transactions routes test', () => {
         it('should get 400 on post transaction on missing params', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'prepaidCard'
                 })
@@ -70,6 +100,7 @@ describe('Transactions routes test', () => {
         it('should get 400 on post transaction on invalid params', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'prepaidCardsss',
                     data: 'YANDEX CASH',
@@ -84,6 +115,7 @@ describe('Transactions routes test', () => {
         it('should not add new transaction with very big charge', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'paymentMobile',
                     data: '79213334455',
@@ -98,6 +130,7 @@ describe('Transactions routes test', () => {
         it('should not add new transaction card2card with not real receiver', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'card2Card',
                     data: '4024007153305543',
@@ -112,6 +145,7 @@ describe('Transactions routes test', () => {
         it('should not add new transaction with invalid sum', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transactions')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     type: 'paymentMobile',
                     data: '79213334455',
@@ -127,6 +161,7 @@ describe('Transactions routes test', () => {
             const id = '59e9ce16131a183238cc784e';
             chai.request(server)
                 .post(`/cards/${id}/pay`)
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     phone: '79213334455',
                     amount: 10
@@ -139,6 +174,7 @@ describe('Transactions routes test', () => {
 
                     chai.request(server)
                         .get(`/cards/${id}/transactions`)
+                        .set('Authorization', 'JWT ' + token)
                         .end((err, res) => {
                             res.should.have.status(200);
                             res.type.should.eql('application/json');
@@ -152,6 +188,7 @@ describe('Transactions routes test', () => {
 
                             chai.request(server)
                                 .get(`/cards/${id}`)
+                                .set('Authorization', 'JWT ' + token)
                                 .end((err, res) => {
                                     res.should.have.status(200);
                                     res.type.should.eql('application/json');
@@ -167,6 +204,7 @@ describe('Transactions routes test', () => {
         it('should add new transaction with card2card operation', done => {
             chai.request(server)
                 .post('/cards/59e9ce16131a183238cc784e/transfer')
+                .set('Authorization', 'JWT ' + token)
                 .send({
                     to: '4011733472066880',
                     amount: 100
@@ -179,6 +217,7 @@ describe('Transactions routes test', () => {
 
                     chai.request(server)
                         .get('/cards/59e9ce16131a183238cc784e/transactions')
+                        .set('Authorization', 'JWT ' + token)
                         .end((err, res) => {
                             res.should.have.status(200);
                             res.type.should.eql('application/json');
@@ -192,6 +231,7 @@ describe('Transactions routes test', () => {
 
                             chai.request(server)
                                 .get('/cards/59e9ce16131a183238cc784f/transactions')
+                                .set('Authorization', 'JWT ' + token)
                                 .end((err, res) => {
                                     res.should.have.status(200);
                                     res.type.should.eql('application/json');
@@ -205,6 +245,7 @@ describe('Transactions routes test', () => {
 
                                     chai.request(server)
                                         .get('/cards/59e9ce16131a183238cc784e')
+                                        .set('Authorization', 'JWT ' + token)
                                         .end((err, res) => {
                                             res.should.have.status(200);
                                             res.type.should.eql('application/json');
@@ -213,6 +254,7 @@ describe('Transactions routes test', () => {
 
                                             chai.request(server)
                                                 .get('/cards/59e9ce16131a183238cc784f')
+                                                .set('Authorization', 'JWT ' + token)
                                                 .end((err, res) => {
                                                     res.should.have.status(200);
                                                     res.type.should.eql('application/json');
@@ -232,6 +274,7 @@ describe('Transactions routes test', () => {
         it('should 405 on delete transaction attemp', done => {
             chai.request(server)
                 .delete('/cards/59e9ce16131a183238cc784f/transactions/59e9ce16131a183238cc784f')
+                .set('Authorization', 'JWT ' + token)
                 .end((err, res) => {
                     res.should.have.status(405);
                     done();

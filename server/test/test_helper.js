@@ -9,7 +9,6 @@ const transactionsJson = require('./data_transactions');
 const usersJson = require('./data_users');
 
 mongoose.Promise = global.Promise;
-process.env.NODE_ENV = 'test';
 
 const cleanDatabase = () => mongoose.connection.db.dropDatabase();
 
