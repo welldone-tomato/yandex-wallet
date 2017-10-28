@@ -9,10 +9,23 @@ const VERIFY_URL = `${ROOT_URL}/verify`;
 const SIGNIN_URL = `${ROOT_URL}/signin`;
 const SIGNUP_URL = `${ROOT_URL}/signup`;
 
+/**
+ * Разлогинивается, если заметит изменение токена в другом окне
+ * 
+ */
+const setStorageEvents = dispatch => {
+    if (window) window.addEventListener('storage', e => {
+            if (e.newValue === null && e.key === 'token')
+                dispatch(signOutUser());
+        });
+}
+
 export const verifyToken = () => {
     return async dispatch => {
         const token = localStorage.getItem('token');
         if (token) {
+            setStorageEvents(dispatch);
+
             dispatch({
                 type: action.USER_TOKEN_VERIFY_START
             });
