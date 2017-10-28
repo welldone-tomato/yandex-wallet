@@ -1,5 +1,6 @@
 import React from 'react';
 
+import './fonts.css';
 import styled, { injectGlobal } from 'react-emotion';
 
 import CardsBar from './cards/cards_bar';

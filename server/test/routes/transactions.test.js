@@ -12,7 +12,7 @@ describe('Transactions routes test', () => {
 
     before(done => {
         chai.request(server)
-            .post('/auth/login')
+            .post('/auth/signin')
             .send({
                 email: userJson[0].email,
                 password: userJson[0].password

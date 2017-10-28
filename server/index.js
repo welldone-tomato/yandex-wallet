@@ -79,7 +79,7 @@ app.use(async (ctx, next) => {
 // Вставка данных пользователя и связанных контекстов
 const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
 		if (!user)
-			ctx.throw(401, 'auth is required');
+			ctx.throw(401, err || 'auth is required');
 
 		ctx.params.userId = user.id;
 		ctx.cards = new CardsContext(user.id);

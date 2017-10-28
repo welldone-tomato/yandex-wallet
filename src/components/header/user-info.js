@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'emotion/react';
 import { Link } from 'react-router';
+import Button from '../misc/button';
 
 const DropDown = styled.div`
 	display: none;
@@ -36,18 +37,26 @@ const Avatar = styled.img`
 	margin-right: 10px;
 `;
 
+const LinkButton = styled(Button)`
+	width: 145px;
+`;
+
 export default ({isAuth, userName, onSignOutClick}) => {
 	if (isAuth) return (
-		<User>
-			<Avatar src="/assets/avatar.png" />
-			{ userName }
-			<DropDown>
-			<a onClick={ onSignOutClick }>Выйти</a>
-			</DropDown>
-		</User>)
+			<User>
+     <Avatar src="/assets/avatar.png" />
+     { userName }
+     <DropDown>
+       <a onClick={ onSignOutClick }>Выйти</a>
+     </DropDown>
+   </User>)
 	else return (
-		<User>
-			<Link to="singin">Войти</Link>
-			<Link to="singup">Зарегистрироваться</Link>
-		</User>)
+			<User>
+     <LinkButton bgColor='#fff'>
+       <Link style={ { display: 'block' } } to="/signin">Войти</Link>
+     </LinkButton>
+     <LinkButton bgColor='#fff'>
+       <Link style={ { display: 'block' } } to="/signup">Зарегистрироваться</Link>
+     </LinkButton>
+   </User>)
 };

@@ -39,6 +39,7 @@ const Header = ({activeCard, auth, dispatch}) => {
 	return (
 		<HeaderLayout>
 			{renderBalance()}
+			{!auth.isAuth && <Balance>Электронный кошелек</Balance>}
 			<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
 		</HeaderLayout>
 	)

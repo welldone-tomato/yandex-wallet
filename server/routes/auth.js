@@ -19,12 +19,12 @@ const getTokenForUser = payload => {
 }
 
 /**
- * Main login route
+ * Main signin route
  *
  */
-router.post('/login', async (ctx, next) => await passport.authenticate('local', (err, user) => {
+router.post('/signin', async (ctx, next) => await passport.authenticate('local', (err, user) => {
         if (err || !user)
-            ctx.throw(401, `login failed`)
+            ctx.throw(401, `signin failed`)
 
         const payload = {
             id: user.id,

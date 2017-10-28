@@ -1,8 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import './fonts.css';
-
 // Redux
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -20,7 +18,7 @@ import registerServiceWorker from './registerServiceWorker';
 import App from './components/app';
 import Home from './components/home/home';
 import Err404 from './components/err404';
-import Login from './components/auth/login';
+import SignIn from './components/auth/signin';
 
 import reducers from './reducers';
 import { USER_LOGIN_SUCCESS } from './actions/types';
@@ -30,6 +28,7 @@ const middlewares = [reduxThunk, routerMiddleware(browserHistory)];
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, composeEnhancers(applyMiddleware(...middlewares)));
+const history = syncHistoryWithStore(browserHistory, store);
 
 if (localStorage.getItem('token')) {
   store.dispatch({
@@ -39,20 +38,18 @@ if (localStorage.getItem('token')) {
 }
 
 const userIsAuthenticated = connectedRouterRedirect({
-  redirectPath: '/login',
+  redirectPath: '/signin',
   authenticatedSelector: state => state.auth.isAuth,
   wrapperDisplayName: 'UserIsAuthenticated',
   redirectAction: routerActions.replace
 });
-
-const history = syncHistoryWithStore(browserHistory, store);
 
 ReactDOM.render(
   <Provider store={ store }>
     <Router history={ history }>
       <Route path="/" component={ App }>
         <IndexRoute component={ userIsAuthenticated(Home) } />
-        <Route path="login" component={ Login } />
+        <Route path="signin" component={ SignIn } />
       </Route>
       <Route path='*' exact={ true } component={ Err404 } />
     </Router>

@@ -55,7 +55,7 @@ const InputEmail = styled(Input)`
 width: 225px;
 `;
 
-class Login extends Component {
+class SignIn extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -116,4 +116,4 @@ const mapStateToProps = state =>({
     error: state.auth.error
 });
 
-export default connect(mapStateToProps)(Login)
+export default connect(mapStateToProps)(SignIn)

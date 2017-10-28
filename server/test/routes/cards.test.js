@@ -12,7 +12,7 @@ describe('Cards routes tests', () => {
 
     before(done => {
         chai.request(server)
-            .post('/auth/login')
+            .post('/auth/signin')
             .send({
                 email: userJson[0].email,
                 password: userJson[0].password

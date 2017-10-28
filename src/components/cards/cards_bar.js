@@ -112,16 +112,21 @@ class CardsBar extends Component {
 
   render = () => {
     const {isCardsEditable, isCardRemoving, removeCardId} = this.state;
-    const {isLoading, cards} = this.props;
+    const {isLoading, cards, isAuth} = this.props;
 
-    if (isCardRemoving) {
+    if (isCardRemoving)
       return (
         <Layout>
           <Logo />
           <CardDelete onCancelClick={ () => this.onCancelBarMode() } deleteCard={ id => this.onDeleteClickWrapper(id) } data={ cards.filter((item) => item.id === removeCardId)[0] } />
           <Footer>Yamoney Node School</Footer>
         </Layout>);
-    }
+
+    if (!isAuth)
+      return (
+        <Layout>
+          <Logo />
+        </Layout>);
 
     return (
       <Layout>

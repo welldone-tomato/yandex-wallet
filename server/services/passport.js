@@ -16,13 +16,15 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
     if (!payload.id)
         return done(null, false);
 
+    //TODO добавить механизим проверки срока действия токена
+
     try {
         const user = await User.findById(payload.id);
         if (user)
             return done(null, user.toObject());
 
         done({
-            message: 'Нет такого пользователя или пароль неверен.'
+            message: 'Токен неверен'
         }, false);
     } catch (err) {
         done(err, false)
@@ -53,7 +55,7 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
 
                 if (!isMatch)
                     return done({
-                        message: 'Нет такого пользователя или пароль неверен.'
+                        message: 'Нет такого пользователя или пароль неверен'
                     }, false);
 
                 done(null, user.toObject());

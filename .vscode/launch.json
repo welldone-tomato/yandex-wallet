@@ -49,9 +49,6 @@
             "program": "${workspaceRoot}/server/index.js",
             "windows": {
                 "useWSL": true
-            },
-            "env": {
-                "NODE_ENV": "test"
             }
         },
         {

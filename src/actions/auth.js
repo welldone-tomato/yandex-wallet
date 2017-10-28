@@ -1,17 +1,18 @@
 import { push } from 'react-router-redux';
 import axios from 'axios';
 
+import { fetchCards } from './cards';
 import * as action from './types';
 
 const ROOT_URL = '/api/auth';
-const LOGIN_URL = `${ROOT_URL}/login`;
+const SIGNIN_URL = `${ROOT_URL}/signin`;
 const SIGNUP_URL = `${ROOT_URL}/signup`;
 
 export const signInUser = ({email, password}) => {
     return async dispatch => {
         try {
             const response = await axios
-                .post(LOGIN_URL, {
+                .post(SIGNIN_URL, {
                     email,
                     password
                 });
@@ -23,6 +24,8 @@ export const signInUser = ({email, password}) => {
                 type: action.USER_LOGIN_SUCCESS,
                 payload: response.data.user
             });
+
+            dispatch(fetchCards());
 
             dispatch(push('/'));
         } catch (response) {
@@ -44,6 +47,6 @@ export const signOutUser = () => {
             type: action.USER_LOGOUT
         });
 
-        dispatch(push('/'));
+        dispatch(push('/signin'));
     }
 };
