@@ -13,10 +13,18 @@ const jwtOptions = {
 };
 
 const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
-    if (!payload.id)
-        return done(null, false);
+    const {id, exp} = payload;
 
-    //TODO добавить механизим проверки срока действия токена
+    if (!id || !exp)
+        return done({
+            message: 'invalid token'
+        }, false);
+
+    const date = new Date().getTime();
+    if (date >= payload.date)
+        return done({
+            message: 'token was expired'
+        }, false);
 
     try {
         const user = await User.findById(payload.id);
@@ -24,7 +32,7 @@ const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {
             return done(null, user.toObject());
 
         done({
-            message: 'Токен неверен'
+            message: 'invalid token'
         }, false);
     } catch (err) {
         done(err, false)

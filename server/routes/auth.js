@@ -10,13 +10,23 @@ const config = require('../config');
  * @returns {String}
  */
 const getTokenForUser = payload => {
-    const timestamp = new Date().getTime();
+    let exp = new Date();
+    exp = exp.setDate(exp.getDate() + 7);
 
     return jwt.encode({
         id: payload.id,
-        iat: timestamp
+        exp
     }, config.secret);
 }
+
+router.get('/verify', async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
+        if (!user)
+            ctx.throw(401, err || 'auth is required');
+
+        ctx.body = {
+            user: user.email
+        };
+    })(ctx, next));
 
 /**
  * Main signin route
