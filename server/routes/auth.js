@@ -34,7 +34,7 @@ router.get('/verify', async (ctx, next) => await passport.authenticate('jwt', as
  */
 router.post('/signin', async (ctx, next) => await passport.authenticate('local', (err, user) => {
         if (err || !user)
-            ctx.throw(401, `signin failed`)
+            ctx.throw(401, err || 'signin failed')
 
         const payload = {
             id: user.id,
@@ -63,7 +63,7 @@ router.post('/signup', async ctx => {
             password
         });
     } catch (err) {
-        ctx.throw(400, err);
+        ctx.throw(400, err || 'signup failed');
     }
 
     const addedUser = await ctx.users.add({

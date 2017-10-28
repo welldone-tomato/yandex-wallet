@@ -96,7 +96,7 @@ class SignIn extends Component {
         return (
             <LoginLayout>
                 <LoginTitle>Войти в аккаунт</LoginTitle>
-                {this.props.error && <ErrorTitle>Ошибка входа</ErrorTitle>}
+                {this.props.error && <ErrorTitle>{this.props.error}</ErrorTitle>}
                 <InputField>
 					<Label>Email</Label>
 					<InputEmail type="email" value={ this.state.email } onChange={this.handleEmailChange } placeholder="jsmith@example.org"/>

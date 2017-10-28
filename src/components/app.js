@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import './fonts.css';
 import styled, { injectGlobal } from 'react-emotion';
@@ -35,10 +36,14 @@ const App = props => {
       <CardsBar />
       <CardPane>
         <Header />
-        { props.children }
+        { !props.isAuthenticating && props.children }
       </CardPane>
     </Wallet>
     );
 };
 
-export default App;
+const mapStateToProps = state => ({
+  isAuthenticating: state.auth.isAuthenticating
+});
+
+export default connect(mapStateToProps)(App);

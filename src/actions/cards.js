@@ -1,4 +1,5 @@
 import * as action from './types';
+import { signOutUser } from './auth';
 import { fetchTransactions } from './transactions';
 
 import axios from 'axios';
@@ -31,12 +32,15 @@ export const fetchCards = () => {
             if (response.data[0].id)
                 dispatch(changeActiveCard(response.data[0].id));
 
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.CARDS_FETCH_FAILED,
-                payload: response.response.data.message ? response.response.data.message : response.response.data
+                payload: err.response.data.message ? err.response.data.message : err.response.data
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }
@@ -60,12 +64,15 @@ export const fetchCard = id => {
                 type: action.CARD_FETCH_SUCCESS,
                 payload: response.data
             });
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.CARD_FETCH_FAILED,
-                payload: response.response.data.message ? response.response.data.message : response.response.data
+                payload: err.response.data.message ? err.response.data.message : err.response.data
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }
@@ -100,12 +107,15 @@ export const deleteCard = id => {
                     type: action.CARD_DELETE_FAILED,
                     payload: 'Что то пошло не так...'
                 });
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.CARD_DELETE_FAILED,
-                payload: response.response.data.message ? response.response.data.message : response.response.data
+                payload: err.response.data.message ? err.response.data.message : err.response.data
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }

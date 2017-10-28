@@ -5,8 +5,45 @@ import { fetchCards } from './cards';
 import * as action from './types';
 
 const ROOT_URL = '/api/auth';
+const VERIFY_URL = `${ROOT_URL}/verify`;
 const SIGNIN_URL = `${ROOT_URL}/signin`;
 const SIGNUP_URL = `${ROOT_URL}/signup`;
+
+export const verifyToken = () => {
+    return async dispatch => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            dispatch({
+                type: action.USER_TOKEN_VERIFY_START
+            });
+
+            try {
+                const response = await axios
+                    .get(VERIFY_URL, {
+                        headers: {
+                            authorization: 'JWT ' + token
+                        }
+                    });
+
+                dispatch({
+                    type: action.USER_LOGIN_SUCCESS,
+                    payload: response.data.user
+                });
+
+                dispatch(fetchCards());
+
+                dispatch(push('/'));
+            } catch (err) {
+                let message = 'Сеанс закончился';
+                if (err.response.status === 401)
+                    if (err.response.data.message === 'invalid token')
+                        message = 'Ошибка авторизации';
+
+                dispatch(signOutUser(message));
+            }
+        }
+    }
+}
 
 export const signInUser = ({email, password}) => {
     return async dispatch => {
@@ -18,7 +55,6 @@ export const signInUser = ({email, password}) => {
                 });
 
             localStorage.setItem('token', response.data.token);
-            localStorage.setItem('userName', response.data.user);
 
             dispatch({
                 type: action.USER_LOGIN_SUCCESS,
@@ -38,13 +74,13 @@ export const signInUser = ({email, password}) => {
     }
 };
 
-export const signOutUser = () => {
+export const signOutUser = err => {
     return dispatch => {
         localStorage.removeItem('token');
-        localStorage.removeItem('userName');
 
         dispatch({
-            type: action.USER_LOGOUT
+            type: action.USER_LOGOUT,
+            payload: err
         });
 
         dispatch(push('/signin'));

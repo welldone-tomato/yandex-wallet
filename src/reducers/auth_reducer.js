@@ -1,6 +1,7 @@
 import * as actions from '../actions/types';
 
 export const authInitialState = {
+    isAuthenticating: false,
     isAuth: false,
     userName: null,
     error: null
@@ -8,21 +9,36 @@ export const authInitialState = {
 
 const authReducer = (state = authInitialState, {type, payload}) => {
     switch (type) {
+        case actions.USER_TOKEN_VERIFY_START:
+            return {
+                ...state,
+                isAuthenticating: true
+            };
+
         case actions.USER_LOGIN_SUCCESS:
             return {
                 ...state,
                 isAuth: true,
                 error: null,
-                userName: payload
+                userName: payload,
+                isAuthenticating: false
             };
         case actions.USER_LOGIN_FAILURE:
             return {
                 ...state,
                 isAuth: false,
-                error: payload
+                error: payload,
+                userName: null,
+                isAuthenticating: false
             };
         case actions.USER_LOGOUT:
-            return authInitialState
+            return {
+                ...state,
+                isAuth: false,
+                error: payload || null,
+                userName: null,
+                isAuthenticating: false
+            };
 
         default:
             return state;

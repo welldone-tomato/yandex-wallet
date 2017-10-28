@@ -1,4 +1,5 @@
 import * as action from './types';
+import { signOutUser } from './auth';
 import { fetchCard } from './cards';
 import { fetchTransactions } from './transactions';
 
@@ -37,15 +38,18 @@ export const payMobile = (transaction, id) => {
                 dispatch(fetchCard(id));
                 dispatch(fetchTransactions(id));
             }
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.MOBILE_PAY_FAILED,
                 payload: {
-                    error: response.response.data.message ? response.response.data.message : response.response.data,
+                    error: err.response.data.message ? err.response.data.message : err.response.data,
                     transaction
                 }
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }
@@ -87,15 +91,18 @@ export const payPrepaid = (transaction, id, currentId) => {
 
                 dispatch(fetchTransactions(currentId));
             }
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.PREPAID_PAY_FAILED,
                 payload: {
-                    error: response.response.data.message ? response.response.data.message : response.response.data,
+                    error: err.response.data.message ? err.response.data.message : err.response.data,
                     transaction
                 }
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }
@@ -137,15 +144,18 @@ export const payWithdraw = (transaction, id, toId) => {
 
                 dispatch(fetchTransactions(id));
             }
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.WITHDRAW_PAY_FAILED,
                 payload: {
-                    error: response.response.data.message ? response.response.data.message : response.response.data,
+                    error: err.response.data.message ? err.response.data.message : err.response.data,
                     transaction
                 }
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }

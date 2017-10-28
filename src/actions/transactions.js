@@ -1,4 +1,5 @@
 import * as action from './types';
+import { signOutUser } from './auth';
 
 import axios from 'axios';
 
@@ -27,12 +28,15 @@ export const fetchTransactions = id => {
                 type: action.TRANS_FETCH_SUCCESS,
                 payload: response.data
             });
-        } catch (response) {
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
             dispatch({
                 type: action.TRANS_FETCH_FAILED,
-                payload: response.response.data.message ? response.response.data.message : response.response.data
+                payload: err.response.data.message ? err.response.data.message : err.response.data
             });
-            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
 }

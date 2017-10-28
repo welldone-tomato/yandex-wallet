@@ -21,7 +21,7 @@ import Err404 from './components/err404';
 import SignIn from './components/auth/signin';
 
 import reducers from './reducers';
-import { USER_LOGIN_SUCCESS } from './actions/types';
+import { verifyToken } from './actions/auth';
 
 //
 const middlewares = [reduxThunk, routerMiddleware(browserHistory)];
@@ -30,12 +30,8 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, composeEnhancers(applyMiddleware(...middlewares)));
 const history = syncHistoryWithStore(browserHistory, store);
 
-if (localStorage.getItem('token')) {
-  store.dispatch({
-    type: USER_LOGIN_SUCCESS,
-    payload: localStorage.getItem('userName')
-  });
-}
+////////
+store.dispatch(verifyToken());
 
 const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/signin',

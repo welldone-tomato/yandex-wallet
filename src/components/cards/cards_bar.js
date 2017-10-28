@@ -3,13 +3,14 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
-import { fetchCards, changeActiveCard, deleteCard } from '../../actions/cards';
+import { changeActiveCard, deleteCard } from '../../actions/cards';
 import { getPreparedCards } from '../../selectors/cards';
 
 import Card from './card';
 import CardDelete from './card_delete';
 
 const Layout = styled.div`
+width: 310px;
 display: flex;
 flex-direction: column;
 position: relative;
@@ -93,12 +94,12 @@ class CardsBar extends Component {
     this.props.onDeleteClick(id);
   }
 
-  componentDidMount = () => {
-    if (this.props.isAuth)
-      this
-        .props
-        .onStart();
-  }
+  // componentDidMount = () => {
+  //   if (this.props.isAuth)
+  //     this
+  //       .props
+  //       .onStart();
+  // }
 
   renderCards = () => {
     const {isLoading, cards, activeCardId, onClick} = this.props;
@@ -147,7 +148,7 @@ CardsBar.propTypes = {
   activeCardId: PropTypes.string,
   error: PropTypes.object,
   onClick: PropTypes.func.isRequired,
-  onStart: PropTypes.func.isRequired,
+  // onStart: PropTypes.func.isRequired,
   onDeleteClick: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired
 };
@@ -162,7 +163,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onClick: id => dispatch(changeActiveCard(id)),
-  onStart: () => dispatch(fetchCards()),
+  // onStart: () => dispatch(fetchCards()),
   onDeleteClick: id => dispatch(deleteCard(id))
 });
 
