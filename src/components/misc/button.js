@@ -20,10 +20,10 @@ const StyledButton = styled.button`
 	}
 `;
 
-const Button = ({bgColor, textColor, children, className}) => (
-	<StyledButton bgColor={bgColor} textColor={textColor} className={className}>
-		{children}
-	</StyledButton>
+const Button = ({bgColor, textColor, children, className, onClick}) => (
+	<StyledButton bgColor={ bgColor } textColor={ textColor } className={ className } onClick={ onClick }>
+   { children }
+ </StyledButton>
 );
 
 Button.propTypes = {

@@ -93,9 +93,12 @@ class CardsBar extends Component {
     this.props.onDeleteClick(id);
   }
 
-  componentDidMount = () => this
-    .props
-    .onStart();
+  componentDidMount = () => {
+    if (this.props.isAuth)
+      this
+        .props
+        .onStart();
+  }
 
   renderCards = () => {
     const {isLoading, cards, activeCardId, onClick} = this.props;
@@ -148,7 +151,8 @@ const mapStateToProps = state => ({
   cards: getPreparedCards(state),
   error: state.cards.error,
   activeCardId: state.cards.activeCardId,
-  isLoading: state.cards.isLoading
+  isLoading: state.cards.isLoading,
+  isAuth: state.auth.isAuth
 });
 
 const mapDispatchToProps = dispatch => ({
