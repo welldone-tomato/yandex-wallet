@@ -19,14 +19,15 @@ const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
 
-mongoose.Promise = global.Promise;
-const app = new Koa();
-
-/*** Define CONST */
+// env config
+const MONGO = require('../config-env');
 const PORT = process.env.NODE_PORT || 4000;
 const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
-const MONGO = process.env.NODE_MONGO || 'mongodb://docker/test_yandex_wallet';
+// const MONGO = process.env.NODE_MONGO || 'mongodb://locahost/wallet';
 const HTTPS = process.env.NODE_HTTPS || false;
+
+mongoose.Promise = global.Promise;
+const app = new Koa();
 
 app.use(cors());
 app.use(koaBody);
