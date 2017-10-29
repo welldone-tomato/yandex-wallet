@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
-import { signInUser } from '../../actions/auth';
+import { signUpUser } from '../../actions/auth';
 import styled from 'emotion/react';
 import Island from '../misc/island';
 import Title from '../misc/title';
@@ -14,7 +14,7 @@ flex-direction: column;
 align-items: center;
 box-sizing: border-box;
 width: 440px;
-background: #2196F3;
+background: #3f51b5;
 `;
 
 const LoginTitle = styled(Title)`
@@ -55,17 +55,20 @@ const InputEmail = styled(Input)`
 width: 225px;
 `;
 
-class SignIn extends Component {
+class SignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {
             email: 'admin@admin.net',
-            password: 'adminAmdin2017&'
+            password: 'adminAmdin2017&',
+            passwordCheck: 'adminAmdin2017&',
+            error: null
         };
 
         this.handleClick = this.handleClick.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);        
+        this.handlePasswordCheckChange = this.handlePasswordCheckChange.bind(this); 
     }
 
     handleEmailChange = event => {
@@ -80,23 +83,35 @@ class SignIn extends Component {
         });
     }
 
+    handlePasswordCheckChange = event => {
+        this.setState({
+            passwordCheck: event.target.value
+        });
+    }
+
     handleClick = () => {
-        const {email, password} = this.state;
+        const {email, password, passwordCheck} = this.state;
+        
+        if (password !== passwordCheck) return this.setState({error:'Пароли не совпадают'});
+
         if (email && password) {
             this
                 .props
-                .dispatch(signInUser({
+                .dispatch(signUpUser({
                     email,
                     password
                 }));
         }
+        else this.setState({error:'Не все поля заполнены'});
     }
 
     render() {
+        const error = this.props.error? this.props.error : this.state.error? this.state.error : null;
+
         return (
             <LoginLayout>
-                <LoginTitle>Войти в аккаунт</LoginTitle>
-                {this.props.error && <ErrorTitle>{this.props.error}</ErrorTitle>}
+                <LoginTitle>Регистрация в аккаунт</LoginTitle>
+                { error && <ErrorTitle>{error}</ErrorTitle>}
                 <InputField>
 					<Label>Email</Label>
 					<InputEmail type="email" value={ this.state.email } onChange={this.handleEmailChange } placeholder="jsmith@example.org"/>
@@ -104,6 +119,10 @@ class SignIn extends Component {
                 <InputField>
 					<Label>Пароль</Label>
 					<InputEmail type="password" value={ this.state.password } onChange={this.handlePasswordChange } placeholder="●●●●●●●"/>
+				</InputField>
+                <InputField>
+					<Label>Пароль еще раз</Label>
+					<InputEmail type="password" value={ this.state.passwordCheck } onChange={this.handlePasswordCheckChange } placeholder="●●●●●●●"/>
 				</InputField>
                 <Underline />
 				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Войти</LoginButton>
@@ -116,4 +135,4 @@ const mapStateToProps = state =>({
     error: state.auth.error
 });
 
-export default connect(mapStateToProps)(SignIn)
+export default connect(mapStateToProps)(SignUp)

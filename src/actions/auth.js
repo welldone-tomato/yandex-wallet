@@ -87,6 +87,35 @@ export const signInUser = ({email, password}) => {
     }
 };
 
+export const signUpUser = ({email, password}) => {
+    return async dispatch => {
+        try {
+            const response = await axios
+                .post(SIGNUP_URL, {
+                    email,
+                    password
+                });
+
+            localStorage.setItem('token', response.data.token);
+
+            dispatch({
+                type: action.USER_LOGIN_SUCCESS,
+                payload: response.data.user
+            });
+
+            dispatch(fetchCards());
+
+            dispatch(push('/'));
+        } catch (response) {
+            dispatch({
+                type: action.USER_LOGIN_FAILURE,
+                payload: response.response.data.message ? response.response.data.message : response.response.data
+            });
+            console.log(response.response.data.message ? response.response.data.message : response.response.data);
+        }
+    }
+};
+
 export const signOutUser = err => {
     return dispatch => {
         localStorage.removeItem('token');

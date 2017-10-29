@@ -19,6 +19,7 @@ import App from './components/app';
 import Home from './components/home/home';
 import Err404 from './components/err404';
 import SignIn from './components/auth/signin';
+import SignUp from './components/auth/signup';
 
 import reducers from './reducers';
 import { verifyToken } from './actions/auth';
@@ -46,6 +47,7 @@ ReactDOM.render(
       <Route path="/" component={ App }>
         <IndexRoute component={ userIsAuthenticated(Home) } />
         <Route path="signin" component={ SignIn } />
+        <Route path="signup" component={ SignUp } />
       </Route>
       <Route path='*' exact={ true } component={ Err404 } />
     </Router>

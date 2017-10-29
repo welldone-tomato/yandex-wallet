@@ -29,8 +29,9 @@ export const fetchCards = () => {
                 payload: response.data
             });
 
-            if (response.data[0].id)
-                dispatch(changeActiveCard(response.data[0].id));
+            if (response.data.length > 0)
+                if (response.data[0].id)
+                    dispatch(changeActiveCard(response.data[0].id));
 
         } catch (err) {
             if (err.response.status === 401)
