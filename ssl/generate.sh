@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KEYSTORE_DIR=crt
+KEYSTORE_DIR=ssl/crt
 
 if [[ -f $KEYSTORE_DIR/key.pem || -f $KEYSTORE_DIR/cert.pem ]]; then
        printf "Keys already exists. Exiting."
