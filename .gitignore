@@ -8,7 +8,7 @@
 .nyc_output
 
 #custom config of environment
-config-env.js
+# config-env.js
 
 # production
 /build

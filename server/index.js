@@ -20,10 +20,9 @@ const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
 
 // env config
-const MONGO = require('../config-env');
+const {MONGO} = require('../config-env');
 const PORT = process.env.NODE_PORT || 4000;
 const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
-// const MONGO = process.env.NODE_MONGO || 'mongodb://locahost/wallet';
 const HTTPS = process.env.NODE_HTTPS || false;
 
 mongoose.Promise = global.Promise;
