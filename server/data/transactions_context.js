@@ -57,6 +57,24 @@ class TransactionsContext extends Context {
         });
     }
 
+    /**
+     * Устанавливает признак транзакции как плохой с описанием того, что случилось
+     * 
+     * @param {String} id 
+     * @param {String} err 
+     * @memberof TransactionsContext
+     */
+    async setInvalid(id, err) {
+        const transaction = await this.model.findById(id);
+        if (transaction) {
+            transaction.invalidInfo = {
+                isInvalid: true,
+                error: err
+            };
+
+            await transaction.save();
+        }
+    }
 
     /**
      * Возращает strean массив транзакций по id карты пользователя

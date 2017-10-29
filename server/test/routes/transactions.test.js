@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 
 const server = require('../../index');
 const userJson = require('../data_users');
+const Card = require('../../models/card');
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -196,6 +197,40 @@ describe('Transactions routes test', () => {
                                 });
                         });
                 });
+        });
+
+        it('should get 500 error with invalid cardNumber in current transaction', done => {
+            const _id = '59e9ce16131a183238cc784e';
+
+            Card.update({
+                _id
+            }, {
+                cardNumber: '5469259469067205'
+            }, (err, row) => {
+                if (err) done(err);
+
+                chai.request(server)
+                    .post(`/cards/${_id}/pay`)
+                    .set('Authorization', 'JWT ' + token)
+                    .send({
+                        phone: '79213334455',
+                        amount: 10
+                    })
+                    .end((err, res) => {
+                        res.should.have.status(500);
+                        chai.request(server)
+                            .get(`/cards/${_id}`)
+                            .set('Authorization', 'JWT ' + token)
+                            .end((err, res) => {
+                                res.should.have.status(200);
+                                res.type.should.eql('application/json');
+                                res.body.should.be.a('object');
+                                res.body.should.have.property('balance').eql(15000);
+
+                                done();
+                            });
+                    });
+            });
         });
 
         it('should add new transaction with card2card operation', done => {

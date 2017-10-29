@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'emotion/react';
 import moment from 'moment';
+import ReactTooltip from 'react-tooltip';
 
 import Island from '../misc/island';
 
@@ -39,6 +40,8 @@ const HistoryItem = styled.div`
 	&:nth-child(odd) {
 		background-color: rgba(255, 255, 255, 0.72);
 	}
+
+	color: ${({isInvalid}) => isInvalid ? '#F44336' : '#000'};
 `;
 
 const HistoryItemIcon = styled.div`
@@ -99,7 +102,8 @@ const History = ({transactions, activeCard, isLoading}) => {
 	const renderCardsDay = (arr) => 
 		arr.map(item => {
 			return (
-				<HistoryItem key={ item.id }>
+				<HistoryItem key={ item.id } isInvalid={item.invalidInfo && item.invalidInfo.isInvalid} data-tip={item.invalidInfo && item.invalidInfo.error}>
+					{item.invalidInfo && <ReactTooltip />}
 					<HistoryItemIcon bankSmLogoUrl={ activeCard.theme.bankSmLogoUrl } />
 						<HistoryItemTitle>
 							{item.title}

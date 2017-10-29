@@ -60,7 +60,11 @@ const transactionSchema = new Schema({
             },
             message: 'invalid transaction sum'
         }
-    }
+    },
+    invalidInfo: {
+        isInvalid: Boolean,
+        error: String
+    },
 },
     {
         toObject: {

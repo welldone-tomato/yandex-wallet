@@ -6,7 +6,11 @@ module.exports = [
         type: "paymentMobile",
         data: "89214445558",
         time: 1506625528,
-        sum: -1000
+        sum: -1000,
+        invalidInfo: {
+            isInvalid: true,
+            error: "ValidationError: cardNumber: valid cardNumber required"
+        }
     },
     {
         cardId: new ObjectId("59e9ce16131a183238cc784e"),

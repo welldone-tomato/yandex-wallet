@@ -33,7 +33,7 @@ const separateByDates = data => {
     });
 
     return sortedData.reduce((result, item) => {
-        const {id, time, data, sum, type} = item;
+        const {id, time, data, sum, type, invalidInfo} = item;
 
         const key = moment.unix(time).format('L');
 
@@ -55,7 +55,8 @@ const separateByDates = data => {
                 type,
                 data
             }),
-            sum
+            sum,
+            invalidInfo
         });
 
         return result;

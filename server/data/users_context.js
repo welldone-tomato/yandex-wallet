@@ -4,12 +4,12 @@ const Context = require('./context');
 const User = require('../models/user');
 
 /**
- * Контекст работы с транзакциями пользователя
+ * Контекст работы с пользователями
  * 
  * @class CardsContext
  * @extends {Context}
  */
-class TransactionsContext extends Context {
+class UsersContext extends Context {
     constructor() {
         super(User);
     }
@@ -31,4 +31,4 @@ class TransactionsContext extends Context {
     }
 }
 
-module.exports = TransactionsContext;
+module.exports = UsersContext;
