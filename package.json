@@ -3,29 +3,67 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^2.13.6",
+    "axios": "^0.16.2",
+    "bcrypt-nodejs": "0.0.3",
+    "card-info": "git+https://github.com/iniel/card-info.git",
+    "jwt-simple": "^0.5.1",
     "koa": "^2.3.0",
-    "koa-body": "^2.3.0",
-    "koa-compose": "^4.0.0",
+    "koa-body": "^2.5.0",
+    "koa-passport": "^4.0.1",
     "koa-router": "^7.2.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
+    "koa2-cors": "^2.0.3",
+    "log4js": "^2.3.5",
+    "moment": "^2.19.1",
+    "mongoose": "^4.12.3",
+    "mongoose-unique-validator": "^1.0.6",
+    "passport-jwt": "^3.0.0",
+    "passport-local": "^1.0.0",
+    "prop-types": "^15.6.0",
+    "react": "^15.6.2",
+    "react-dom": "^15.6.2",
+    "react-emotion": "^7.3.2",
     "react-redux": "^5.0.6",
-    "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.13",
-    "redux": "^3.7.2"
+    "react-router": "^3.2.0",
+    "react-router-redux": "^4.0.8",
+    "redux": "^3.7.2",
+    "redux-auth-wrapper": "^2.0.2",
+    "redux-thunk": "^2.2.0",
+    "reselect": "^3.0.1"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "start:server": "node ./server/index.js",
-    "test:server": "mocha ./server/test --timeout 10000",
-    "cover:server": "nyc mocha ./server/test --timeout 10000"
+    "ssl:generate": "ssl/generate.sh",
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "start:server": "cross-env NODE_HTTPS=1 node ./server/index.js",
+    "test:server": "cross-env NODE_PORT=4080 NODE_ENV=test mocha ./server/test --recursive --timeout 10000",
+    "cover:server": "cross-env NODE_PORT=4080 NODE_ENV=test nyc mocha ./server/test --recursive --timeout 10000"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.9.0",
+    "babel-plugin-emotion": "^7.3.2",
+    "babel-preset-react-app": "^3.0.3",
     "chai": "^4.1.2",
     "chai-http": "^3.0.0",
+    "cross-env": "^5.0.5",
+    "enzyme": "^3.1.0",
+    "enzyme-adapter-react-15": "^1.0.1",
     "mocha": "^3.5.3",
-    "nyc": "^11.2.1"
+    "nyc": "^11.2.1",
+    "react-app-rewire-emotion": "^2.0.0",
+    "react-app-rewired": "^1.3.2",
+    "react-scripts": "^1.0.14",
+    "react-test-renderer": "^15.6.2",
+    "redux-mock-store": "^1.3.0"
+  },
+  "proxy": {
+    "/api": {
+      "target": "http://localhost:4000",
+      "ssl": false,
+      "pathRewrite": {
+        "^/api": "/"
+      }
+    }
   }
 }

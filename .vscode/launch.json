@@ -2,6 +2,22 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Chrome",
+            "type": "chrome",
+            "request": "launch",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceRoot}/src",
+            "userDataDir": "${workspaceRoot}/.vscode/chrome",
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*"
+            },
+            "windows": {
+                "runtimeArgs": [
+                    "--remote-debugging-port=9222"
+                ]
+            }
+        },
+        {
             "type": "node",
             "request": "launch",
             "name": "Mocha Server Tests",
@@ -12,18 +28,28 @@
                 "--timeout",
                 "999999",
                 "--colors",
-                "${workspaceRoot}/server/test"
+                "${workspaceRoot}/server/test",
+                "--recursive"
             ],
             "internalConsoleOptions": "openOnSessionStart",
             "skipFiles": [
                 "<node_internals>/**"
-            ]
+            ],
+            "windows": {
+                "useWSL": true
+            },
+            "env": {
+                "NODE_ENV": "test"
+            }
         },
         {
             "type": "node",
             "request": "launch",
             "name": "Launch Server",
-            "program": "${workspaceRoot}/server/index.js"
+            "program": "${workspaceRoot}/server/index.js",
+            "windows": {
+                "useWSL": true
+            }
         },
         {
             "type": "node",
@@ -33,7 +59,10 @@
             "program": "${workspaceRoot}/server/index.js",
             "restart": true,
             "console": "integratedTerminal",
-            "internalConsoleOptions": "neverOpen"
+            "internalConsoleOptions": "neverOpen",
+            "windows": {
+                "useWSL": true
+            }
         }
     ]
 }

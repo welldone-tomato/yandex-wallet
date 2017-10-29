@@ -1,6 +1,10 @@
-const Context = require('./context');
+const ObjectId = require('mongoose').Types.ObjectId;
 
-const FILE_NAME = '/../db/cards.json';
+const logger = require('../libs/logger')('cards-context');
+const Context = require('./context');
+const Card = require('../models/card');
+
+const ApplicationError = require('../libs/application_error');
 
 /**
  * Контекст работы с картами пользователя
@@ -14,48 +18,115 @@ class CardsContext extends Context {
      * Creates an instance of CardsContext.
      * @memberof CardsContext
      */
-    constructor() {
-        super(FILE_NAME);
+    constructor(userId) {
+        if (!userId)
+            throw new ApplicationError('user id is required', 500);
+
+        super(Card);
+
+        this.userId = new ObjectId(userId);
     }
 
     /**
-     * Возвращает массив только номеров карт, которые есть в файле
+     * Возвращает данные из БД в [] 
      * 
-     * @returns {Promise<Array>}
-     * @memberof CardsContext
+     * @returns {[{"id":String}]} 
+     * @memberof Context
      */
-    async getCardsNumbers() {
-        const cards = await this.getAll();
-        return cards.map(item => item['cardNumber']);
+    async getAll() {
+        const {userId} = this;
+        try {
+            const data = await this.model.find({
+                userId
+            });
+            return data.map(item => item.toObject());
+        } catch (err) {
+            logger.error(`Loading data from ${this.model} failed `, err);
+            throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
+        }
     }
 
     /**
-     * Проверяет есть ли уже карта в базе
+     * Возвращает элемент по id
      * 
-     * @param {any} cardNumber 
-     * @returns {Boolean}
+     * @param {String} id 
+     * @memberof Context
+     */
+    async get(id) {
+        const data = await this.getModelById(id);
+        return data ? data.toObject() : data;
+    }
+
+    /**
+     * Возвращает элемент по id
+     * 
+     * @param {String} id 
+     * @memberof Context
+     */
+    async getModelById(id) {
+        const {userId} = this;
+
+        try {
+            return this.model.findOne({
+                _id: new ObjectId(id),
+                userId
+            });
+
+        } catch (err) {
+            logger.error(`Loading data from ${this.model} failed `, err);
+            throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
+        }
+    }
+
+    /**
+     * Удаление объекта
+     * 
+     * @param {String} id 
+     * @returns {Promise}
+     * @memberof Context
+     */
+    async remove(id) {
+        const data = await this.getModelById(id);
+
+        if (!data)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
+
+        await data.remove();
+    }
+
+    /**
+     * Возвращает карту по номеру карты
+     * 
+     * @param {String} cardNumber 
+     * @returns {Promise<Object>}
      * @memberof CardsContext
      */
-    async checkCardExist(cardNumber) {
-        const cardsNumbers = await this.getCardsNumbers();
-        return cardsNumbers.includes(cardNumber);
+    async getByCardNumber(cardNumber) {
+        const {userId} = this;
+        const data = await this.model.findOne({
+            cardNumber,
+            userId
+        });
+        return data ? data.toObject() : data;
     }
 
     /**
      * Изменяет баланс карты
      * 
-     * @param {Number} id 
+     * @param {String} id 
      * @param {Object} transaction 
-     * @returns {Boolean}
+     * @returns {Promise}
      * @memberof CardsContext
      */
-    async affectBalance(id, transaction) {
-        const card = await this.get(id);
-        card.balance += Number(transaction.sum);
+    async affectBalance(id, {sum}) {
+        const card = await this.getModelById(id);
 
-        const result = await this.edit(id, card);
+        if (!card)
+            throw new ApplicationError(`Item with id=${id} not found`, 404);
 
-        return result;
+        card.balance += sum;
+
+        await card.save();
     }
 }
 

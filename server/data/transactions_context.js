@@ -1,6 +1,10 @@
-const Context = require('./context');
+const ObjectId = require('mongoose').Types.ObjectId;
 
-const FILE_NAME = '/../db/transactions.json';
+const Context = require('./context');
+const Transaction = require('../models/transaction');
+const Card = require('../models/card');
+
+const ApplicationError = require('../libs/application_error');
 
 /**
  * Контекст работы с транзакциями пользователя
@@ -9,20 +13,60 @@ const FILE_NAME = '/../db/transactions.json';
  * @extends {Context}
  */
 class TransactionsContext extends Context {
-    constructor() {
-        super(FILE_NAME);
+    constructor(userId) {
+        if (!userId)
+            throw new ApplicationError('user id is required', 500);
+
+        super(Transaction);
+
+        this.userId = new ObjectId(userId);
     }
 
     /**
      * Возращает массив транзакций по id карты пользователя
      * 
-     * @param {any} id 
-     * @returns 
+     * @param {String} id 
+     * @returns []
      * @memberof TransactionsContext
      */
     async getByCardId(id) {
-        const data = await this.getAll();
-        return data.filter(item => item.cardId === id);
+        const data = await this.getModelByCardId(id);
+        return data.map(item => item.toObject());
+    }
+
+    /**
+     * Возращает массив транзакций по id карты пользователя
+     * 
+     * @param {String} id 
+     * @returns []
+     * @memberof TransactionsContext
+     */
+    async getModelByCardId(id) {
+        const {userId} = this;
+
+        const card = await Card.findOne({
+            _id: new ObjectId(id),
+            userId
+        });
+
+        if (!card)
+            throw new ApplicationError(`Card with id=${id} not found`, 404);
+
+        return this.model.find({
+            cardId: new ObjectId(id)
+        });
+    }
+
+
+    /**
+     * Возращает strean массив транзакций по id карты пользователя
+     * 
+     * @param {String} id 
+     * @returns {Stream}
+     * @memberof TransactionsContext
+     */
+    getByCardIdStream(id) {
+        return this.getModelByCardId(id).cursor();
     }
 }
 

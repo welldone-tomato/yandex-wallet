@@ -1,9 +1,4 @@
-const fs = require('fs');
-const util = require('util');
-
-const readFile = util.promisify(fs.readFile);
-const writeFile = util.promisify(fs.writeFile);
-
+const logger = require('../libs/logger')('context');
 const ApplicationError = require('../libs/application_error');
 
 /**
@@ -15,116 +10,56 @@ class Context {
 
     /**
      * Creates an instance of Context.
-     * @param {String} fileName 
+     * @param {Model} model 
      * @memberof Context
      */
-    constructor(fileName) {
-        this.fileName = fileName;
+    constructor(model) {
+        this.model = model;
     }
 
     /**
-     * Записывает данные объекта в файл
+     * Возвращает саму модель для доступа к low level функциям.
      * 
-     * @param {any} data 
+     * @returns {Model}
      * @memberof Context
      */
-    async save(data) {
-        await writeFile(__dirname + this.fileName, JSON.stringify(data));
+    self() {
+        return this.model;
     }
 
     /**
-     * Читает данные из файла в объект 
+     * Валидация модели и возврат статусов
      * 
-     * @returns {[{"id":Number}]} 
+     * @param {Object} data 
      * @memberof Context
      */
-    async getAll() {
-        const data = await readFile(__dirname + this.fileName, 'utf8');
-        return JSON.parse(data);
+    validate(data) {
+        const model = new this.model(data);
+
+        return new Promise((resolve, reject) => {
+            model.validate(validationResult => {
+                if (!validationResult) resolve()
+                else reject(validationResult.message);
+            });
+        });
     }
 
     /**
-     * Возвращает элемент по id
+     * Добавление объекта в БД
      * 
-     * @param {String} id 
-     * @memberof Context
-     */
-    async get(id) {
-        const data = await this.getAll();
-        return data.find(x => x.id === id);
-    }
-
-    /**
-     * Получает следующий id из файла
-     * 
-     * @param {[]} data 
-     * @returns {Integer}
-     * @memberof Context
-     */
-    async getNextId(data) {
-        data = data || await this.getAll();
-        const ids = data.map(obj => obj.id);
-        return Math.max(...ids) + 1;
-    }
-
-    /**
-     * Добавление объекта в файл
-     * 
-     * @param {{Object}} item 
+     * @param {{Model}} item 
      * @returns {{Object}}
      * @memberof Context
      */
-    async add(item) {
-        const data = await this.getAll();
-        item.id = await this.getNextId(data);
-        data.push(item);
-
-        await this.save(data);
-
-        return item;
-    }
-
-    /**
-     * Удаление объекта из файла
-     * 
-     * @param {String} id 
-     * @returns {Boolean}
-     * @memberof Context
-     */
-    async remove(id) {
-        const item = await this.get(id);
-        if (!item)
-            throw new ApplicationError(`Item with id=${id} not found`, 404);
-
-        let data = await this.getAll();
-        data = data.filter(item => item.id !== id);
-
-        await this.save(data);
-
-        return true;
-    }
-
-    /**
-     * Обновляет элемент в файле
-     * 
-     * @param {Integer} id 
-     * @param {Object} item 
-     * @return {Boolean}
-     * @memberof Context
-     */
-    async edit(id, item) {
-        const items = await this.getAll();
-
-        const itemIndex = items.findIndex(item => item.id === id);
-
-        if (itemIndex === -1)
-            throw new ApplicationError(`Item with id=${id} not found`, 404);
-
-        items[itemIndex] = item;
-
-        await this.save(items);
-
-        return true;
+    async add(data) {
+        try {
+            const item = new this.model(data);
+            await item.save();
+            return item.toObject();
+        } catch (err) {
+            logger.error(`Storing data to ${this.model} failed `, err);
+            throw new ApplicationError(`Storing data to ${this.model} failed, ${err}`, 500, false);
+        }
     }
 }
 
