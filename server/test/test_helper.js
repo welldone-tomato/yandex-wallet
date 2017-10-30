@@ -8,6 +8,8 @@ const cardsJson = require('./data_cards');
 const transactionsJson = require('./data_transactions');
 const usersJson = require('./data_users');
 
+const {MONGO} = require('../../config-env');
+
 mongoose.Promise = global.Promise;
 
 const cleanDatabase = () => mongoose.connection.db.dropDatabase();
@@ -27,7 +29,7 @@ const restoreDatabase = done => {
 };
 
 before(done => {
-    mongoose.connect('mongodb://docker/test_yandex_wallet', {
+    mongoose.connect(MONGO, {
         useMongoClient: true,
         config: {
             autoIndex: false
