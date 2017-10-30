@@ -7,6 +7,53 @@ import axios from 'axios';
 const ROOT_URL = '/api';
 
 /**
+* Добавляет новую карту пользователю
+* 
+*/
+export const addCard = (cardNumber, exp, name) => {
+    return async dispatch => {
+        try {
+            dispatch({
+                type: action.CARD_ADD_STARTED
+            });
+
+            const data = {
+                cardNumber,
+                exp,
+                name
+            };
+
+            const response = await axios
+                .post(`${ROOT_URL}/cards`, data, {
+                    headers: {
+                        authorization: 'JWT ' + localStorage.getItem('token')
+                    }
+                });
+
+            if (response.status === 201) {
+                dispatch({
+                    type: action.CARD_ADD_SUCCESS
+                });
+                dispatch(fetchCards());
+            }
+            else dispatch({
+                    type: action.CARD_ADD_FAILED,
+                    payload: 'Что то пошло не так...'
+                });
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
+            dispatch({
+                type: action.CARD_ADD_FAILED,
+                payload: err.response.data.message ? err.response.data.message : err.response.data
+            });
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
+        }
+    }
+}
+
+/**
 * Вытаскивает данные по картам пользователя
 * 
 */

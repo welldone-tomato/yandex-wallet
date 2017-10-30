@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
-import { changeActiveCard, deleteCard } from '../../actions/cards';
+import { changeActiveCard, deleteCard, addCard } from '../../actions/cards';
 import { getPreparedCards } from '../../selectors/cards';
 
 import Card from './card';
 import CardDelete from './card_delete';
+import CardAdd from './card_add';
 
 const Layout = styled.div`
 width: 310px;
@@ -54,7 +55,8 @@ class CardsBar extends Component {
     this.state = {
       removeCardId: 0,
       isCardRemoving: false,
-      isCardsEditable: false
+      isCardsEditable: false,
+      isCardAdding: false
     }
   }
 
@@ -70,7 +72,7 @@ class CardsBar extends Component {
     });
   }
 
-  onChangeBarMode = (event, removeCardId) => {
+  onSetDeleteMode = (event, removeCardId) => {
     event.stopPropagation();
     this.setState({
       isCardRemoving: true,
@@ -78,10 +80,18 @@ class CardsBar extends Component {
     });
   }
 
-  onCancelBarMode = () => {
+  onSetAddMode = event => {
+    event.stopPropagation();
+    this.setState({
+      isCardAdding: true
+    });
+  }
+
+  onCancelMode = () => {
     this.setState({
       isCardRemoving: false,
-      isCardsEditable: false
+      isCardsEditable: false,
+      isCardAdding: false
     });
   }
 
@@ -94,39 +104,47 @@ class CardsBar extends Component {
     this.props.onDeleteClick(id);
   }
 
-  // componentDidMount = () => {
-  //   if (this.props.isAuth)
-  //     this
-  //       .props
-  //       .onStart();
-  // }
+  onAddClickWrapper = (cardNumber, exp, name) => {
+    this.setState({
+      isCardAdding: false
+    });
+    this.props.onAddClick(cardNumber, exp, name);
+  }
 
   renderCards = () => {
     const {isLoading, cards, activeCardId, onClick} = this.props;
 
     return isLoading ? (<div/>)
       : (cards.map(card => (
-        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeBarMode={ (e, id) => this.onChangeBarMode(e, id) } isCardsEditable={ this.state.isCardsEditable }
+        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeDeleteMode={ (e, id) => this.onSetDeleteMode(e, id) } isCardsEditable={ this.state.isCardsEditable }
         />
       )))
   };
 
   render = () => {
-    const {isCardsEditable, isCardRemoving, removeCardId} = this.state;
+    const {isCardsEditable, isCardRemoving, isCardAdding, removeCardId} = this.state;
     const {isLoading, cards, isAuth} = this.props;
-
-    if (isCardRemoving)
-      return (
-        <Layout>
-          <Logo />
-          <CardDelete onCancelClick={ () => this.onCancelBarMode() } deleteCard={ id => this.onDeleteClickWrapper(id) } data={ cards.filter((item) => item.id === removeCardId)[0] } />
-          <Footer>Yamoney Node School</Footer>
-        </Layout>);
 
     if (!isAuth)
       return (
         <Layout>
           <Logo />
+        </Layout>);
+
+    if (isCardRemoving)
+      return (
+        <Layout>
+          <Logo />
+          <CardDelete onCancelClick={ () => this.onCancelMode() } deleteCard={ id => this.onDeleteClickWrapper(id) } data={ cards.filter((item) => item.id === removeCardId)[0] } />
+          <Footer>Yamoney Node School</Footer>
+        </Layout>);
+
+    if (isCardAdding)
+      return (
+        <Layout>
+          <Logo />
+          <CardAdd onCancelClick={ () => this.onCancelMode() } addCard={ (cardNumber, exp, name) => this.onAddClickWrapper(cardNumber, exp, name) } />
+          <Footer>Yamoney Node School</Footer>
         </Layout>);
 
     return (
@@ -135,7 +153,7 @@ class CardsBar extends Component {
         <Edit onClick={ () => this.onEditChange(isCardsEditable) } editable={ isCardsEditable } />
         <CardsList>
           { this.renderCards() }
-          { isLoading ? <div/> : <Card type='new' /> }
+          { isLoading ? <div/> : <Card type='new' onChangeAddMode={ (e) => this.onSetAddMode(e) } /> }
         </CardsList>
         <Footer>Yamoney Node School</Footer>
       </Layout>
@@ -146,9 +164,8 @@ class CardsBar extends Component {
 CardsBar.propTypes = {
   cards: PropTypes.array.isRequired,
   activeCardId: PropTypes.string,
-  error: PropTypes.object,
+  error: PropTypes.string,
   onClick: PropTypes.func.isRequired,
-  // onStart: PropTypes.func.isRequired,
   onDeleteClick: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired
 };
@@ -163,8 +180,8 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   onClick: id => dispatch(changeActiveCard(id)),
-  // onStart: () => dispatch(fetchCards()),
-  onDeleteClick: id => dispatch(deleteCard(id))
+  onDeleteClick: id => dispatch(deleteCard(id)),
+  onAddClick: (cardNumber, exp, name) => dispatch(addCard(cardNumber, exp, name))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardsBar);
