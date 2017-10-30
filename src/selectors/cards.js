@@ -19,6 +19,7 @@ const prepareCardData = card => {
         balance: card.balance,
         number: numberNice,
         cardNumber: card.cardNumber,
+        exp: card.exp,
         bankName: bankName,
         theme: {
             bgColor: backgroundColor,

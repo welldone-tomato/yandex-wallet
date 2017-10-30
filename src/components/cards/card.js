@@ -13,7 +13,7 @@ const CardLayout = styled.div`
 	padding: 25px 20px 20px 25px;
 	border-radius: 4px;
 	background-color: ${({bgColor, active}) => active ? bgColor : 'rgba(255, 255, 255, 0.1)'};
-	cursor:pointer;
+	cursor:${({cursor})=> cursor? cursor :'pointer'};
 `;
 
 const CardLogo = styled.div`
@@ -32,6 +32,15 @@ const CardNumber = styled.div`
 	font-family: 'OCR A Std Regular';
 `;
 
+const CardNumberInput = styled.input`
+	margin-bottom: 20px;
+	color: ${({active, textColor}) => active ? textColor : 'rgba(255, 255, 255, 0.6)'};
+	font-size: 16px;
+	font-family: 'OCR A Std Regular';
+	background: transparent;
+	border: none;
+`;
+
 const CardType = styled.div`
 	height: 26px;
 	background-image: url(${({url}) => url});
@@ -39,6 +48,14 @@ const CardType = styled.div`
 	background-repeat: no-repeat;
 	background-position-x: right;
 	opacity: ${({active}) => active ? '1' : '0.6'};
+
+	padding-right: 60px;
+	padding-top: 4px;
+	text-align: right;
+
+	color: ${({active, textColor}) => active ? textColor : 'rgba(255, 255, 255, 0.6)'};
+	font-size: 16px;
+	font-family: 'OCR A Std Regular';
 `;
 
 const NewCardLayout = styled(CardLayout)`
@@ -57,11 +74,13 @@ const CardSelect = styled(Select)`
 
 class Card extends Component {
 	render() {
-        const {data, active, type, onClick, isCardsEditable, onChangeBarMode, isSingle} = this.props;
+        const { type } = this.props;
 
         if (type === 'new')
-			return (<NewCardLayout />);
+			return (<NewCardLayout onClick={this.props.onChangeAddMode} />);
 			
+		const {data, isCardsEditable, isSingle} = this.props;
+
         if (type === 'select') {
 			const {activeCardIndex} = this.props;
 			const selectedCard = data[activeCardIndex];
@@ -80,18 +99,33 @@ class Card extends Component {
 			);
 		}
 
-        const {number, theme, id} = data;
+		if (type === 'form'){
+			const {cardNumber, exp, theme} = data;
+			const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
+			const {onCardNumberChange} = this.props;
+
+			return (
+				<CardLayout active={true} bgColor={bgColor} isCardsEditable={false} isSingle={true} cursor={'auto'}>
+					<CardLogo url={bankLogoUrl} active={true} />
+					<CardNumberInput textColor={textColor} active={true} value={cardNumber} onChange={onCardNumberChange}/>
+					<CardType url={brandLogoUrl} active={true} textColor={textColor}>{exp}</CardType>
+				</CardLayout>
+			);
+		}
+
+		const {active, onClick, onChangeDeleteMode} = this.props;
+        const {number, theme, id, exp} = data;
         const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
         const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
 
         return (
 			<CardLayout active={active} bgColor={bgColor} onClick={onClick} isCardsEditable={isCardsEditable} isSingle={isSingle}>
-				<CardEdit editable={isCardsEditable} id={id} onChangeBarMode={onChangeBarMode}/>
+				<CardEdit editable={isCardsEditable} id={id} onChangeBarMode={onChangeDeleteMode}/>
 				<CardLogo url={bankLogoUrl} active={active} />
 				<CardNumber textColor={textColor} active={active}>
 					{number}
 				</CardNumber>
-				<CardType url={themedBrandLogoUrl} active={active} />
+				<CardType url={themedBrandLogoUrl} active={active} textColor={textColor}>{exp}</CardType>
 			</CardLayout>
 		);
     }
