@@ -6,6 +6,7 @@ const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
 const cors = require('koa2-cors');
+const serve = require('koa-static');
 const mongoose = require('mongoose');
 
 // Turn on auth strategies
@@ -35,15 +36,13 @@ app.use(passport.initialize());
 require('./services/passport');
 
 // Логгер работает только для нетестовых окружений
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test')
 	app.use(async (ctx, next) => {
 		const start = new Date();
 		await next();
 		const ms = new Date() - start;
-		// console.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 		logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 	});
-}
 
 // id param auto-loading
 router.param('id', async (id, ctx, next) => {
@@ -88,11 +87,14 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 		await next();
 	})(ctx, next);
 
-router.use('/auth', authRoute.routes());
-router.use('/cards', requiredAuth, cardsRoute.routes());
+router.use('/api/auth', authRoute.routes());
+router.use('/api/cards', requiredAuth, cardsRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
+
+if (process.env.NODE_ENV !== 'test')
+	app.use(serve(__dirname + '/../build'));
 
 //********************** Mongo connections and server starts ***************************** */
 if (process.env.NODE_ENV !== 'test') {
