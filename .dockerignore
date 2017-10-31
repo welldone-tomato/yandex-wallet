@@ -1,0 +1,7 @@
+.vscode
+build
+.gitattributes
+.gitignore
+node_modules
+README.md
+server/logs

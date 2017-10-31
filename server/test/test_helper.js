@@ -8,7 +8,7 @@ const cardsJson = require('./data_cards');
 const transactionsJson = require('./data_transactions');
 const usersJson = require('./data_users');
 
-const {MONGO} = require('../../config-env');
+const {MONGO} = require('../config-env');
 
 mongoose.Promise = global.Promise;
 

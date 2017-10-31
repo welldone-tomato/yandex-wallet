@@ -1,0 +1,47 @@
+version: '2'
+services:
+  nginx:
+    image: jwilder/nginx-proxy
+    container_name: nginx-yandex-proxy-production
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # - ~/yandex_wallet/certs:/etc/nginx/certs:ro
+      - /usr/share/nginx/html
+  
+  # letsencrypt:
+  #   image: jrcs/letsencrypt-nginx-proxy-companion
+  #   container_name: letsencrypt
+  #   restart: always
+  #   volumes:
+  #     - ~/yandex_wallet/certs:/etc/nginx/certs:rw
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #   volumes_from: 
+  #     - nginx
+  
+  db:
+    image: mongo:3.2
+    container_name: mongo-yandex-production
+    restart: always
+
+  web:
+    image: yandex_wallet
+    container_name: web-yw-production
+    restart: always
+    depends_on:
+      - db
+      - nginx
+      # - letsencrypt
+    links:
+      - db
+    volumes:
+      - ~/yandex_wallet/logs:/app/server/logs
+    environment:
+      - NODE_JWT_SECRET=jksjksajkKJSJKjksajksafjkJKSjkasjkqwbkDJKBLJKSdjkasdjksadjk
+      - NODE_MONGO=mongodb://db/yandex_wallet
+      - VIRTUAL_HOST=wallet.kroniak.net
+      - LETSENCRYPT_HOST=wallet.kroniak.net
+      - LETSENCRYPT_EMAIL=me@kroniak.net

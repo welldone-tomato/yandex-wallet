@@ -34,11 +34,10 @@
     "reselect": "^3.0.1"
   },
   "scripts": {
-    "ssl:generate": "ssl/generate.sh",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
-    "start:server": "cross-env NODE_HTTPS=1 node ./server/index.js",
+    "start:server": "node ./server/index.js",
     "test:server": "cross-env NODE_PORT=4080 NODE_ENV=test mocha ./server/test --recursive --timeout 10000",
     "cover:server": "cross-env NODE_PORT=4080 NODE_ENV=test nyc mocha ./server/test --recursive --timeout 10000"
   },

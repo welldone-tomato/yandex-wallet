@@ -1,7 +1,4 @@
 const http = require('http');
-const https = require('https');
-const fs = require('fs');
-
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
@@ -21,10 +18,8 @@ const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
 
 // env config
-const {MONGO} = require('../config-env');
+const {MONGO} = require('./config-env');
 const PORT = process.env.NODE_PORT || 4000;
-const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
-const HTTPS = process.env.NODE_HTTPS || false;
 
 mongoose.Promise = global.Promise;
 const app = new Koa();
@@ -103,18 +98,6 @@ if (process.env.NODE_ENV !== 'test') {
 		logger.log(`YM Node School App listening on port ${port}!`);
 	}
 
-	const startServer = () => {
-		const options = {
-			key: fs.readFileSync('./ssl/crt/key.key', 'utf8'),
-			cert: fs.readFileSync('./ssl/crt/cert.crt', 'utf8')
-		};
-
-		http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
-
-		if (HTTPS)
-			https.createServer(options, app.callback()).listen(PORT_SSL, notifyStarting(PORT_SSL));
-	};
-
 	mongoose.connect(MONGO, {
 		useMongoClient: true,
 		config: {
@@ -127,7 +110,7 @@ if (process.env.NODE_ENV !== 'test') {
 			console.log(`YM Node School APP connected to DB successfully. ADDR= ${MONGO}`)
 			logger.log(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
 
-			startServer();
+			http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
 		})
 		.once('error', error => {
 			console.error('Mongo Error: ', error);
