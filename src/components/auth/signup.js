@@ -125,7 +125,7 @@ class SignUp extends Component {
 					<InputEmail type="password" value={ this.state.passwordCheck } onChange={this.handlePasswordCheckChange } placeholder="●●●●●●●"/>
 				</InputField>
                 <Underline />
-				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Войти</LoginButton>
+				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Регистрация</LoginButton>
             </LoginLayout>
             );
     }

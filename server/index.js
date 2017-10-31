@@ -95,7 +95,7 @@ if (process.env.NODE_ENV !== 'test')
 if (process.env.NODE_ENV !== 'test') {
 	const notifyStarting = port => {
 		console.log(`YM Node School App listening on port ${port}!`)
-		logger.log(`YM Node School App listening on port ${port}!`);
+		logger.info(`YM Node School App listening on port ${port}!`);
 	}
 
 	mongoose.connect(MONGO, {
@@ -108,7 +108,7 @@ if (process.env.NODE_ENV !== 'test') {
 	mongoose.connection
 		.once('open', () => {
 			console.log(`YM Node School APP connected to DB successfully. ADDR= ${MONGO}`)
-			logger.log(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
+			logger.info(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
 
 			http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
 		})
