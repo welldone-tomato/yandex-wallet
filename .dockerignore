@@ -1,7 +1,15 @@
 .vscode
-build
+.git
+.babelrc
+.dockerignore
+.eslintrc
 .gitattributes
 .gitignore
+config-overrides.js
+Dockerfile
+*.yml
 node_modules
+public
 README.md
 server/logs
+src
