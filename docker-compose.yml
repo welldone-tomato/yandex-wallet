@@ -24,9 +24,11 @@ services:
       - nginx
   
   db:
-    image: mongo:3.2
+    image: mongo:3.4
     container_name: yandex-mongodb-production
     restart: always
+    volumes:
+      - ~/yandex_wallet/db/backup:/backup:rw
 
   web:
     image: yandex-wallet
