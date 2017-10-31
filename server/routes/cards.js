@@ -106,13 +106,14 @@ router.get('/:id', async ctx => {
 });
 
 router.post('/', async ctx => {
-	const {cardNumber, exp, name, balance} = ctx.request.body;
+	const {cardNumber, currency, exp, name, balance} = ctx.request.body;
 
-	if (!cardNumber || !exp || !name)
+	if (!cardNumber || !currency || !exp || !name)
 		ctx.throw(400, 'properties required');
 
 	const card = {
 		cardNumber,
+		currency,
 		exp,
 		name,
 		balance: Number(balance) || 0,
