@@ -1,7 +1,7 @@
 const passport = require('koa-passport');
 const router = require('koa-router')();
 const jwt = require('jwt-simple');
-const {JWT_SECRET} = require('../../config-env');
+const {JWT_SECRET} = require('../config-env');
 
 /**
  * Create token for user information

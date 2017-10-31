@@ -40,5 +40,29 @@ module.exports = [
         balance: 200000,
         exp: "01/18",
         name: "NIK COLLIN"
-    } // 5290256799199944
+    },
+    {
+        _id: new ObjectId("59e9ce16131a183238cc7845"),
+        userId: new ObjectId("59f299a4d611ad01d0115b10"),
+        cardNumber: "5290256799199944",
+        balance: 10000,
+        exp: "04/18",
+        name: "ALYSSA LIVINGSTON"
+    },
+    {
+        _id: new ObjectId("59e9ce16131a183238cc7841"),
+        userId: new ObjectId("59f299a4d611ad01d0115b10"),
+        cardNumber: "5100699167020335",
+        balance: 1000,
+        exp: "11/18",
+        name: "CLAIRE MACADAM"
+    },
+    {
+        _id: new ObjectId("59e9ce16131a183238cc7853"),
+        userId: new ObjectId("59f299a4d611ad01d0115b10"),
+        cardNumber: "5312372056591113",
+        balance: 700,
+        exp: "05/18",
+        name: "NIK COLLIN"
+    }
 ];

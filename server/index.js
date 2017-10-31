@@ -1,11 +1,9 @@
 const http = require('http');
-const https = require('https');
-const fs = require('fs');
-
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
 const cors = require('koa2-cors');
+const serve = require('koa-static');
 const mongoose = require('mongoose');
 
 // Turn on auth strategies
@@ -20,10 +18,8 @@ const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
 
 // env config
-const {MONGO} = require('../config-env');
+const {MONGO} = require('./config-env');
 const PORT = process.env.NODE_PORT || 4000;
-const PORT_SSL = process.env.NODE_PORT_SSL || 4001;
-const HTTPS = process.env.NODE_HTTPS || false;
 
 mongoose.Promise = global.Promise;
 const app = new Koa();
@@ -35,15 +31,13 @@ app.use(passport.initialize());
 require('./services/passport');
 
 // Логгер работает только для нетестовых окружений
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== 'test')
 	app.use(async (ctx, next) => {
 		const start = new Date();
 		await next();
 		const ms = new Date() - start;
-		// console.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 		logger.info(`${ctx.method} ${ctx.url} - ${ms}ms`);
 	});
-}
 
 // id param auto-loading
 router.param('id', async (id, ctx, next) => {
@@ -88,30 +82,21 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 		await next();
 	})(ctx, next);
 
-router.use('/auth', authRoute.routes());
-router.use('/cards', requiredAuth, cardsRoute.routes());
+router.use('/api/auth', authRoute.routes());
+router.use('/api/cards', requiredAuth, cardsRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
+
+if (process.env.NODE_ENV !== 'test')
+	app.use(serve(__dirname + '/../build'));
 
 //********************** Mongo connections and server starts ***************************** */
 if (process.env.NODE_ENV !== 'test') {
 	const notifyStarting = port => {
 		console.log(`YM Node School App listening on port ${port}!`)
-		logger.log(`YM Node School App listening on port ${port}!`);
+		logger.info(`YM Node School App listening on port ${port}!`);
 	}
-
-	const startServer = () => {
-		const options = {
-			key: fs.readFileSync('./ssl/crt/key.key', 'utf8'),
-			cert: fs.readFileSync('./ssl/crt/cert.crt', 'utf8')
-		};
-
-		http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
-
-		if (HTTPS)
-			https.createServer(options, app.callback()).listen(PORT_SSL, notifyStarting(PORT_SSL));
-	};
 
 	mongoose.connect(MONGO, {
 		useMongoClient: true,
@@ -123,9 +108,9 @@ if (process.env.NODE_ENV !== 'test') {
 	mongoose.connection
 		.once('open', () => {
 			console.log(`YM Node School APP connected to DB successfully. ADDR= ${MONGO}`)
-			logger.log(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
+			logger.info(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
 
-			startServer();
+			http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
 		})
 		.once('error', error => {
 			console.error('Mongo Error: ', error);

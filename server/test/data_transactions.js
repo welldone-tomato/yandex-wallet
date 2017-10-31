@@ -56,5 +56,36 @@ module.exports = [
         data: "89214445558",
         time: 1507150264,
         sum: -300
+    },
+    {
+        cardId: new ObjectId("59e9ce16131a183238cc7845"),
+        type: "card2Card",
+        data: "5100699167020335",
+        time: 1506736528,
+        sum: -100
+    },
+    {
+
+        cardId: new ObjectId("59e9ce16131a183238cc7841"),
+        type: "prepaidCard",
+        data: "5290256799199944",
+        time: 1506746528,
+        sum: 100
+    },
+    {
+
+        cardId: new ObjectId("59e9ce16131a183238cc7841"),
+        type: "paymentMobile",
+        data: "89214445558",
+        time: 1506756528,
+        sum: -1000
+    },
+    {
+
+        cardId: new ObjectId("59e9ce16131a183238cc7853"),
+        type: "paymentMobile",
+        data: "89214445558",
+        time: 1507150264,
+        sum: -300
     }
 ];
