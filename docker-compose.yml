@@ -11,6 +11,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ~/yandex_wallet/certs:/etc/nginx/certs:ro
       - /usr/share/nginx/html
+      - ~/yandex_wallet/nginx/vhost.d:/etc/nginx/vhost.d
   
   letsencrypt:
     image: jrcs/letsencrypt-nginx-proxy-companion
