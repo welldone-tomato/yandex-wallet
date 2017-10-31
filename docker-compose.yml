@@ -28,7 +28,7 @@ services:
     restart: always
 
   web:
-    image: yandex_wallet
+    image: yandex-wallet
     container_name: yandex-web-production
     restart: always
     depends_on:
