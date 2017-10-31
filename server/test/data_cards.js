@@ -23,7 +23,7 @@ module.exports = [
         _id: new ObjectId("59e9ce16131a183238cc7850"),
         userId: new ObjectId("59f299a4d611ad01d0115b09"),
         cardNumber: "5101263005131454",
-        currency: 'RUB',
+        currency: 'USD',
         balance: 7000,
         exp: "05/18",
         name: "NIK COLLIN"
@@ -32,7 +32,7 @@ module.exports = [
         _id: new ObjectId("59e9ce16131a183238cc7851"),
         userId: new ObjectId("59f299a4d611ad01d0115b09"),
         cardNumber: "4377725938711552",
-        currency: 'RUB',
+        currency: 'EUR',
         balance: 20,
         exp: "08/18",
         name: "NIK COLLIN"
