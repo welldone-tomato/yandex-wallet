@@ -139,7 +139,7 @@ describe('Transaction model validation tests', () => {
 
     it('it should get errors with messages about not founded card', done => {
         const transaction = new Transaction({
-            cardId: '59e9ce16131a183238cc7845',
+            cardId: '59e9ce16131a183238cc7860',
             type: 'prepaidCard',
             data: 'yandex money 33222335',
             sum: 10

@@ -7,7 +7,7 @@ const Transaction = require('../../models/transaction');
 describe('Cards model reading tests', () => {
     it('it should get all cards', async () => {
         const cards = await Card.find({});
-        assert(cards.length === 5);
+        assert(cards.length > 5);
     });
 
     it('it should get a card by id', async () => {
