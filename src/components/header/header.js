@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import styled from 'emotion/react';
 import Title from '../misc/title';
 import UserInfo from './user-info';
+import Currency from './currency';
 
 import { signOutUser } from '../../actions/auth';
 
@@ -32,7 +33,7 @@ const Header = ({activeCard, auth, dispatch}) => {
 		if (activeCard) return (
 		<Balance>
 			{`${activeCard.bankName}: `}
-			<BalanceSum>{`${activeCard.balance} ₽`}</BalanceSum>
+			<BalanceSum>{`${Number(activeCard.balance.toFixed(4))} ${activeCard.currencySign}`}</BalanceSum>
 		</Balance>)
 	};
 
@@ -40,6 +41,7 @@ const Header = ({activeCard, auth, dispatch}) => {
 		<HeaderLayout>
 			{renderBalance()}
 			{!auth.isAuth && <Balance>Электронный кошелек</Balance>}
+			{auth.isAuth && <Currency />}
 			<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
 		</HeaderLayout>
 	)
