@@ -2,6 +2,7 @@ const router = require('koa-router')();
 const moment = require('moment');
 const PassThrough = require('stream').PassThrough;
 const logger = require('../libs/logger')('cards-router');
+const currency = require('../services/currency');
 
 /**
  * Добавление транзакции через контекст, переданный в контроллер
@@ -29,16 +30,24 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 		// добавляем вторую транзакцию, если надо 
 		if (transaction.type === 'card2Card') {
 			const {time, sum} = transaction;
+			
+			const receiverSum = currency.convert({
+				sum: Math.abs(sum),
+				convertFrom: card.currency,
+				convertTo: toCard.currency,
+			});
+			
+			if (receiverSum === false) ctx.throw(500, 'payment error. currency operations are not available now. try again later');
 
-			const recieverTransaction = {
+			const receiverTransaction = {
 				cardId: toCard.id,
 				type: 'prepaidCard',
 				data: card.cardNumber,
 				time: time || Math.floor(Date.now() / 1000),
-				sum: sum < 0 ? sum * -1 : sum
+				sum: receiverSum,
 			};
 
-			await addTransaction(recieverTransaction, ctx, toCard);
+			await addTransaction(receiverTransaction, ctx, toCard);
 		}
 	} catch (err) {
 		//помечаем транзакцию невалидной
