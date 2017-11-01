@@ -50,6 +50,7 @@ module.exports = [
         _id: new ObjectId("59e9ce16131a183238cc7845"),
         userId: new ObjectId("59f299a4d611ad01d0115b10"),
         cardNumber: "5290256799199944",
+        currency: 'RUB',
         balance: 10000,
         exp: "04/18",
         name: "ALYSSA LIVINGSTON"
@@ -58,6 +59,7 @@ module.exports = [
         _id: new ObjectId("59e9ce16131a183238cc7841"),
         userId: new ObjectId("59f299a4d611ad01d0115b10"),
         cardNumber: "5100699167020335",
+        currency: 'USD',
         balance: 1000,
         exp: "11/18",
         name: "CLAIRE MACADAM"
@@ -66,6 +68,7 @@ module.exports = [
         _id: new ObjectId("59e9ce16131a183238cc7853"),
         userId: new ObjectId("59f299a4d611ad01d0115b10"),
         cardNumber: "5312372056591113",
+        currency: 'EUR',
         balance: 700,
         exp: "05/18",
         name: "NIK COLLIN"

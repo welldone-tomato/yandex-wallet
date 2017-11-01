@@ -173,7 +173,7 @@ describe('Cards routes tests', () => {
         
         it('it should not POST new card with invalid currency', done => {
              chai.request(server)
-                 .post('/cards')
+                 .post('/api/cards')
                  .set('Authorization', 'JWT ' + token)
                  .send({
                    cardNumber: '5483874041820682',

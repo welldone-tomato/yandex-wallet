@@ -12,7 +12,7 @@ describe('Currency route test', () => {
   
   before(done => {
     chai.request(server)
-    .post('/auth/signin')
+    .post('/api/auth/signin')
     .send({
       email: userJson[0].email,
       password: userJson[0].password
@@ -25,7 +25,7 @@ describe('Currency route test', () => {
   
   it('it should get 401 with currency route match', done => {
     chai.request(server)
-    .get('/currency')
+    .get('/api/currency')
     .set('Authorization', 'JWT ')
     .end((err, res) => {
       res.should.have.status(401);
@@ -35,7 +35,7 @@ describe('Currency route test', () => {
   
   it('it should GET currencies', done => {
     chai.request(server)
-    .get('/currency')
+    .get('/api/currency')
     .set('Authorization', 'JWT ' + token)
     .end((err, res) => {
       res.should.have.status(200);
