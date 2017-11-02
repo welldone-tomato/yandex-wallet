@@ -3,6 +3,7 @@ const chaiHttp = require('chai-http');
 
 const server = require('../../index');
 const userJson = require('../data_users');
+const restoreDatabase = require('../test_helper');
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -91,7 +92,7 @@ describe('Cards routes tests', () => {
         });
     });
 
-    describe('/POST new card', () => {
+    describe('/POST new card with error', () => {
         it('it should not POST new card with empty body', done => {
             chai.request(server)
                 .post('/api/cards')
@@ -165,6 +166,10 @@ describe('Cards routes tests', () => {
                     done();
                 });
         });
+    });
+
+    describe('/POST new card', () => {
+        afterEach(done => restoreDatabase(done));
 
         it('it should POST new card with balance', done => {
             chai.request(server)
@@ -210,7 +215,7 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
                     res.body.should.have.property('userId').eql(userJson[0]._id.toString());
-                    
+
                     done();
                 });
 
@@ -218,6 +223,8 @@ describe('Cards routes tests', () => {
     });
 
     describe('/DELETE card', () => {
+        after(done => restoreDatabase(done));
+
         it('it should not DELETE card with empty id', done => {
             chai.request(server)
                 .delete('/api/cards/')

@@ -4,6 +4,7 @@ const chaiHttp = require('chai-http');
 const server = require('../../index');
 const userJson = require('../data_users');
 const Card = require('../../models/card');
+const restoreDatabase = require('../test_helper');
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -66,7 +67,7 @@ describe('Transactions routes test', () => {
         });
     });
 
-    describe('/POST new transactions', () => {
+    describe('/POST new transactions with errors', () => {
         it('should get 400 on post transaction on error cardId', done => {
             chai.request(server)
                 .post('/api/cards/59e9ce16131a183238cc7846/transactions')
@@ -154,6 +155,10 @@ describe('Transactions routes test', () => {
                     done();
                 });
         });
+    });
+
+    describe('/POST new transactions', () => {
+        afterEach(done => restoreDatabase(done));
 
         it('should add new transaction with phone payment', done => {
             const id = '59e9ce16131a183238cc784e';

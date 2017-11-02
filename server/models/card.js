@@ -14,8 +14,8 @@ const cardSchema = new Schema({
         index: true,
         validate: {
             validator: async value => {
-                const card = await User.findById(value);
-                return card;
+                const data = await User.findById(value);
+                return data;
             },
             message: 'user not found'
         }
