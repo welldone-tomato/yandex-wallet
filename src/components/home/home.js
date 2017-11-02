@@ -24,7 +24,7 @@ class Home extends Component {
   
   componentDidMount() {
     this.props.getCurrencies();
-    this.currencyInterval = setInterval(() => this.props.getCurrencies(), 1000 * 30);
+    this.currencyInterval = setInterval(() => this.props.getCurrencies(), 1000 * 15);
   }
   
   componentWillUnmount() {
