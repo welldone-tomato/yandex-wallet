@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>service-worker.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../doc-style.css" />
+  <script src="../doc-filelist.js"></script>
+  <script>
+    var relativeDir = "../";
+    var thisFile = "build/service-worker.js";
+    var defaultSidebar = true;
+  </script>
+  <script src="../doc-script.js"></script>
+
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container">
+    <div class="background highlight"></div>
+<table cellpadding="0" cellspacing="0">
+  <tbody>
+    
+      <tr>
+        <td class="docs">
+          <h1>service-worker.js</h1>
+        </td>
+        <td class="code highlight"></td>
+      </tr>
+    
+    
+      <tr>
+        <td class="docs">
+          <div class="pilwrap">
+  <a class="pilcrow" href="#section-1" id="section-1"></a>
+</div>
+
+        </td>
+        <td class="code highlight">
+          <pre class="javascript"><span class="hljs-meta">"use strict"</span>;<span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">setOfCachedUrls</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.keys().then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.url})}).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>(e)})}<span class="hljs-keyword">var</span> precacheConfig=[[<span class="hljs-string">"/index.html"</span>,<span class="hljs-string">"e862e8b1fe337977f50829a68d09bb6a"</span>],[<span class="hljs-string">"/static/css/main.3e066560.css"</span>,<span class="hljs-string">"eda1a6cb2d98527100c957cdbfd610ef"</span>],[<span class="hljs-string">"/static/js/main.0ffff7c5.js"</span>,<span class="hljs-string">"ecceaa88acc9cd89beead94c0232c073"</span>]],cacheName=<span class="hljs-string">"sw-precache-v3-sw-precache-webpack-plugin-"</span>+(self.registration?self.registration.scope:<span class="hljs-string">""</span>),ignoreUrlParametersMatching=[<span class="hljs-regexp">/^utm_/</span>],addDirectoryIndex=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e,t</span>)</span>{<span class="hljs-keyword">var</span> n=<span class="hljs-keyword">new</span> URL(e);<span class="hljs-keyword">return</span><span class="hljs-string">"/"</span>===n.pathname.slice(<span class="hljs-number">-1</span>)&amp;&amp;(n.pathname+=t),n.toString()},cleanResponse=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.redirected?(<span class="hljs-string">"body"</span><span class="hljs-keyword">in</span> e?<span class="hljs-built_in">Promise</span>.resolve(e.body):e.blob()).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> Response(t,{<span class="hljs-attr">headers</span>:e.headers,<span class="hljs-attr">status</span>:e.status,<span class="hljs-attr">statusText</span>:e.statusText})}):<span class="hljs-built_in">Promise</span>.resolve(e)},createCacheKey=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e,t,n,r</span>)</span>{<span class="hljs-keyword">var</span> a=<span class="hljs-keyword">new</span> URL(e);<span class="hljs-keyword">return</span> r&amp;&amp;a.pathname.match(r)||(a.search+=(a.search?<span class="hljs-string">"&amp;"</span>:<span class="hljs-string">""</span>)+<span class="hljs-built_in">encodeURIComponent</span>(t)+<span class="hljs-string">"="</span>+<span class="hljs-built_in">encodeURIComponent</span>(n)),a.toString()},isPathWhitelisted=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e,t</span>)</span>{<span class="hljs-keyword">if</span>(<span class="hljs-number">0</span>===e.length)<span class="hljs-keyword">return</span>!<span class="hljs-number">0</span>;<span class="hljs-keyword">var</span> n=<span class="hljs-keyword">new</span> URL(t).pathname;<span class="hljs-keyword">return</span> e.some(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> n.match(e)})},stripIgnoredUrlParameters=<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e,t</span>)</span>{<span class="hljs-keyword">var</span> n=<span class="hljs-keyword">new</span> URL(e);<span class="hljs-keyword">return</span> n.hash=<span class="hljs-string">""</span>,n.search=n.search.slice(<span class="hljs-number">1</span>).split(<span class="hljs-string">"&amp;"</span>).map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.split(<span class="hljs-string">"="</span>)}).filter(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> t.every(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">return</span>!t.test(e[<span class="hljs-number">0</span>])})}).map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.join(<span class="hljs-string">"="</span>)}).join(<span class="hljs-string">"&amp;"</span>),n.toString()},hashParamName=<span class="hljs-string">"_sw-precache"</span>,urlsToCacheKeys=<span class="hljs-keyword">new</span> <span class="hljs-built_in">Map</span>(precacheConfig.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">var</span> t=e[<span class="hljs-number">0</span>],n=e[<span class="hljs-number">1</span>],r=<span class="hljs-keyword">new</span> URL(t,self.location),a=createCacheKey(r,hashParamName,n,/\.\w{<span class="hljs-number">8</span>}\./);<span class="hljs-keyword">return</span>[r.toString(),a]}));self.addEventListener(<span class="hljs-string">"install"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{e.waitUntil(caches.open(cacheName).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> setOfCachedUrls(e).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all(<span class="hljs-built_in">Array</span>.from(urlsToCacheKeys.values()).map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{<span class="hljs-keyword">if</span>(!t.has(n)){<span class="hljs-keyword">var</span> r=<span class="hljs-keyword">new</span> Request(n,{<span class="hljs-attr">credentials</span>:<span class="hljs-string">"same-origin"</span>});<span class="hljs-keyword">return</span> fetch(r).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">if</span>(!t.ok)<span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"Request for "</span>+n+<span class="hljs-string">" returned a response with status "</span>+t.status);<span class="hljs-keyword">return</span> cleanResponse(t).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">return</span> e.put(n,t)})})}}))})}).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{<span class="hljs-keyword">return</span> self.skipWaiting()}))}),self.addEventListener(<span class="hljs-string">"activate"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">var</span> t=<span class="hljs-keyword">new</span> <span class="hljs-built_in">Set</span>(urlsToCacheKeys.values());e.waitUntil(caches.open(cacheName).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.keys().then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{<span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.all(n.map(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">n</span>)</span>{<span class="hljs-keyword">if</span>(!t.has(n.url))<span class="hljs-keyword">return</span> e.delete(n)}))})}).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{<span class="hljs-keyword">return</span> self.clients.claim()}))}),self.addEventListener(<span class="hljs-string">"fetch"</span>,<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">if</span>(<span class="hljs-string">"GET"</span>===e.request.method){<span class="hljs-keyword">var</span> t,n=stripIgnoredUrlParameters(e.request.url,ignoreUrlParametersMatching);(t=urlsToCacheKeys.has(n))||(n=addDirectoryIndex(n,<span class="hljs-string">"index.html"</span>),t=urlsToCacheKeys.has(n));!t&amp;&amp;<span class="hljs-string">"navigate"</span>===e.request.mode&amp;&amp;isPathWhitelisted([<span class="hljs-string">"^(?!\\/__).*"</span>],e.request.url)&amp;&amp;(n=<span class="hljs-keyword">new</span> URL(<span class="hljs-string">"/index.html"</span>,self.location).toString(),t=urlsToCacheKeys.has(n)),t&amp;&amp;e.respondWith(caches.open(cacheName).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">return</span> e.match(urlsToCacheKeys.get(n)).then(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">e</span>)</span>{<span class="hljs-keyword">if</span>(e)<span class="hljs-keyword">return</span> e;<span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">"The cached response that was expected is missing."</span>)})}).catch(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">t</span>)</span>{<span class="hljs-keyword">return</span> <span class="hljs-built_in">console</span>.warn(<span class="hljs-string">'Couldn\'t serve response for "%s" from cache: %O'</span>,e.request.url,t),fetch(e.request)}))}});
+</pre>
+        </td>
+      </tr>
+    
+  </tbody>
+</table>
+
+  </div>
+</body>
+</html>
