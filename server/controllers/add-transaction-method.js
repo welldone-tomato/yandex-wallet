@@ -9,7 +9,7 @@ const logger = require('../libs/logger')('cards-router');
  * @param {Object} toCard Карта получатель - опционально
  * @returns 
  */
-module.exports = async (transaction, ctx, card, toCard) => {
+const addTransaction = async (transaction, ctx, card, toCard) => {
 	// проверяем транзакцию
 	try {
 		await ctx.transactions.validate(transaction);
@@ -46,3 +46,4 @@ module.exports = async (transaction, ctx, card, toCard) => {
 	}
 };
 
+module.exports = addTransaction;
