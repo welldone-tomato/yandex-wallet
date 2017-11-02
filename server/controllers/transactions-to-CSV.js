@@ -5,7 +5,7 @@
  * @param {any} stream 
  * @param {any} ctx 
  */
-const transactionsToCSV = (cursor, stream, ctx) => {
+module.exports = (cursor, stream, ctx) => {
 	const fieldToString = field => '"' + String(field || "").replace(/\"/g, '""') + '"';
 
 	const headers = [
@@ -42,5 +42,3 @@ const transactionsToCSV = (cursor, stream, ctx) => {
 			msg: "Failed to get CSV"
 		}));
 };
-
-module.exports = transactionsToCSV;
