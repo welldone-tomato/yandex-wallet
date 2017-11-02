@@ -22,4 +22,3 @@ module.exports = async (ctx) => {
         ctx.body = await ctx.cards.add(card);
         ctx.status = 201;
 };
-

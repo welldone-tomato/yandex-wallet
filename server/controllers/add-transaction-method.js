@@ -27,7 +27,7 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 		// добавляем вторую транзакцию, если надо 
 		if (transaction.type === 'card2Card') {
 			const {time, sum} = transaction;
-      
+
       const receiverSum = currency.convert({
         sum: Math.abs(sum),
         convertFrom: card.currency,
