@@ -17,7 +17,7 @@ const deleteTransaction = require('../controllers/transactions/delete-transactio
 
 //****************************** ROUTES *************************************/
 // Cards
-router.get('/',getCards);
+router.get('/', getCards);
 
 router.get('/:id', getCard);
 

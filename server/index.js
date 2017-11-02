@@ -12,10 +12,12 @@ const passport = require('koa-passport');
 const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
 const authRoute = require('./routes/auth');
+const mrRoute = require('./routes/money_requests');
 
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
+const MoneyRequestsContext = require('./data/money_requests_context');
 
 // env config
 const {MONGO} = require('./config-env');
@@ -78,12 +80,14 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 		ctx.params.userId = user.id;
 		ctx.cards = new CardsContext(user.id);
 		ctx.transactions = new TransactionsContext(user.id);
+		ctx.money_requests = new MoneyRequestsContext(user.id);
 
 		await next();
 	})(ctx, next);
 
 router.use('/api/auth', authRoute.routes());
 router.use('/api/cards', requiredAuth, cardsRoute.routes());
+router.use('/api/mrs', requiredAuth, mrRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
