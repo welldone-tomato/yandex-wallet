@@ -1,4 +1,4 @@
-const addTransaction = require('../add-transaction');
+const addTransaction = require('../add-transaction-method');
 
 module.exports = async ctx => {
 	const {id} = ctx.params;
