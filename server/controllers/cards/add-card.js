@@ -1,4 +1,4 @@
-module.exports = async (ctx) => {
+module.exports = async ctx => {
     const {cardNumber, exp, name, balance} = ctx.request.body;
     
         if (!cardNumber || !exp || !name)

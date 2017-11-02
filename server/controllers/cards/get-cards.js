@@ -1,3 +1,1 @@
-module.exports = async (ctx) => {
-	ctx.body = await ctx.cards.getAll()
-};
+module.exports = async ctx => ctx.body = await ctx.cards.getAll();

@@ -1,6 +1,6 @@
 const addTransaction = require('../add-transaction');
 
-module.exports = async (ctx) => {
+module.exports = async ctx => {
 	const {id} = ctx.params;
 
 	const {phone, amount} = ctx.request.body;

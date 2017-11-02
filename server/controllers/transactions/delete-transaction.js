@@ -1,1 +1,1 @@
-module.exports = (ctx) => ctx.status = 405;
+module.exports = ctx => ctx.status = 405;
