@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import Island from '../misc/island';
 
 const HistoryLayout = styled(Island)`
-	width: 530px;
+	width: 760px;
 	max-height: 622px;
 	overflow-y: scroll;
 	padding: 0;
@@ -55,7 +55,7 @@ const HistoryItemIcon = styled.div`
 `;
 
 const HistoryItemTitle = styled.div`
-	width: 290px;
+	width: 360px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 `;
@@ -65,7 +65,7 @@ const HistoryItemTime = styled.div`
 `;
 
 const HistoryItemSum = styled.div`
-	width: 50px;
+	width: 72px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 `;

@@ -14,9 +14,9 @@ body {
 }
 
 #root {
-  height: 100%;
   font-family: 'Open Sans';
   color: #000;
+  background-color: rgba(36, 36, 36, 0.75);
 }
 `;
 
@@ -24,6 +24,8 @@ const Wallet = styled.div`
 display: flex;
 min-height: 100%;
 background-color: #fcfcfc;
+width: 66%;
+margin: 0px auto;
 `;
 
 const CardPane = styled.div`

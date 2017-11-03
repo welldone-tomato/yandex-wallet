@@ -14,7 +14,7 @@ import { getTransactionsByDays } from '../../selectors/transactions';
 const Workspace = styled.div`
 display: flex;
 flex-wrap: wrap;
-max-width: 970px;
+max-width: 1200px;
 padding: 15px;
 `;
 

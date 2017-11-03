@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
 import Select from './select';
-import CardEdit from './card_edit';
+import CardEditButton from './card_edit_button';
+import CardShareButton from './card_share_button';
 
 const CardLayout = styled.div`
 	position: relative;
@@ -79,7 +80,7 @@ class Card extends Component {
         if (type === 'new')
 			return (<NewCardLayout onClick={this.props.onChangeAddMode} />);
 			
-		const {data, isCardsEditable, isSingle} = this.props;
+		const {data, isCardsEditable, isCardsPaymeIconActive, isSingle} = this.props;
 
         if (type === 'select') {
 			const {activeCardIndex} = this.props;
@@ -113,14 +114,15 @@ class Card extends Component {
 			);
 		}
 
-		const {active, onClick, onChangeDeleteMode} = this.props;
+		const {active, onClick, onChangeDeleteMode, onChangePaymeMode} = this.props;
         const {number, theme, id, exp} = data;
         const {bgColor, textColor, bankLogoUrl, brandLogoUrl} = theme;
         const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
 
         return (
 			<CardLayout active={active} bgColor={bgColor} onClick={onClick} isCardsEditable={isCardsEditable} isSingle={isSingle}>
-				<CardEdit editable={isCardsEditable} id={id} onChangeBarMode={onChangeDeleteMode}/>
+				<CardEditButton editable={isCardsEditable} id={id} onChangeBarMode={onChangeDeleteMode}/>
+				<CardShareButton shareable={isCardsPaymeIconActive} id={id} onClick={onChangePaymeMode}/>
 				<CardLogo url={bankLogoUrl} active={active} />
 				<CardNumber textColor={textColor} active={active}>
 					{number}
@@ -137,7 +139,8 @@ Card.propTypes = {
 	active: PropTypes.bool,
 	isCardsEditable: PropTypes.bool,
 	onClick: PropTypes.func,
-	onChangeBarMode:PropTypes.func,
+	onChangeDeleteMode:PropTypes.func,
+	onChangePaymeMode:PropTypes.func,
 	isSingle: PropTypes.bool,
 }
 

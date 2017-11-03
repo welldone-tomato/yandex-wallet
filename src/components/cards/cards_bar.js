@@ -9,6 +9,7 @@ import { getPreparedCards } from '../../selectors/cards';
 import Card from './card';
 import CardDelete from './card_delete';
 import CardAdd from './card_add';
+import CardPayme from './card_payme';
 
 const Layout = styled.div`
 width: 310px;
@@ -38,6 +39,17 @@ const Edit = styled.div`
   background-position: center center;
 `;
 
+const PaymeButton = styled.div`
+position: absolute;
+top: 25px;
+right: 57px;
+width: 20px;
+height: 20px;
+cursor: pointer;
+background-image: url('/assets/${({editable}) => editable ? 'cards-share-active' : 'cards-share'}.png');
+background-repeat: round;
+`;
+
 const CardsList = styled.div`
   flex: 1;
   font-size: 15px;
@@ -53,10 +65,13 @@ class CardsBar extends Component {
     super(props);
 
     this.state = {
-      removeCardId: 0,
+      removeCardId: '',
+      shareCardId: '',
       isCardRemoving: false,
       isCardsEditable: false,
-      isCardAdding: false
+      isCardsPaymeIconActive: false,
+      isCardAdding: false,
+      isCardPayme: false
     }
   }
 
@@ -69,6 +84,18 @@ class CardsBar extends Component {
     this.setState({
       isCardsEditable,
       isCardRemoving: false
+    });
+  }
+
+  /**
+	* Обработчик события нажатия иконки шаринга карт
+	* @param {Boolean} isEditable Признак редактируемости
+	*/
+  onEditPaymeIcon = isEditable => {
+    const isCardsPaymeIconActive = !isEditable;
+    this.setState({
+      isCardsPaymeIconActive,
+      isCardPayme: false
     });
   }
 
@@ -87,18 +114,27 @@ class CardsBar extends Component {
     });
   }
 
+  onSetPaymeMode = (event, shareCardId) => {
+    event.stopPropagation();
+    this.setState({
+      isCardPayme: true,
+      shareCardId
+    });
+  }
+
   onCancelMode = () => {
     this.setState({
       isCardRemoving: false,
       isCardsEditable: false,
-      isCardAdding: false
+      isCardAdding: false,
+      isCardPayme: false
     });
   }
 
   onDeleteClickWrapper = id => {
     this.setState({
       isCardRemoving: false,
-      removeCardId: 0,
+      removeCardId: '',
       isCardsEditable: false
     });
     this.props.onDeleteClick(id);
@@ -111,18 +147,27 @@ class CardsBar extends Component {
     this.props.onAddClick(cardNumber, exp, name);
   }
 
+  onCreateMRClickWrapper = (sum, goal) => {
+    this.setState({
+      isCardPayme: false,
+      shareCardId: '',
+      isCardsPaymeIconActive: false
+    });
+  // this.props.onAddClick(cardNumber, exp, name);
+  }
+
   renderCards = () => {
     const {isLoading, cards, activeCardId, onClick} = this.props;
 
     return isLoading ? (<div/>)
       : (cards.map(card => (
-        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeDeleteMode={ (e, id) => this.onSetDeleteMode(e, id) } isCardsEditable={ this.state.isCardsEditable }
-        />
+        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeDeleteMode={ (e, id) => this.onSetDeleteMode(e, id) } onChangePaymeMode={ (e, id) => this.onSetPaymeMode(e, id) }
+          isCardsEditable={ this.state.isCardsEditable } isCardsPaymeIconActive={ this.state.isCardsPaymeIconActive } />
       )))
   };
 
   render = () => {
-    const {isCardsEditable, isCardRemoving, isCardAdding, removeCardId} = this.state;
+    const {isCardsEditable, isCardsPaymeIconActive, isCardRemoving, isCardAdding, isCardPayme, removeCardId} = this.state;
     const {isLoading, cards, isAuth} = this.props;
 
     if (!isAuth)
@@ -147,10 +192,19 @@ class CardsBar extends Component {
           <Footer>Yamoney Node School</Footer>
         </Layout>);
 
+    if (isCardPayme)
+      return (
+        <Layout>
+          <Logo />
+          <CardPayme onCancelClick={ () => this.onCancelMode() } createPayMe={ (sum, goal) => this.onCreateMRClickWrapper(sum, goal) } />
+          <Footer>Yamoney Node School</Footer>
+        </Layout>);
+
     return (
       <Layout>
         <Logo />
         <Edit onClick={ () => this.onEditChange(isCardsEditable) } editable={ isCardsEditable } />
+        <PaymeButton onClick={ () => this.onEditPaymeIcon(isCardsPaymeIconActive) } editable={ isCardsPaymeIconActive } />
         <CardsList>
           { this.renderCards() }
           { isLoading ? <div/> : <Card type='new' onChangeAddMode={ (e) => this.onSetAddMode(e) } /> }
