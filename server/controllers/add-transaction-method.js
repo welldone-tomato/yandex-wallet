@@ -1,4 +1,5 @@
 const logger = require('../libs/logger')('cards-router');
+const currency = require('../services/currency');
 
 /**
  * Добавление транзакции через контекст, переданный в контроллер
@@ -27,15 +28,23 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 		if (transaction.type === 'card2Card') {
 			const {time, sum} = transaction;
 
-			const recieverTransaction = {
-				cardId: toCard.id,
-				type: 'prepaidCard',
-				data: card.cardNumber,
-				time: time || Math.floor(Date.now() / 1000),
-				sum: sum < 0 ? sum * -1 : sum
-			};
+      const receiverSum = currency.convert({
+        sum: Math.abs(sum),
+        convertFrom: card.currency,
+        convertTo: toCard.currency,
+      });
+      
+      if (receiverSum === false) ctx.throw(500, 'payment error. currency operations are not available now. try again later');
+      
+      const receiverTransaction = {
+        cardId: toCard.id,
+        type: 'prepaidCard',
+        data: card.cardNumber,
+        time: time || Math.floor(Date.now() / 1000),
+        sum: receiverSum,
+      };
 
-			await addTransaction(recieverTransaction, ctx, toCard);
+			await addTransaction(receiverTransaction, ctx, toCard);
 		}
 	} catch (err) {
 		//помечаем транзакцию невалидной
