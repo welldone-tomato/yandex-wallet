@@ -5,10 +5,10 @@ const Transaction = require('../models/transaction');
 const User = require('../models/user');
 const MoneyRequest = require('../models/money_request');
 
-const cardsJson = require('./data_cards');
-const transactionsJson = require('./data_transactions');
-const usersJson = require('./data_users');
-const mrsJson = require('./data_money_requests');
+const cardsJson = require('./data_inits/data_cards');
+const transactionsJson = require('./data_inits/data_transactions');
+const usersJson = require('./data_inits/data_users');
+const mrsJson = require('./data_inits/data_money_requests');
 
 const {MONGO} = require('../config-env');
 

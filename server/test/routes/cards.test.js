@@ -2,7 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
-const userJson = require('../data_users');
+const userJson = require('../data_inits/data_users');
 const restoreDatabase = require('../test_helper');
 
 const should = chai.should();
@@ -20,15 +20,6 @@ describe('Cards routes tests', () => {
             })
             .end((err, res) => {
                 token = res.body.token;
-                done();
-            });
-    });
-
-    it('it should get 401 with cards route match', done => {
-        chai.request(server)
-            .get('/api/cards')
-            .end((err, res) => {
-                res.should.have.status(401);
                 done();
             });
     });

@@ -36,11 +36,8 @@ const moneyRequestSchema = new Schema({
         type: String,
         index: true,
         unique: [true, 'non doublicated hash required'],
-        validate: {
-            // TODO 
-            validator: value => value,
-            message: 'valid hash required'
-        }
+        match: [new RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'), 'hash must GUID pattern matchs'],
+        lowercase: true
     },
     sum: {
         type: Number,
@@ -60,29 +57,15 @@ const moneyRequestSchema = new Schema({
     }
 });
 
-const hashCode = object => {
-    let hash = 0;
+const guid = () => s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+    s4() + '-' + s4() + s4() + s4();
 
-    const str = JSON.stringify(object);
-
-    if (str.length === 0) return hash;
-
-    for (var i = 0; i < str.length; i++) {
-        hash = hash * 31 + str.charCodeAt(i);
-        hash = hash & hash;
-    }
-    return Math.abs(hash);
-};
+const s4 = () => Math.floor((1 + Math.random()) * 0x10000)
+    .toString(16)
+    .substring(1);
 
 moneyRequestSchema.pre('save', async function(next) {
-    const {userId, cardId, sum} = this;
-
-    const hash = hashCode({
-        userId,
-        cardId,
-        sum,
-        time: new Date().getTime()
-    });
+    const hash = guid();
 
     this.hash = hash;
     next();
