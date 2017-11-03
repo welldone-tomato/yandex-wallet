@@ -20,6 +20,9 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 
 	// добавляем транзакцию и сохраняем ссылку
 	const savedTransaction = await ctx.transactions.add(transaction);
+	
+	ctx.broadcastCardIds = ctx.broadcastCardIds || [];
+	ctx.broadcastCardIds.push(card.id);
 
 	try { // транзакция добавилась, необходимо обновить баланс карты
 		await ctx.cards.affectBalance(card.id, transaction);
