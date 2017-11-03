@@ -80,7 +80,7 @@ class Card extends Component {
         if (type === 'new')
 			return (<NewCardLayout onClick={this.props.onChangeAddMode} />);
 			
-		const {data, isCardsEditable, isCardsPaymeIconActive, isSingle} = this.props;
+		const {data, isCardsEditableIconActive, isCardsPaymeIconActive, isSingle} = this.props;
 
         if (type === 'select') {
 			const {activeCardIndex} = this.props;
@@ -88,7 +88,7 @@ class Card extends Component {
 			const {bgColor, bankLogoUrl, brandLogoUrl} = selectedCard.theme;
 
 			return (
-				<CardLayout active={true} bgColor={bgColor} isCardsEditable={isCardsEditable} isSingle={isSingle}>
+				<CardLayout active={true} bgColor={bgColor} isCardsEditable={isCardsEditableIconActive} isSingle={isSingle}>
 					<CardLogo url={bankLogoUrl} active={true} />
 					<CardSelect value={selectedCard.number} onChange={id => this.props.onCardChange(id)}>
 						{data.map((card, index) => (
@@ -120,8 +120,8 @@ class Card extends Component {
         const themedBrandLogoUrl = active ? brandLogoUrl : brandLogoUrl.replace(/-colored.svg$/, '-white.svg');
 
         return (
-			<CardLayout active={active} bgColor={bgColor} onClick={onClick} isCardsEditable={isCardsEditable} isSingle={isSingle}>
-				<CardEditButton editable={isCardsEditable} id={id} onChangeBarMode={onChangeDeleteMode}/>
+			<CardLayout active={active} bgColor={bgColor} onClick={onClick} isCardsEditable={isCardsEditableIconActive} isSingle={isSingle}>
+				<CardEditButton editable={isCardsEditableIconActive} id={id} onChangeBarMode={onChangeDeleteMode}/>
 				<CardShareButton shareable={isCardsPaymeIconActive} id={id} onClick={onChangePaymeMode}/>
 				<CardLogo url={bankLogoUrl} active={active} />
 				<CardNumber textColor={textColor} active={active}>

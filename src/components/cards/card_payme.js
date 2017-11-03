@@ -52,6 +52,16 @@ const Footer = styled.div`
 	margin-top: 35px;
 `;
 
+const ErrorTitle = styled(Title)`
+color: #6c0202;
+font-size: 16px;
+`;
+
+const SuccessTitle = styled(Title)`
+color: #0a6c02;
+font-size: 12px;
+`;
+
 class CardAddPayme extends Component {
 	constructor(props) {
 		super(props);
@@ -69,8 +79,12 @@ class CardAddPayme extends Component {
 	onCreateClick(e) {
 		const {sum, goal} = this.state;
 
-		if (sum && goal)
-			this.props.createPayMe(sum, goal);
+		if (!sum || !goal) return;
+
+		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
+		if (!isNumber || sum <= 0) return;
+
+		this.props.createPayMe(sum, goal);
 	}
 
 	handleSumChange = event => {
@@ -86,36 +100,56 @@ class CardAddPayme extends Component {
     }
 
 	render() {
-		const {onCancelClick} = this.props;
+		const {onCancelClick, error, createdLink} = this.props;
 
+		if (!createdLink)
+			return (
+				<CardPaymeLayout>
+					<Title>Запрос средств</Title>
+					{error && <ErrorTitle>{error}</ErrorTitle>}
+					<InputField>
+						<Label>Сумма</Label>
+						<CustomInput value={ this.state.sum } onChange={ this.handleSumChange } />
+					</InputField>
+					<InputField>
+						<Label>Комментарий</Label>
+						<CustomInput value={ this.state.goal } onChange={ this.handleGoalChange } />
+					</InputField>
+					<LinkCardText>Запрос средств можно удалить в любое время</LinkCardText>
+					<Footer>
+					<div onClick={ this.onCreateClick }>
+						<Button bgColor='#d3292a' textColor='#fff'>Создать</Button>
+					</div>
+					<div onClick={ () => onCancelClick(true) }>
+						<Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>
+					</div>
+					</Footer>
+				</CardPaymeLayout>
+				);
+		
 		return (
-			<CardPaymeLayout>
-     <Title>Запросить средства</Title>
-     <InputField>
-       <Label>Сумма</Label>
-       <CustomInput value={ this.state.sum } onChange={ this.handleSumChange } />
-     </InputField>
-     <InputField>
-       <Label>Комментарий</Label>
-       <CustomInput value={ this.state.goal } onChange={ this.handleGoalChange } />
-     </InputField>
-     <LinkCardText>Запрос средств можно удалить в любое время</LinkCardText>
-     <Footer>
-       <div onClick={ this.onCreateClick }>
-         <Button bgColor='#d3292a' textColor='#fff'>Создать</Button>
-       </div>
-       <div onClick={ () => onCancelClick(true) }>
-         <Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>
-       </div>
-     </Footer>
-   </CardPaymeLayout>
-			);
+					<CardPaymeLayout>
+						{createdLink &&
+						<InputField>
+							<Label>Ссылка на получение средств:</Label>
+							<SuccessTitle>{createdLink}</SuccessTitle>
+						</InputField>}
+												
+						<Footer>
+						<div onClick={ () => onCancelClick(true) }>
+							<Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>
+						</div>
+						</Footer>
+					</CardPaymeLayout>
+					);		
 	}
 }
 
 CardAddPayme.propTypes = {
 	onCancelClick: PropTypes.func.isRequired,
-	createPayMe: PropTypes.func.isRequired
+	createPayMe: PropTypes.func.isRequired,
+	error: PropTypes.string,
+	url:PropTypes.string
 };
 
 export default CardAddPayme;
