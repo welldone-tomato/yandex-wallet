@@ -34,6 +34,7 @@ describe('Cards routes tests', () => {
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(5);
+                    res.body[0].should.not.have.property('userId');
                     res.body[0].should.have.property('id');
                     res.body[0].should.have.property('cardNumber');
                     res.body[0].should.have.property('exp');

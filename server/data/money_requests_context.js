@@ -1,5 +1,7 @@
 const ObjectId = require('mongoose').Types.ObjectId;
 
+const {DOMAIN} = require('../config-env');
+
 const ApplicationError = require('../libs/application_error');
 const Context = require('./context');
 const MoneyRequest = require('../models/money_request');
@@ -18,6 +20,21 @@ class MoneyRequestContext extends Context {
         super(MoneyRequest);
 
         this.userId = new ObjectId(userId);
+    }
+
+    /**
+     * Возвращает данные из БД в [] 
+     * 
+     * @returns {[{"id":String}]} 
+     * @memberof Context
+     */
+    async getAll() {
+        const data = await super.getAll();
+
+        return data.map(item => ({
+            ...item,
+            url: `http://${DOMAIN}/payme/${item.hash}`
+        }));
     }
 }
 

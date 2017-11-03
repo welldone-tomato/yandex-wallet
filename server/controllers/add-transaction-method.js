@@ -1,5 +1,17 @@
 const logger = require('../libs/logger')('cards-router');
 
+const cardExpValidator = value => {
+	// проверяем срок действия карты
+	const date = new Date();
+	const currentYear = date.getFullYear();
+	const currentMonth = date.getMonth() + 1;
+	const parts = value.split('/');
+	const year = parseInt(parts[1], 10) + 2000;
+	const month = parseInt(parts[0], 10);
+
+	return year < currentYear || (year === currentYear && month < currentMonth) ? false : true;
+}
+
 /**
  * Добавление транзакции через контекст, переданный в контроллер
  * 
@@ -16,6 +28,15 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 	} catch (err) {
 		ctx.throw(400, err);
 	}
+
+	//проверяем карты на "просроченность"
+	let expCheck = false;
+	if (card)
+		expCheck = cardExpValidator(card.exp);
+	if (toCard)
+		expCheck = expCheck && cardExpValidator(toCard.exp);
+
+	if (!expCheck) ctx.throw(400, 'cards in transaction are expired');
 
 	// добавляем транзакцию и сохраняем ссылку
 	const savedTransaction = await ctx.transactions.add(transaction);
