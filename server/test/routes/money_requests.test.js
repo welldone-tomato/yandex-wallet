@@ -10,6 +10,7 @@ chai.use(chaiHttp);
 
 describe('Money requests routes tests', () => {
     let token;
+    let guid;
 
     before(done => {
         chai.request(server)
@@ -20,12 +21,19 @@ describe('Money requests routes tests', () => {
             })
             .end((err, res) => {
                 token = res.body.token;
-                done();
+
+                chai.request(server)
+                    .get('/api/mrs')
+                    .set('Authorization', 'JWT ' + token)
+                    .end((err, res) => {
+                        guid = res.body[0].guid;
+                        done();
+                    });
             });
     });
 
     describe('/GET mrs for user', () => {
-        it('it should GET all the cards in db', done => {
+        it('it should GET all the mrs in db', done => {
             chai.request(server)
                 .get('/api/mrs')
                 .set('Authorization', 'JWT ' + token)
@@ -37,9 +45,39 @@ describe('Money requests routes tests', () => {
                     res.body[0].should.not.have.property('userId');
                     res.body[0].should.have.property('id');
                     res.body[0].should.have.property('cardId');
-                    res.body[0].should.have.property('hash');
+                    res.body[0].should.have.property('guid');
                     res.body[0].should.have.property('sum');
                     res.body[0].should.have.property('url');
+                    res.body[0].should.have.property('goal');
+                    done();
+                });
+        });
+
+        it('it should GET mrs in db', done => {
+            chai.request(server)
+                .get('/api/mrs/' + guid)
+                .set('Authorization', 'JWT ' + token)
+                .end((err, res) => {
+                    res.should.have.status(200);
+                    res.type.should.eql('application/json');
+                    res.body.should.be.a('object');
+                    res.body.should.not.have.property('userId');
+                    res.body.should.not.have.property('id');
+                    res.body.should.not.have.property('cardId');
+                    res.body.should.have.property('goal');
+                    res.body.should.have.property('sum');
+                    res.body.should.have.property('userName');
+                    res.body.should.have.property('cardNumber');
+                    done();
+                });
+        });
+
+        it('it should GET 404 for invalid guid mrs in db', done => {
+            chai.request(server)
+                .get('/api/mrs/' + guid + '1')
+                .set('Authorization', 'JWT ' + token)
+                .end((err, res) => {
+                    res.should.have.status(404);
                     done();
                 });
         });

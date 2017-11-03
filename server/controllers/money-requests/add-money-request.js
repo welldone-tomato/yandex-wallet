@@ -18,9 +18,9 @@ module.exports = async ctx => {
         ctx.throw(400, err);
     }
 
-    const {hash} = await ctx.money_requests.add(mr);
+    const {guid} = await ctx.money_requests.add(mr);
     ctx.body = {
-        url: `http://${DOMAIN}/payme/${hash}`
+        url: `http://${DOMAIN}/payme/${guid}`
     }
     ctx.status = 201;
 };

@@ -23,7 +23,6 @@ const moneyRequestSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Card',
         required: [true, 'cardId is required'],
-        index: true,
         validate: {
             validator: async value => {
                 const card = await Card.findById(value);
@@ -32,11 +31,11 @@ const moneyRequestSchema = new Schema({
             message: 'card with this id not found'
         }
     },
-    hash: {
+    guid: {
         type: String,
         index: true,
-        unique: [true, 'non doublicated hash required'],
-        match: [new RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'), 'hash must GUID pattern matchs'],
+        unique: [true, 'non doublicated guid required'],
+        match: [new RegExp('^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'), 'guid must GUID pattern matchs'],
         lowercase: true
     },
     sum: {
@@ -45,7 +44,10 @@ const moneyRequestSchema = new Schema({
             validator: value => value >= 0 && !isNaN(value),
             message: 'sum must be greater then 0 and must be a number'
         }
-    }
+    },
+    goal: {
+        type: String
+    },
 }, {
     toObject: {
         transform: (doc, ret) => {
@@ -57,7 +59,7 @@ const moneyRequestSchema = new Schema({
     }
 });
 
-const guid = () => s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+const getGUID = () => s4() + s4() + '-' + s4() + '-' + s4() + '-' +
     s4() + '-' + s4() + s4() + s4();
 
 const s4 = () => Math.floor((1 + Math.random()) * 0x10000)
@@ -65,9 +67,7 @@ const s4 = () => Math.floor((1 + Math.random()) * 0x10000)
     .substring(1);
 
 moneyRequestSchema.pre('save', async function(next) {
-    const hash = guid();
-
-    this.hash = hash;
+    this.guid = getGUID();
     next();
 });
 

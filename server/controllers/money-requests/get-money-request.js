@@ -1,7 +1,7 @@
 module.exports = async ctx => {
-	// const {hash} = ctx.params;
-	// const doc = await ctx.cards.get(id);
+	const {guid} = ctx.params;
+	const doc = await ctx.money_requests.getByGUID(guid);
 
-	// if (!doc) ctx.throw(404, `card with id=${id} not found`);
-	// ctx.body = doc;
+	if (!doc) ctx.throw(404, `mr with guid=${guid} not found`);
+	ctx.body = doc;
 };

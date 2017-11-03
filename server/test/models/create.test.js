@@ -15,8 +15,8 @@ describe('MoneyRequest create validation tests', () => {
 
         try {
             await mr.save();
-            assert(mr.hash !== null);
-            assert(mr.hash.length > 5);
+            assert(mr.guid !== null);
+            assert(mr.guid.length > 16);
         } catch (err) {}
     });
 });
