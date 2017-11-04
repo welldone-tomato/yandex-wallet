@@ -30,6 +30,11 @@ export default ({
     }
   
     const token = localStorage.getItem('token');
+    
+    if (!token) {
+      console.log('WS requires JWT token');
+      return;
+    }
   
     this._ws = new WebSocket(`${url}?JWT=${token}`);
   
