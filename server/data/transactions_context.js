@@ -83,8 +83,20 @@ class TransactionsContext extends Context {
      * @returns {Stream}
      * @memberof TransactionsContext
      */
-    getByCardIdStream(id) {
-        return this.getModelByCardId(id).cursor();
+    async getByCardIdStream(id) {
+        const {userId} = this;
+
+        const card = await Card.findOne({
+            _id: new ObjectId(id),
+            userId
+        });
+
+        if (!card)
+            throw new ApplicationError(`Card with id=${id} not found`, 404);
+
+        return this.model.find({
+            cardId: new ObjectId(id)
+        }).cursor();
     }
 }
 

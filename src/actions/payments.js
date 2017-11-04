@@ -49,6 +49,9 @@ export const payMobile = (transaction, id) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
@@ -102,6 +105,9 @@ export const payPrepaid = (transaction, id, currentId) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
@@ -155,6 +161,9 @@ export const payWithdraw = (transaction, id, toId) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }

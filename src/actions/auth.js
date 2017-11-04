@@ -45,7 +45,7 @@ export const verifyToken = () => {
 
                 dispatch(fetchCards());
 
-                dispatch(push('/'));
+            // dispatch(push('/'));
             } catch (err) {
                 let message = 'Сеанс закончился';
                 if (err.response.status === 401)
@@ -119,6 +119,9 @@ export const signUpUser = ({email, password}) => {
 export const signOutUser = err => {
     return dispatch => {
         localStorage.removeItem('token');
+
+        if (document.cookie)
+            document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 
         dispatch({
             type: action.USER_LOGOUT,

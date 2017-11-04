@@ -3,6 +3,18 @@ const router = require('koa-router')();
 const jwt = require('jwt-simple');
 const {JWT_SECRET} = require('../config-env');
 
+const getExp = () => {
+    let exp = new Date();
+    exp = exp.setDate(exp.getDate() + 7);
+    return exp;
+}
+
+const getExpDate = () => {
+    let exp = new Date();
+    exp.setDate(exp.getDate() + 7);
+    return exp;
+}
+
 /**
  * Create token for user information
  *
@@ -10,12 +22,9 @@ const {JWT_SECRET} = require('../config-env');
  * @returns {String}
  */
 const getTokenForUser = payload => {
-    let exp = new Date();
-    exp = exp.setDate(exp.getDate() + 7);
-
     return jwt.encode({
         id: payload.id,
-        exp
+        exp: getExp()
     }, JWT_SECRET);
 }
 
@@ -41,9 +50,16 @@ router.post('/signin', async (ctx, next) => await passport.authenticate('local',
             email: user.email
         };
 
+        const token = getTokenForUser(payload);
+
+        ctx.cookies.set('jwt', token, {
+            expires: getExpDate(),
+            httpOnly: false
+        });
+
         ctx.body = {
             user: user.email,
-            token: getTokenForUser(payload)
+            token
         };
     })(ctx, next));
 

@@ -87,17 +87,17 @@ class CardAddPayme extends Component {
 		this.props.createPayMe(sum, goal);
 	}
 
-	handleSumChange = event => {
+	handleSumChange(event) {
         this.setState({
             sum: event.target.value
         });
 	}
 	
-	handleGoalChange = event => {
+	handleGoalChange(event)  {
         this.setState({
             goal: event.target.value
         });
-    }
+	}
 
 	render() {
 		const {onCancelClick, error, createdLink} = this.props;
