@@ -36,8 +36,7 @@ class TelegramBot {
         this.setUserChatId();
     }
 
-    initChatId(chatId) {
-        const user = await this.userInstance(chatId);
+    initChatId(user) {
         if (user) {
           this.getCardsList(user);
           this.getTransactions(user);
@@ -71,31 +70,35 @@ class TelegramBot {
         this.bot.command('/getupdates', async (ctx) => {
             const inputTelegramKey = ctx.message.text.split("/getupdates ")[1];
             const user = await this.getUserByTelegramKey(inputTelegramKey);
-            await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
-            this.initChatId();
-            ctx.reply(`Your chatId is ${ctx.chat.id}`);
+            if (user && user.email) {
+              await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
+              this.initChatId(user);
+              ctx.reply(`Your chatId is set: ${ctx.chat.id}`);
+            } else {
+              ctx.reply("No user found. Make sure you inserted correct key.");
+            }
         })
     }
 
     /**
-	 * Отправляет Telegram-оповещение пользователю
-	 *
-	 * @param {Object} notificationParams параметры нотификации
-	 */
-	sendNotification(notificationParams) {
-    const {chatId} = notificationParams.user;
-    const {card, phone, amount}= notificationParams;
-    const cardNumberSecure = card.cardNumber.substr(card.cardNumber.length - 4);
-		var message;
-		if (notificationParams.type == 'paymentMobile') {
-			message = `С вашей карты **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на телефон ${phone}`;
-		} else {
-			message = `На вашу карту **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
-		}
-		if (chatId) {
-			this.bot.telegram.sendMessage(chatId, message);
-		}
-  }
+    * Отправляет Telegram-оповещение пользователю
+    *
+    * @param {Object} notificationParams параметры нотификации
+    */
+  	sendNotification(notificationParams) {
+        const {chatId} = notificationParams.user;
+        const {card, phone, amount}= notificationParams;
+        const cardNumberSecure = card.cardNumber.substr(card.cardNumber.length - 4);
+    		var message;
+    		if (notificationParams.type == 'paymentMobile') {
+    			message = `С вашей карты **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на телефон ${phone}`;
+    		} else {
+    			message = `На вашу карту **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
+    		}
+    		if (chatId) {
+    			this.bot.telegram.sendMessage(chatId, message);
+    		}
+    }
 
 }
 
