@@ -5,6 +5,7 @@ import styled from 'emotion/react';
 import Title from '../misc/title';
 import UserInfo from './user-info';
 import Button from '../misc/button';
+import Popup from '../misc/popup';
 import Currency from './currency';
 
 import { signOutUser } from '../../actions/auth';
@@ -36,6 +37,7 @@ class Header extends React.Component {
 	constructor(props) {
 		super(props);
 		this.onClick = this.onClick.bind(this);
+		this.onCloseClick = this.onCloseClick.bind(this);
 		this.state = {
 			isTelegramModalVisible: false
 		}
@@ -52,6 +54,13 @@ class Header extends React.Component {
 			isTelegramModalVisible: !this.state.isTelegramModalVisible
 		});
 	}
+	
+	onCloseClick() {
+		this.setState({
+			isTelegramModalVisible: false
+		});
+	}
+	
 	renderBalance() {
 		const {activeCard, auth} = this.props;
 		if (activeCard) return (
@@ -71,7 +80,14 @@ class Header extends React.Component {
 				{auth.isAuth && 
 					<Button bgColor='#0088cc' textColor='#fff' onClick={this.onClick}>Telegram</Button>
 				}
-				{this.state.isTelegramModalVisible ? <span>{user.telegramKey}</span> : null}
+				{this.state.isTelegramModalVisible ? <Popup onCloseClick={this.onCloseClick}>
+					<div>Скопируйте этот текст и вставьте его в диалог с ботом: 
+						<div style={{textAlign:'center', marginBottom: '20px', marginTop: '10px'}}>
+							<code style={{background:'#FFFACD'}}>/getupdates {user.telegramKey}</code>
+						</div>
+					</div>
+					<Button bgColor='#0088cc' textColor='#fff'><a style={{color:'#fff'}} target="_blank" href={`http://telegram.me/@PicturerBot`}>Перейти к боту</a></Button>
+				</Popup> : null}
 				{auth.isAuth && <Currency />}
 				<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
 			</HeaderLayout>
