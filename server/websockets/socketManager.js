@@ -21,13 +21,17 @@ const remove = (userSocket) => {
 };
 
 const broadcast = (userId, message) => {
-  _userSocketsStore[userId].forEach(userSocket => userSocket.send(message));
+  const userSockets = _userSocketsStore[userId];
+  if (!userSockets) return;
+  userSockets.forEach(userSocket => userSocket.send(message));
 };
 
 const log = (eventType, userSocket) => {
+  const userSockets = _userSocketsStore[userSocket.userId];
+  if (!userSockets) return;
   logger.info(`
     ${eventType} ${userSocket};
-    all user connections: ${_userSocketsStore[userSocket.userId].length};
+    all user connections: ${userSockets.length};
     all connections: ${Object.values(_userSocketsStore).reduce((sum, sockets) => sum + sockets.length, 0)}
   `);
 };
