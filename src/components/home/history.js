@@ -112,7 +112,7 @@ const History = ({transactions, activeCard, isLoading}) => {
 						{ item.hhmm}
 					</HistoryItemTime>
 					<HistoryItemSum>
-						{ `${Number(item.sum.toFixed(4))} ${activeCard.currencySign}` }
+						{ `${Number(item.sum.toFixed(2))} ${activeCard.currencySign}` }
 					</HistoryItemSum>
 				</HistoryItem>
 		);

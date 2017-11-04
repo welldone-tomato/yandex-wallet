@@ -32,8 +32,8 @@ const Currency = ({ currencyState }) => (
     <CurrencyTitle>Курсы валют:</CurrencyTitle>
     <Currencies>
       <CurrencyItem>{currencyState.timestamp ? moment(currencyState.timestamp).format('HH:mm:ss') : ''}</CurrencyItem>
-      <CurrencyItem>$ {currencyState.USD}</CurrencyItem>
-      <CurrencyItem>€ {currencyState.EUR}</CurrencyItem>
+      <CurrencyItem>$ {currencyState.timestamp ? currencyState.USD.toFixed(2) : ''}</CurrencyItem>
+      <CurrencyItem>€ {currencyState.timestamp ? currencyState.EUR.toFixed(2) : ''}</CurrencyItem>
     </Currencies>
   </CurrencyLayout>
 );
