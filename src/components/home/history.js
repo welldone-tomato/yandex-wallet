@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip';
 import Island from '../misc/island';
 
 const HistoryLayout = styled(Island)`
-	width: 760px;
+	width: 620px;
 	max-height: 622px;
 	overflow-y: scroll;
 	padding: 0;

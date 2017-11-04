@@ -24,7 +24,7 @@ const Wallet = styled.div`
 display: flex;
 min-height: 100%;
 background-color: #fcfcfc;
-width: 66%;
+width: 94%;
 margin: 0px auto;
 `;
 

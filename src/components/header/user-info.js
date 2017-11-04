@@ -28,6 +28,7 @@ const User = styled.div`
 	color: #000;
 	cursor: pointer;
 	&:hover {${DropDown} {display: block;}}
+	margin-right: 16px;
 `;
 
 const Avatar = styled.img`
