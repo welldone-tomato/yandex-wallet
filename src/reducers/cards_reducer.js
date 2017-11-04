@@ -7,7 +7,16 @@ import * as actions from '../actions/types';
  * @param {Object} action 
  * @returns {Array}
  */
-const updateObjectInArray = (array, newItem) => array.map(item => item.id !== newItem.id ? item : newItem);
+const addOrUpdateObjectInArray = (array, newItem) => {
+    let isNew = true;
+    const newArray = array.map((item) => {
+        if (item.id !== newItem.id) return item;
+        isNew = false;
+        return newItem;
+    });
+    if (isNew) newArray.push(newItem);
+    return newArray;
+};
 
 export const cardsInitialState = {
     data: [],
@@ -57,7 +66,7 @@ const cardsReducer = (state = cardsInitialState, {type, payload}) => {
         case actions.CARD_FETCH_SUCCESS:
             return {
                 ...state,
-                data: updateObjectInArray(state.data, payload)
+                data: addOrUpdateObjectInArray(state.data, payload)
             }
 
         case actions.CARD_FETCH_FAILED:
