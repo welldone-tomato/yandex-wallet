@@ -34,7 +34,7 @@ module.exports = async ctx => {
 	const user = await ctx.users.getOne({_id: new ObjectId(toCard.userId)});
 	
 	const notificationParams = {
-		type: 'card2Card',
+		type: transaction.type,
 		user,
 		amount,
 		card: toCard
