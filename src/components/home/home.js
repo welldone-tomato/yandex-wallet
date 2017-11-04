@@ -8,6 +8,8 @@ import MobilePayment from './mpayment/mobile_payment';
 import Prepaid from './prepaid/prepaid';
 import Withdraw from './withdraw/withdraw';
 
+import Websockets from '../../websockets';
+
 import { fetchCurrencies } from '../../actions/currency';
 
 import { getActiveCard } from '../../selectors/cards';
@@ -25,10 +27,12 @@ class Home extends Component {
   componentDidMount() {
     this.props.getCurrencies();
     this.currencyInterval = setInterval(() => this.props.getCurrencies(), 1000 * 15);
+    Websockets.connect();
   }
   
   componentWillUnmount() {
     clearInterval(this.currencyInterval);
+    Websockets.disconnect();
   }
   
   render() {
