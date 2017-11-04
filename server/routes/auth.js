@@ -1,6 +1,7 @@
 const passport = require('koa-passport');
 const router = require('koa-router')();
 const jwt = require('jwt-simple');
+const stringCrypt = require('../libs/string-encrypt');
 const {JWT_SECRET} = require('../config-env');
 
 /**
@@ -65,10 +66,11 @@ router.post('/signup', async ctx => {
     } catch (err) {
         ctx.throw(400, err || 'signup failed');
     }
-
+    
     const addedUser = await ctx.users.add({
         email,
-        password
+        password,
+        telegramKey: stringCrypt(email, 4),
     });
 
     ctx.body = {

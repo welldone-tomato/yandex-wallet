@@ -13,6 +13,7 @@ const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
 const authRoute = require('./routes/auth');
 const currencyRoute = require('./routes/currency');
+const userRoute = require('./routes/user');
 
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
@@ -89,6 +90,7 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 router.use('/api/auth', authRoute.routes());
 router.use('/api/cards', requiredAuth, cardsRoute.routes());
 router.use('/api/currency', requiredAuth, currencyRoute.routes());
+router.use('/api/user', requiredAuth, userRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());

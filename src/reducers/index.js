@@ -8,6 +8,7 @@ import mobilePaymentReducer from './mobile_payment_reducer';
 import prepaidPaymentReducer from './prepaid_payment_reducer';
 import withdrawPaymentReducer from './withdraw_payment_reducer';
 import currencyReducer from './currency_reducer';
+import userReducer from './user_reducer';
 
 const rootReducer = combineReducers({
     auth: authReducer,
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
         withdrawPayment: withdrawPaymentReducer
     }),
     currency: currencyReducer,
+    user: userReducer
 });
 
 export default rootReducer;
