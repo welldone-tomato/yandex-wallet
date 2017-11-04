@@ -1,4 +1,5 @@
 const ObjectId = require('mongoose').Types.ObjectId;
+const logger = require('../libs/logger')('context');
 
 const Context = require('./context');
 const Transaction = require('../models/transaction');
