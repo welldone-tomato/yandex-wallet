@@ -1,7 +1,6 @@
 const CardsContext = require('../data/cards_context');
 const TransactionsContext = require('../data/transactions_context');
 const UsersContext = require('../data/users_context');
-const addMobilePayment = require('../controllers/transactions/add-payment');
 const ObjectId = require('mongoose').Types.ObjectId;
 const moment = require('moment');
 const Extra = require('telegraf/extra');
@@ -98,14 +97,13 @@ class TelegramBot {
     */
     mobilePaymentCommand(user) {
         this.bot.command('/mobile', async (ctx) => {
-            const pay = await this.makePayment("59e9ce16131a183238cc784e");
+            const params = ctx.message.text.split(' ');
+            const pay = await this.makePayment("59e9ce16131a183238cc784e", params[1], params[2]);
             ctx.reply(pay);
         });
     }
 
-    async makePayment (id) {
-        // ObjectId("59e9ce16131a183238cc784e")
-        const url = `/${id}/pay`;
+    async makePayment (id, phone, amount) {
         const payment = {
             phone: '89211234567',
             amount: 500
@@ -118,16 +116,12 @@ class TelegramBot {
                         authorization: token
                     }
                 });
-
-            const state = {
-                timestamp: new Date(data.date).getTime(),
-                RUB: 1,
-                USD: Number((1 / data.rates.USD).toFixed(4)),
-                EUR: Number((1 / data.rates.EUR).toFixed(4)),
-            };
-            return state;
+            if (data.status === 'success' || data.status === 200) {
+                return `Mobile payment to the 📱 ${payment.phone} was fullfilled for amount of 💰 ${payment.amount}`
+            } else {
+                return '🙄 Something bad happened with request'
+            }
         } catch (err) {
-            // logger.error(`Can not receive fixer currencies: ${err.message}`);
             return err.message;
         }
     }
@@ -268,11 +262,26 @@ Make sure you inserted correct key.`);
     */
     async cardsButtons(user, ctx) {
         this.bot.action(/.+/, async (ctx) => {
-            // return ctx.reply(`Oh, ${ctx.match[0]}! Great choise`)
             await this.getTransactions(ctx.match[0], user, ctx);
         });
         const allCards = await this.cards(user.id).getAll();
         return ctx.reply('<b>Select card to view transactions</b>', Extra.HTML().markup((m) =>
+            m.inlineKeyboard(allCards.map((card) => m.callbackButton(`💳  ${card.cardNumber.substr(card.cardNumber.length - 4)} — ${CURRENCY_ENUM[card.currency]}`, `${card.cardNumber.substr(card.cardNumber.length - 4)}`)))
+        ));
+    }
+
+    /**
+    * Команда списка карт пользователя для пополнения мобильного
+    * @param {Object} user Объект пользователя
+    * @param {Context} ctx контекст бота
+    * 
+    */
+    async cardsButtonsMobilePayment(user, ctx) {
+        this.bot.action(/.+/, async (ctx) => {
+            await this.getTransactions(ctx.match[0], user, ctx);
+        });
+        const allCards = await this.cards(user.id).getAll();
+        return ctx.reply('<b>Select card to make mobile payment</b>', Extra.HTML().markup((m) =>
             m.inlineKeyboard(allCards.map((card) => m.callbackButton(`💳  ${card.cardNumber.substr(card.cardNumber.length - 4)} — ${CURRENCY_ENUM[card.currency]}`, `${card.cardNumber.substr(card.cardNumber.length - 4)}`)))
         ));
     }
