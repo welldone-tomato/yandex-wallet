@@ -168,7 +168,7 @@ class CardsBar extends Component {
   };
 
   render = () => {
-    const {isCardRemoving, isCardAdding, isCardPayme} = this.state;
+    const {isCardRemoving, isCardAdding, isCardPayme, shareCardId} = this.state;
     const {isLoading, cards, isAuth} = this.props;
 
     if (!isAuth)
@@ -193,13 +193,15 @@ class CardsBar extends Component {
           <Footer>Yamoney Node School</Footer>
         </Layout>);
 
-    if (isCardPayme)
+    if (isCardPayme) {
+      const cardToShare = cards.find(card => card.id === shareCardId);
       return (
         <Layout>
           <Logo />
-          <CardPayme onCancelClick={ () => this.onCancelMode() } createPayMe={ (sum, goal) => this.onCreateMRClickWrapper(sum, goal) } error={ this.props.mrs.error } createdLink={ this.props.mrs.createdLink } />
+          <CardPayme cardToShare={cardToShare} onCancelClick={ () => this.onCancelMode() } createPayMe={ (sum, goal) => this.onCreateMRClickWrapper(sum, goal) } error={ this.props.mrs.error } createdLink={ this.props.mrs.createdLink } />
           <Footer>Yamoney Node School</Footer>
         </Layout>);
+    }
 
     const {isCardsEditableIconActive, isCardsPaymeIconActive} = this.state;
 

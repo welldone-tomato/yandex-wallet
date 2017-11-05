@@ -104,7 +104,7 @@ class CardAddPayme extends Component {
 	}
 
 	render() {
-		const {onCancelClick, error, createdLink} = this.props;
+		const {onCancelClick, error, createdLink, cardToShare} = this.props;
 
 		if (!createdLink)
 			return (
@@ -112,7 +112,7 @@ class CardAddPayme extends Component {
 					<Title>Запрос средств</Title>
 					{error && <ErrorTitle>{error}</ErrorTitle>}
 					<InputField>
-						<Label>Сумма</Label>
+						<Label>Сумма ({cardToShare ? cardToShare.currencySign : ''})</Label>
 						<CustomInput value={ this.state.sum } onChange={ this.handleSumChange } />
 					</InputField>
 					<InputField>
@@ -154,7 +154,8 @@ CardAddPayme.propTypes = {
 	onCancelClick: PropTypes.func.isRequired,
 	createPayMe: PropTypes.func.isRequired,
 	error: PropTypes.string,
-	url:PropTypes.string
+	url:PropTypes.string,
+	cardToShare: PropTypes.object,
 };
 
 export default CardAddPayme;
