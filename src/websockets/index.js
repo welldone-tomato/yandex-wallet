@@ -1,5 +1,6 @@
 import { fetchCard } from '../actions/cards';
 import { fetchTransactions } from '../actions/transactions';
+import notifications from '../services/notifications';
 
 export default ({
   
@@ -38,7 +39,10 @@ export default ({
   
     this._ws = new WebSocket(`${url}?JWT=${token}`);
   
-    this._ws.onopen = () => console.log('WS connection is opened');
+    this._ws.onopen = () => {
+      notifications.init(document.title);
+      console.log('WS connection is opened');
+    };
     this._ws.onerror = () => console.log('WS connection error');
     this._ws.onclose = () => console.log('WS connection is closed');
     this._ws.onmessage = message => this._handleMessage(message);
@@ -60,6 +64,7 @@ export default ({
       switch (type) {
         
         case 'CARD_IDS': {
+          notifications.sendNotification('notification');
           const { activeCardId } = this._store.getState().cards;
           data.forEach((cardId) => {
             this._store.dispatch(fetchCard(cardId));
