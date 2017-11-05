@@ -4,11 +4,14 @@ import { connect } from 'react-redux';
 import styled from 'emotion/react';
 
 import { changeActiveCard, deleteCard, addCard } from '../../actions/cards';
+import { MR_ADD_RESET_STATUS } from '../../actions/types';
+import { addMr } from '../../actions/mrs';
 import { getPreparedCards } from '../../selectors/cards';
 
 import Card from './card';
 import CardDelete from './card_delete';
 import CardAdd from './card_add';
+import CardPayme from './card_payme';
 
 const Layout = styled.div`
 width: 310px;
@@ -38,6 +41,17 @@ const Edit = styled.div`
   background-position: center center;
 `;
 
+const PaymeButton = styled.div`
+position: absolute;
+top: 25px;
+right: 57px;
+width: 20px;
+height: 20px;
+cursor: pointer;
+background-image: url('/assets/${({editable}) => editable ? 'cards-share-active' : 'cards-share'}.png');
+background-repeat: round;
+`;
+
 const CardsList = styled.div`
   flex: 1;
   font-size: 15px;
@@ -53,10 +67,13 @@ class CardsBar extends Component {
     super(props);
 
     this.state = {
-      removeCardId: 0,
+      removeCardId: '',
+      shareCardId: '',
       isCardRemoving: false,
-      isCardsEditable: false,
-      isCardAdding: false
+      isCardsEditableIconActive: false,
+      isCardsPaymeIconActive: false,
+      isCardAdding: false,
+      isCardPayme: false
     }
   }
 
@@ -65,10 +82,22 @@ class CardsBar extends Component {
 	* @param {Boolean} isEditable Признак редактируемости
 	*/
   onEditChange = isEditable => {
-    const isCardsEditable = !isEditable;
+    const isCardsEditableIconActive = !isEditable;
     this.setState({
-      isCardsEditable,
+      isCardsEditableIconActive,
       isCardRemoving: false
+    });
+  }
+
+  /**
+	* Обработчик события нажатия иконки шаринга карт
+	* @param {Boolean} isEditable Признак редактируемости
+	*/
+  onEditPaymeIcon = isEditable => {
+    const isCardsPaymeIconActive = !isEditable;
+    this.setState({
+      isCardsPaymeIconActive,
+      isCardPayme: false
     });
   }
 
@@ -87,19 +116,34 @@ class CardsBar extends Component {
     });
   }
 
+  onSetPaymeMode = (event, shareCardId) => {
+    event.stopPropagation();
+    this.setState({
+      isCardPayme: true,
+      shareCardId
+    });
+  }
+
   onCancelMode = () => {
+    if (this.state.isCardPayme && (this.props.mrs.error || this.props.mrs.createdLink))
+      this.props.onCancePaymeClick();
+
     this.setState({
       isCardRemoving: false,
-      isCardsEditable: false,
-      isCardAdding: false
+      isCardAdding: false,
+      isCardPayme: false,
+      shareCardId: '',
+      removeCardId: '',
+      isCardsEditableIconActive: false,
+      isCardsPaymeIconActive: false
     });
   }
 
   onDeleteClickWrapper = id => {
     this.setState({
       isCardRemoving: false,
-      removeCardId: 0,
-      isCardsEditable: false
+      removeCardId: '',
+      isCardsEditableIconActive: false
     });
     this.props.onDeleteClick(id);
   }
@@ -111,18 +155,20 @@ class CardsBar extends Component {
     this.props.onAddClick(cardNumber, currency, exp, name);
   }
 
+  onCreateMRClickWrapper = (sum, goal) => this.props.onCreateMrClick(this.state.shareCardId, sum, goal);
+
   renderCards = () => {
     const {isLoading, cards, activeCardId, onClick} = this.props;
 
     return isLoading ? (<div/>)
       : (cards.map(card => (
-        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeDeleteMode={ (e, id) => this.onSetDeleteMode(e, id) } isCardsEditable={ this.state.isCardsEditable }
-        />
+        <Card key={ card.id } data={ card } active={ card.id === activeCardId } onClick={ () => onClick(card.id) } onChangeDeleteMode={ (e, id) => this.onSetDeleteMode(e, id) } onChangePaymeMode={ (e, id) => this.onSetPaymeMode(e, id) }
+          isCardsEditableIconActive={ this.state.isCardsEditableIconActive } isCardsPaymeIconActive={ this.state.isCardsPaymeIconActive } />
       )))
   };
 
   render = () => {
-    const {isCardsEditable, isCardRemoving, isCardAdding, removeCardId} = this.state;
+    const {isCardRemoving, isCardAdding, isCardPayme} = this.state;
     const {isLoading, cards, isAuth} = this.props;
 
     if (!isAuth)
@@ -135,7 +181,7 @@ class CardsBar extends Component {
       return (
         <Layout>
           <Logo />
-          <CardDelete onCancelClick={ () => this.onCancelMode() } deleteCard={ id => this.onDeleteClickWrapper(id) } data={ cards.filter((item) => item.id === removeCardId)[0] } />
+          <CardDelete onCancelClick={ () => this.onCancelMode() } deleteCard={ id => this.onDeleteClickWrapper(id) } data={ cards.filter((item) => item.id === this.state.removeCardId)[0] } />
           <Footer>Yamoney Node School</Footer>
         </Layout>);
 
@@ -147,10 +193,21 @@ class CardsBar extends Component {
           <Footer>Yamoney Node School</Footer>
         </Layout>);
 
+    if (isCardPayme)
+      return (
+        <Layout>
+          <Logo />
+          <CardPayme onCancelClick={ () => this.onCancelMode() } createPayMe={ (sum, goal) => this.onCreateMRClickWrapper(sum, goal) } error={ this.props.mrs.error } createdLink={ this.props.mrs.createdLink } />
+          <Footer>Yamoney Node School</Footer>
+        </Layout>);
+
+    const {isCardsEditableIconActive, isCardsPaymeIconActive} = this.state;
+
     return (
       <Layout>
         <Logo />
-        <Edit onClick={ () => this.onEditChange(isCardsEditable) } editable={ isCardsEditable } />
+        <Edit onClick={ () => this.onEditChange(isCardsEditableIconActive) } editable={ isCardsEditableIconActive } />
+        <PaymeButton onClick={ () => this.onEditPaymeIcon(isCardsPaymeIconActive) } editable={ isCardsPaymeIconActive } />
         <CardsList>
           { this.renderCards() }
           { isLoading ? <div/> : <Card type='new' onChangeAddMode={ (e) => this.onSetAddMode(e) } /> }
@@ -175,13 +232,18 @@ const mapStateToProps = state => ({
   error: state.cards.error,
   activeCardId: state.cards.activeCardId,
   isLoading: state.cards.isLoading,
-  isAuth: state.auth.isAuth
+  isAuth: state.auth.isAuth,
+  mrs: state.mrs
 });
 
 const mapDispatchToProps = dispatch => ({
   onClick: id => dispatch(changeActiveCard(id)),
   onDeleteClick: id => dispatch(deleteCard(id)),
-  onAddClick: (cardNumber, currency, exp, name) => dispatch(addCard(cardNumber, currency, exp, name))
+  onAddClick: (cardNumber, currency, exp, name) => dispatch(addCard(cardNumber, currency, exp, name)),
+  onCreateMrClick: (cardId, sum, goal) => dispatch(addMr(cardId, sum, goal)),
+  onCancePaymeClick: () => dispatch({
+    type: MR_ADD_RESET_STATUS
+  })
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CardsBar);

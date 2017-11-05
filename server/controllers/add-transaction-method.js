@@ -1,6 +1,18 @@
 const logger = require('../libs/logger')('cards-router');
 const currency = require('../services/currency');
 
+const cardExpValidator = value => {
+	// проверяем срок действия карты
+	const date = new Date();
+	const currentYear = date.getFullYear();
+	const currentMonth = date.getMonth() + 1;
+	const parts = value.split('/');
+	const year = parseInt(parts[1], 10) + 2000;
+	const month = parseInt(parts[0], 10);
+
+	return year < currentYear || (year === currentYear && month < currentMonth) ? false : true;
+}
+
 /**
  * Добавление транзакции через контекст, переданный в контроллер
  * 
@@ -18,34 +30,43 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 		ctx.throw(400, err);
 	}
 
+	//проверяем карты на "просроченность"
+	let expCheck = false;
+	if (card)
+		expCheck = cardExpValidator(card.exp);
+	if (toCard)
+		expCheck = expCheck && cardExpValidator(toCard.exp);
+
+	if (!expCheck) ctx.throw(400, 'cards in transaction are expired');
+
 	// добавляем транзакцию и сохраняем ссылку
 	const savedTransaction = await ctx.transactions.add(transaction);
 
 	try { // транзакция добавилась, необходимо обновить баланс карты
 		await ctx.cards.affectBalance(card.id, transaction);
-    
-    ctx.broadcastCardIds = ctx.broadcastCardIds || [];
-    ctx.broadcastCardIds.push(card.id);
+
+		ctx.broadcastCardIds = ctx.broadcastCardIds || [];
+		ctx.broadcastCardIds.push(card.id);
 
 		// добавляем вторую транзакцию, если надо 
 		if (transaction.type === 'card2Card') {
 			const {time, sum} = transaction;
 
-      const receiverSum = currency.convert({
-        sum: Math.abs(sum),
-        convertFrom: card.currency,
-        convertTo: toCard.currency,
-      });
-      
-      if (receiverSum === false) ctx.throw(500, 'payment error. currency operations are not available now. try again later');
-      
-      const receiverTransaction = {
-        cardId: toCard.id,
-        type: 'prepaidCard',
-        data: card.cardNumber,
-        time: time || Math.floor(Date.now() / 1000),
-        sum: receiverSum,
-      };
+			const receiverSum = currency.convert({
+				sum: Math.abs(sum),
+				convertFrom: card.currency,
+				convertTo: toCard.currency,
+			});
+
+			if (receiverSum === false) ctx.throw(500, 'payment error. currency operations are not available now. try again later');
+
+			const receiverTransaction = {
+				cardId: toCard.id,
+				type: 'prepaidCard',
+				data: card.cardNumber,
+				time: time || Math.floor(Date.now() / 1000),
+				sum: receiverSum,
+			};
 
 			await addTransaction(receiverTransaction, ctx, toCard);
 		}

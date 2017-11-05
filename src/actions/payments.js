@@ -4,6 +4,7 @@ import { fetchCard } from './cards';
 import { fetchTransactions } from './transactions';
 
 import axios from 'axios';
+import { push } from 'react-router-redux';
 
 const ROOT_URL = '/api';
 
@@ -49,6 +50,9 @@ export const payMobile = (transaction, id) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
@@ -102,6 +106,9 @@ export const payPrepaid = (transaction, id, currentId) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
@@ -155,6 +162,9 @@ export const payWithdraw = (transaction, id, toId) => {
                     transaction
                 }
             });
+
+            dispatch(fetchTransactions(id));
+
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }
     }
@@ -163,3 +173,65 @@ export const payWithdraw = (transaction, id, toId) => {
 export const repeateWithdrawTransfer = () => dispatch => dispatch({
     type: action.WITHDRAW_PAY_REPEAT
 });
+
+/**
+* Проводит card2user транзакцию
+* 
+* @param {any} transaction 
+* @param {any} id 
+* @returns 
+*/
+export const payCardToUser = (transaction, id) => {
+    // формируем транзакцию
+    const data = {
+        guid: transaction.guid,
+        amount: transaction.sum < 0 ? transaction.sum * -1 : transaction.sum
+    };
+
+    return async dispatch => {
+        try {
+            const response = await axios
+                .post(`${ROOT_URL}/cards/${id}/transfer2user`, data, {
+                    headers: {
+                        authorization: 'JWT ' + localStorage.getItem('token')
+                    }
+                });
+
+            if (response.status === 201) {
+                dispatch({
+                    type: action.CARD2USER_PAY_SUCCESS,
+                    payload: transaction
+                });
+                dispatch(fetchCard(id));
+                dispatch(fetchTransactions(id));
+            }
+        } catch (err) {
+            if (err.response.status === 401)
+                dispatch(signOutUser('Ошибка авторизации'));
+
+            dispatch({
+                type: action.CARD2USER_PAY_FAILED,
+                payload: {
+                    error: err.response.data.message ? err.response.data.message : err.response.data,
+                    transaction
+                }
+            });
+
+            dispatch(fetchTransactions(id));
+
+            console.log(err.response.data.message ? err.response.data.message : err.response.data);
+        }
+    }
+}
+
+export const repeateCard2User = () => dispatch => dispatch({
+    type: action.CARD2USER_PAY_REPEAT
+});
+
+export const clearCard2UserState = () => dispatch => {
+    dispatch({
+        type: action.CARD2USER_PAY_REPEAT
+    });
+
+    dispatch(push('/'));
+}

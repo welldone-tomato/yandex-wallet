@@ -11,15 +11,13 @@ import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
 // Middlewares
 import reduxThunk from 'redux-thunk';
 
-// Other
-import registerServiceWorker from './registerServiceWorker';
-
 // Components
 import App from './components/app';
 import Home from './components/home/home';
 import Err404 from './components/err404';
 import SignIn from './components/auth/signin';
 import SignUp from './components/auth/signup';
+import Payme from './components/home/payme/payme';
 
 import reducers from './reducers';
 import { verifyToken } from './actions/auth';
@@ -51,11 +49,10 @@ ReactDOM.render(
     <Router history={ history }>
       <Route path="/" component={ App }>
         <IndexRoute component={ userIsAuthenticated(Home) } />
+        <Route path="payme/:guid" component={ userIsAuthenticated(Payme) } />
         <Route path="signin" component={ SignIn } />
         <Route path="signup" component={ SignUp } />
       </Route>
       <Route path='*' exact={ true } component={ Err404 } />
     </Router>
   </Provider>, document.getElementById('root'));
-
-registerServiceWorker();

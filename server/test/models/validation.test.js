@@ -2,6 +2,7 @@ const assert = require('assert');
 const Card = require('../../models/card');
 const Transaction = require('../../models/transaction');
 const User = require('../../models/user');
+const MoneyRequest = require('../../models/money_request');
 
 describe('Card model validation tests', () => {
     it('it should get errors with messages about requeries fields', done => {
@@ -253,6 +254,47 @@ describe('User model validation tests', () => {
         });
 
         user.validate(validationResult => {
+            assert.equal(validationResult, null);
+            done();
+        });
+    });
+});
+
+describe('MoneyRequest model validation tests', () => {
+    it('it should get errors with messages about requeries fields', done => {
+        const mr = new MoneyRequest({});
+
+        mr.validate(validationResult => {
+            const {message} = validationResult;
+
+            assert(message === 'moneyRequest validation failed: cardId: cardId is required, userId: userId is required');
+            done();
+        });
+    });
+
+    it('it should get errors with messages about email field', done => {
+        const mr = new MoneyRequest({
+            userId: 'test',
+            cardId: '',
+            sum: 'a'
+        });
+
+        mr.validate(validationResult => {
+            const {message} = validationResult;
+
+            assert(message === 'moneyRequest validation failed: sum: Cast to Number failed for value "a" at path "sum", cardId: Cast to ObjectID failed for value "" at path "cardId", userId: Cast to ObjectID failed for value "test" at path "userId"');
+            done();
+        });
+    });
+
+    it('it should not get errors with messages', done => {
+        const mr = new MoneyRequest({
+            userId: '59f299a4d611ad01d0115b09',
+            cardId: '59e9ce16131a183238cc784e',
+            sum: 100
+        });
+
+        mr.validate(validationResult => {
             assert.equal(validationResult, null);
             done();
         });

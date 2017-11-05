@@ -7,9 +7,17 @@ const {JWT_SECRET} = require('../config-env');
 const User = require('../models/user');
 
 // JWT strategy
+const cookieExtractor = ctx => {
+    let token = null;
+    if (ctx && ctx.cookies)
+        token = ctx.cookies.get('jwt');
+
+    return token;
+};
+
 const jwtOptions = {
-    jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
-    secretOrKey: JWT_SECRET
+    secretOrKey: JWT_SECRET,
+    jwtFromRequest: ExtractJwt.fromExtractors([ExtractJwt.fromAuthHeaderWithScheme('JWT'), cookieExtractor])
 };
 
 const jwtLogin = new JwtStrategy(jwtOptions, async (payload, done) => {

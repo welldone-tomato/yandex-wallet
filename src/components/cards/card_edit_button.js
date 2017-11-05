@@ -13,14 +13,14 @@ const CardEditIcon = styled.div`
 	display: ${({editable}) => (editable ? 'block' : 'none')};
 `;
 
-const CardEdit = ({editable, onChangeBarMode, id}) => (
+const CardEditButton = ({editable, onChangeBarMode, id}) => (
 	<CardEditIcon editable={ editable } onClick={ (event) => onChangeBarMode(event, id) } />
 );
 
-CardEdit.propTypes = {
+CardEditButton.propTypes = {
 	editable: PropTypes.bool,
 	onChangeBarMode: PropTypes.func,
 	id: PropTypes.string
 };
 
-export default CardEdit;
+export default CardEditButton;

@@ -96,5 +96,5 @@ setInterval(() => receiveCurrencies(), 1000 * 15);
 
 module.exports = {
   getCurrencies,
-  convert,
+  convert
 };

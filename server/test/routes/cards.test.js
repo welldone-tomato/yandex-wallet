@@ -2,7 +2,8 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
-const userJson = require('../data_users');
+const userJson = require('../data_inits/data_users');
+const restoreDatabase = require('../test_helper');
 
 const should = chai.should();
 chai.use(chaiHttp);
@@ -23,15 +24,6 @@ describe('Cards routes tests', () => {
             });
     });
 
-    it('it should get 401 with cards route match', done => {
-        chai.request(server)
-            .get('/api/cards')
-            .end((err, res) => {
-                res.should.have.status(401);
-                done();
-            });
-    });
-
     describe('/GET cards', () => {
         it('it should GET all the cards in db', done => {
             chai.request(server)
@@ -42,6 +34,7 @@ describe('Cards routes tests', () => {
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(5);
+                    res.body[0].should.not.have.property('userId');
                     res.body[0].should.have.property('id');
                     res.body[0].should.have.property('cardNumber');
                     res.body[0].should.have.property('currency');
@@ -93,7 +86,7 @@ describe('Cards routes tests', () => {
         });
     });
 
-    describe('/POST new card', () => {
+    describe('/POST new card with error', () => {
         it('it should not POST new card with empty body', done => {
             chai.request(server)
                 .post('/api/cards')
@@ -170,23 +163,27 @@ describe('Cards routes tests', () => {
                     done();
                 });
         });
-        
+
         it('it should not POST new card with invalid currency', done => {
-             chai.request(server)
-                 .post('/api/cards')
-                 .set('Authorization', 'JWT ' + token)
-                 .send({
-                   cardNumber: '5483874041820682',
-                   currency: 'JPY',
-                   exp: '04/30',
-                   name: 'ALYSSA LIVINGSTON',
-                 })
-                 .end((err, res) => {
-                   res.should.have.status(400);
-                   res.body.should.have.property('message').eql('card validation failed: currency: valid currency is required');
-                   done();
-                 });
+            chai.request(server)
+                .post('/api/cards')
+                .set('Authorization', 'JWT ' + token)
+                .send({
+                    cardNumber: '5483874041820682',
+                    currency: 'JPY',
+                    exp: '04/30',
+                    name: 'ALYSSA LIVINGSTON',
+                })
+                .end((err, res) => {
+                    res.should.have.status(400);
+                    res.body.should.have.property('message').eql('card validation failed: currency: valid currency is required');
+                    done();
+                });
         });
+    });
+
+    describe('/POST new card with DB', () => {
+        afterEach(done => restoreDatabase(done));
 
         it('it should POST new card with balance', done => {
             chai.request(server)
@@ -209,7 +206,7 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(10000);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
-                    res.body.should.have.property('userId').eql(userJson[0]._id.toString());
+                    res.body.should.not.have.property('userId');
 
                     done();
                 });
@@ -235,8 +232,8 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(0);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
-                    res.body.should.have.property('userId').eql(userJson[0]._id.toString());
-                    
+                    res.body.should.not.have.property('userId');
+
                     done();
                 });
 
@@ -244,6 +241,8 @@ describe('Cards routes tests', () => {
     });
 
     describe('/DELETE card', () => {
+        after(done => restoreDatabase(done));
+
         it('it should not DELETE card with empty id', done => {
             chai.request(server)
                 .delete('/api/cards/')

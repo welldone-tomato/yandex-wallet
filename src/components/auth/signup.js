@@ -15,6 +15,7 @@ align-items: center;
 box-sizing: border-box;
 width: 440px;
 background: #3f51b5;
+margin: 100px auto;
 `;
 
 const LoginTitle = styled(Title)`

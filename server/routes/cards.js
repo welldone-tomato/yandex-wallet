@@ -12,12 +12,13 @@ const getTransactionsFile = require('../controllers/transactions/get-transaction
 const addTransaction = require('../controllers/transactions/add-transaction');
 const addPayment = require('../controllers/transactions/add-payment');
 const addTransfer = require('../controllers/transactions/add-transfer');
-const deleteTransaction = require('../controllers/transactions/delete-transaction');
+const addTransfer2User = require('../controllers/transactions/add-transfer2user');
 
+const deleteTransaction = require('../controllers/transactions/delete-transaction');
 
 //****************************** ROUTES *************************************/
 // Cards
-router.get('/',getCards);
+router.get('/', getCards);
 
 router.get('/:id', getCard);
 
@@ -37,5 +38,7 @@ router.delete('/:id/transactions/:tranId', deleteTransaction);
 router.post('/:id/pay', addPayment);
 
 router.post('/:id/transfer', addTransfer);
+
+router.post('/:id/transfer2user', addTransfer2User);
 
 module.exports = router;

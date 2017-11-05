@@ -45,6 +45,25 @@ class Context {
     }
 
     /**
+     * Возвращает данные из БД в [] 
+     * 
+     * @returns {[{"id":String}]} 
+     * @memberof Context
+     */
+    async getAll() {
+        const {userId} = this;
+        try {
+            const data = await this.model.find({
+                userId
+            });
+            return data.map(item => item.toObject());
+        } catch (err) {
+            logger.error(`Loading data from ${this.model} failed `, err);
+            throw new ApplicationError(`Loading data from ${this.model} failed, ${err}`, 500, false);
+        }
+    }
+
+    /**
      * Добавление объекта в БД
      * 
      * @param {{Model}} item 

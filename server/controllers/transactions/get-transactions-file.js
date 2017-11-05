@@ -2,7 +2,7 @@ const PassThrough = require('stream').PassThrough;
 const moment = require('moment');
 const transactionsToCSV = require('../transactions-to-CSV');
 
-module.exports = async (ctx) => {
+module.exports = async ctx => {
 	const cursor = await ctx.transactions.getByCardIdStream(ctx.params.id);
 	const stream = new PassThrough();
 

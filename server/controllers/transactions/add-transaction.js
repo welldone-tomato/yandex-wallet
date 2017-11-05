@@ -1,6 +1,6 @@
 const addTransaction = require('../add-transaction-method');
 
-module.exports = async (ctx) => {
+module.exports = async ctx => {
 	const {id} = ctx.params;
 
 	const {type, data, time, sum} = ctx.request.body;

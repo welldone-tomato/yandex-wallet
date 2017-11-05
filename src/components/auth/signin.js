@@ -14,7 +14,8 @@ flex-direction: column;
 align-items: center;
 box-sizing: border-box;
 width: 440px;
-background: #2196F3;
+background: #3f51b5;
+margin: 100px auto;
 `;
 
 const LoginTitle = styled(Title)`
@@ -51,7 +52,7 @@ const LoginButton = styled(Button)`
 float: right;
 `;
 
-const InputEmail = styled(Input)`
+const CustomInput = styled(Input)`
 width: 225px;
 `;
 
@@ -99,11 +100,11 @@ class SignIn extends Component {
                 {this.props.error && <ErrorTitle>{this.props.error}</ErrorTitle>}
                 <InputField>
 					<Label>Email</Label>
-					<InputEmail type="email" value={ this.state.email } onChange={this.handleEmailChange } placeholder="jsmith@example.org"/>
+					<CustomInput type="email" value={ this.state.email } onChange={this.handleEmailChange } placeholder="jsmith@example.org"/>
 				</InputField>
                 <InputField>
 					<Label>Пароль</Label>
-					<InputEmail type="password" value={ this.state.password } onChange={this.handlePasswordChange } placeholder="●●●●●●●"/>
+					<CustomInput type="password" value={ this.state.password } onChange={this.handlePasswordChange } placeholder="●●●●●●●"/>
 				</InputField>
                 <Underline />
 				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Войти</LoginButton>

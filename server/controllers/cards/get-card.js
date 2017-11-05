@@ -1,4 +1,4 @@
-module.exports = async (ctx) => {
+module.exports = async ctx => {
     const {id} = ctx.params;
 	const doc = await ctx.cards.get(id);
 

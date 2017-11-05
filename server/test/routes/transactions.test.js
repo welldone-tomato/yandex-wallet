@@ -2,8 +2,9 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 
 const server = require('../../index');
-const userJson = require('../data_users');
+const userJson = require('../data_inits/data_users');
 const Card = require('../../models/card');
+const restoreDatabase = require('../test_helper');
 
 const currency = require('../../services/currency');
 
@@ -22,16 +23,6 @@ describe('Transactions routes test', () => {
             })
             .end((err, res) => {
                 token = res.body.token;
-                done();
-            });
-    });
-
-    it('it should get 401 with cards route match', done => {
-        chai.request(server)
-            .get('/api/cards')
-            .set('Authorization', 'JWT ')
-            .end((err, res) => {
-                res.should.have.status(401);
                 done();
             });
     });
@@ -68,7 +59,7 @@ describe('Transactions routes test', () => {
         });
     });
 
-    describe('/POST new transactions', () => {
+    describe('/POST new transactions with errors', () => {
         it('should get 400 on post transaction on error cardId', done => {
             chai.request(server)
                 .post('/api/cards/59e9ce16131a183238cc7846/transactions')
@@ -156,6 +147,10 @@ describe('Transactions routes test', () => {
                     done();
                 });
         });
+    });
+
+    describe('/POST new transactions', () => {
+        afterEach(done => restoreDatabase(done));
 
         it('should add new transaction with phone payment', done => {
             const id = '59e9ce16131a183238cc784e';

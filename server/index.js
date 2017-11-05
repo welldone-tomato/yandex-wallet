@@ -2,8 +2,9 @@ const http = require('http');
 const Koa = require('koa');
 const router = require('koa-router')();
 const koaBody = require('koa-body')();
-const cors = require('koa2-cors');
+// const cors = require('koa2-cors');
 const serve = require('koa-static');
+const send = require('koa-send');
 const mongoose = require('mongoose');
 
 const websockets = require('./websockets');
@@ -16,10 +17,12 @@ const logger = require('./libs/logger')('app');
 const cardsRoute = require('./routes/cards');
 const authRoute = require('./routes/auth');
 const currencyRoute = require('./routes/currency');
+const mrRoute = require('./routes/money_requests');
 
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
 const UsersContext = require('./data/users_context');
+const MoneyRequestsContext = require('./data/money_requests_context');
 
 // env config
 const {MONGO} = require('./config-env');
@@ -28,7 +31,10 @@ const PORT = process.env.NODE_PORT || 4000;
 mongoose.Promise = global.Promise;
 const app = new Koa();
 
-app.use(cors());
+if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev')
+	app.use(serve(__dirname + '/../build'));
+
+// app.use(cors());
 app.use(koaBody);
 app.use(passport.initialize());
 
@@ -85,6 +91,7 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 		ctx.params.userId = user.id;
 		ctx.cards = new CardsContext(user.id);
 		ctx.transactions = new TransactionsContext(user.id);
+		ctx.money_requests = new MoneyRequestsContext(user.id);
 
 		await next();
 	})(ctx, next);
@@ -92,12 +99,13 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 router.use('/api/auth', authRoute.routes());
 router.use('/api/cards', requiredAuth, websocketsMiddleware, cardsRoute.routes());
 router.use('/api/currency', requiredAuth, currencyRoute.routes());
+router.use('/api/mrs', requiredAuth, mrRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-if (process.env.NODE_ENV !== 'test')
-	app.use(serve(__dirname + '/../build'));
+if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev')
+	app.use(async ctx => await send(ctx, 'build/index.html'));
 
 //********************** Mongo connections and server starts ***************************** */
 if (process.env.NODE_ENV !== 'test') {
