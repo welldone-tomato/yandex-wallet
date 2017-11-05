@@ -44,9 +44,11 @@ const addTransaction = async (transaction, ctx, card, toCard) => {
 
 	try { // транзакция добавилась, необходимо обновить баланс карты
 		await ctx.cards.affectBalance(card.id, transaction);
-
-		ctx.broadcastCardIds = ctx.broadcastCardIds || [];
-		ctx.broadcastCardIds.push(card.id);
+  
+		// for ws broadcast
+    ctx.broadcastCards = ctx.broadcastCards || {};
+    ctx.broadcastCards[card.userId] = ctx.broadcastCards[card.userId] || [];
+    ctx.broadcastCards[card.userId].push(card.id);
 
 		// добавляем вторую транзакцию, если надо 
 		if (transaction.type === 'card2Card') {

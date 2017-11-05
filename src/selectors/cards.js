@@ -7,7 +7,7 @@ import { createSelector } from 'reselect';
  * @param {String} currency
  * @returns {String}
  */
-const getSignByCurrency = (currency) => {
+export const getSignByCurrency = (currency) => {
     switch (currency) {
         case 'RUB': return '₽';
         case 'USD': return '$';

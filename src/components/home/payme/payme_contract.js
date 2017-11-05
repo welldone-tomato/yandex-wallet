@@ -7,6 +7,9 @@ import Title from '../../misc/title';
 import Button from '../../misc/button';
 import Input from '../../misc/input';
 
+import { convertCurrency } from '../../../selectors/currency';
+import { getSignByCurrency } from '../../../selectors/cards';
+
 const PaymeLayout = styled(Island)`
 	margin: 15px;
 	min-width: 350px;
@@ -110,40 +113,95 @@ class PaymeContract extends Component {
 	 */
 	constructor(props) {
 		super(props);
+		
+		const activeCardIndex = 0;
+		
+		const sumFrom = Number(props.contract.sum);
+    
+    const sumTo = props.cardsList[activeCardIndex]
+			? convertCurrency({
+					currencyState: props.currencyState,
+					sum: sumFrom,
+					convertFrom: props.contract.currency,
+					convertTo: props.cardsList[activeCardIndex].currency,
+				})
+			: 0;
 
-		this.state = {
-			activeCardIndex: 0,
-			sum: Number(this.props.contract.sum)
-		};
+		this.state = { activeCardIndex, sumFrom, sumTo };
 	}
-
-	/**
-	 * Изменения активной карты
-	 * @param {Number} activeCardIndex индекс активной карты
-	 */
-	onCardChange(activeCardIndex) {
-		this.setState({activeCardIndex});
-
-		const fromCard = this.props.cardsList[activeCardIndex];
-
-		this.props.onChangeActiveCard(fromCard.id);
-	}
-
-	/**
-	 * Обработка изменения значения в input
-	 * @param {Event} event событие изменения значения input
-	 */
-	onChangeInputValue(event) {
-		if (!event) {
-			return;
-		}
-
-		const {name, value} = event.target;
-
-		this.setState({
-			[name]: value
-		});
-	}
+  
+  componentWillUpdate(nextProps) {
+		const isUpdatedSelectedCard = this.props.cardsList[this.state.activeCardIndex] !== nextProps.cardsList[this.state.activeCardIndex];
+		const areNewCurrencies = nextProps.currencyState.timestamp !== this.props.currencyState.timestamp;
+    if (areNewCurrencies || isUpdatedSelectedCard) {
+    	
+    	const sumTo = convertCurrency({
+        currencyState: nextProps.currencyState,
+        sum: this.state.sumFrom,
+        convertFrom: nextProps.contract.currency,
+        convertTo: nextProps.cardsList[this.state.activeCardIndex].currency,
+      });
+      
+      this.setState({ sumTo });
+    }
+  }
+  
+  /**
+   * Изменения активной карты
+   * @param {Number} activeCardIndex индекс выбранной карты
+   */
+  onCardChange(activeCardIndex) {
+  	
+    const sumTo = convertCurrency({
+      currencyState: this.props.currencyState,
+      sum: this.state.sumFrom,
+      convertFrom: this.props.contract.currency,
+      convertTo: this.props.cardsList[activeCardIndex].currency,
+    });
+    
+    this.setState({
+      activeCardIndex,
+      sumTo,
+    });
+    
+    const selectedCard = this.props.cardsList[activeCardIndex];
+    
+    this.props.onChangeActiveCard(selectedCard.id);
+  }
+  
+  /**
+   * Обработка изменения значения в input
+   * @param {Event} event событие изменения значения input
+   */
+  onChangeInputValue(event) {
+    if (!event) return;
+    
+    const {name, value} = event.target;
+    const { currencyState, contract, cardsList } = this.props;
+    const { activeCardIndex } = this.state;
+    const selectedCard = cardsList[activeCardIndex];
+    
+    let otherName, otherValue, convertFrom, convertTo;
+    
+    if (name === 'sumFrom') {
+      otherName = 'sumTo';
+      convertFrom = contract.currency;
+      convertTo = selectedCard.currency;
+    } else {
+      otherName = 'sumFrom';
+      convertFrom = selectedCard.currency;
+      convertTo = contract.currency;
+    }
+    
+    otherValue = convertCurrency({ currencyState, sum: value, convertFrom, convertTo });
+    
+    if (isNaN(otherValue)) otherValue = '?';
+    
+    this.setState({
+      [name]: value,
+      [otherName]: otherValue,
+    });
+  }
 
 	/**
 	 * Отправка формы
@@ -154,27 +212,32 @@ class PaymeContract extends Component {
 			event.preventDefault();
 		}
 
-		const {sum} = this.state;
-		const {guid, contract} = this.props;
+		const { sumFrom, sumTo, activeCardIndex } = this.state;
+		const { cardsList, guid, contract, onPaymentSubmit } = this.props;
+    
+    const isNumberFrom = !isNaN(parseFloat(sumFrom)) && isFinite(sumFrom);
+    const isNumberTo = !isNaN(parseFloat(sumTo)) && isFinite(sumTo);
+    if (!isNumberFrom || sumFrom <= 0 || !isNumberTo) return;
 
-		const isNumber = !isNaN(parseFloat(sum)) && isFinite(sum);
-		if (!isNumber || sum <= 0) return;
-
-		const fromCard = this.props.cardsList[this.state.activeCardIndex];
+		const selectedCard = cardsList[activeCardIndex];
 			
-		this.props.onPaymentSubmit({
-			sum,
-			guid: guid,
-			userName:contract.userName
-		}, fromCard.id);
+		onPaymentSubmit(
+			{
+				sum: sumTo,
+				guid: guid,
+				userName: contract.userName,
+				currency: selectedCard.currency,
+			},
+			selectedCard.id,
+		);
 	}
 
 	render() {
-		const {cardsList, contract} = this.props;
+		const {cardsList, contract, currencyState} = this.props;
 
 		if (cardsList.length === 0) return (<div></div>);
 
-		const {activeCardIndex} = this.state;
+		const {activeCardIndex, sumFrom, sumTo} = this.state;
 		const selectedCard = cardsList[activeCardIndex];
 
 		return (
@@ -182,9 +245,26 @@ class PaymeContract extends Component {
 					<PrepaidTitle>Исходящий платеж</PrepaidTitle>
 					<Row>
 						<DetailLabel>
-							<div style={{"marginBottom": "20px" }}>Пользователь <UserSpan>{contract.userName}</UserSpan> просит вас перевести деньги {contract.sum && <span> в размере <SumSpan>{contract.sum}</SumSpan> р. </span>} 
-							на карту <SumSpan>{contract.cardNumber}</SumSpan></div>
-							<div>Комментарий к платежу: <span>{contract.goal}</span></div>
+							<div style={{"marginBottom": "20px" }}>
+								<span>Пользователь <UserSpan>{contract.userName}</UserSpan> просит вас перевести деньги</span>
+								{
+									contract.sum &&
+									<span> в размере <SumSpan>{contract.sum} {getSignByCurrency(contract.currency)} </SumSpan></span>
+								}
+								{
+									contract.sum && selectedCard.currency !== contract.currency &&
+									<SumSpan>
+										({convertCurrency({currencyState, sum: contract.sum, convertFrom: contract.currency, convertTo: selectedCard.currency})}
+										{selectedCard.currencySign})
+									</SumSpan>
+								}
+								<span> на карту </span>
+								<SumSpan>{contract.cardNumber}</SumSpan>
+							</div>
+							<div>
+								Комментарий к платежу:
+								<span> {contract.goal}</span>
+							</div>
 						</DetailLabel>
 						<PrepaidItems>
 							{
@@ -212,14 +292,25 @@ class PaymeContract extends Component {
 							}
 						</PrepaidItems>
 					</Row>
-
+					
 					<InputField>
 						<SumInput
-							name='sum'
-							value={this.state.sum}
-							onChange={(event) => this.onChangeInputValue(event)} />
-						<Currency>₽</Currency>
+							name='sumTo'
+							value={sumTo}
+							onChange={event => this.onChangeInputValue(event)}
+						/>
+						<Currency>{selectedCard.currencySign}</Currency>
 					</InputField>
+          {
+            (contract.currency !== selectedCard.currency) &&
+						<InputField>
+							<SumInput
+								name='sumFrom'
+								value={sumFrom}
+								onChange={(event) => this.onChangeInputValue(event)} />
+							<Currency>{getSignByCurrency(contract.currency)}</Currency>
+						</InputField>
+          }
 					<Button
 						type='submit'
 						bgColor={selectedCard.theme.bgColor}
@@ -233,8 +324,12 @@ class PaymeContract extends Component {
 }
 
 PaymeContract.propTypes = {
+	contract: PropTypes.object,
+	guid: PropTypes.string,
 	cardsList: PropTypes.arrayOf(PropTypes.object),
-	onPaymentSubmit: PropTypes.func.isRequired
+	currencyState: PropTypes.object,
+	onPaymentSubmit: PropTypes.func.isRequired,
+	onChangeActiveCard: PropTypes.func.isRequired,
 };
 
 export default PaymeContract;
