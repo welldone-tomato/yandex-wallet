@@ -23,8 +23,10 @@ module.exports = async (ctx) => {
     
         ctx.body = dbCard;
   
-        ctx.broadcastCardIds = ctx.broadcastCardIds || [];
-        ctx.broadcastCardIds.push(dbCard.id);
+        // for ws broadcast
+        ctx.broadcastCards = ctx.broadcastCards || {};
+        ctx.broadcastCards[dbCard.userId] = ctx.broadcastCards[dbCard.userId] || [];
+        ctx.broadcastCards[dbCard.userId].push(dbCard.id);
   
         ctx.status = 201;
 };
