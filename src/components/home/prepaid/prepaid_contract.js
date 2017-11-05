@@ -23,6 +23,7 @@ const PrepaidTitle = styled(Title)`
 const PrepaidItems = styled.div`
 	width: 285px;
 	margin-bottom: 40px;
+	border-radius: 4px;
 `;
 
 const PrepaidItem = styled.div`

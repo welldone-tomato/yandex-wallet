@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'emotion/react';
+
+import QRCode from 'qrcode.react';
 import Button from '../misc/button';
 import Input from '../misc/input';
 
@@ -58,8 +60,10 @@ font-size: 16px;
 `;
 
 const SuccessTitle = styled(Title)`
+margin-top: 30px;
+font-size: 20px;
 color: #0a6c02;
-font-size: 12px;
+word-wrap: break-word;
 `;
 
 class CardAddPayme extends Component {
@@ -133,8 +137,9 @@ class CardAddPayme extends Component {
 						<InputField>
 							<Label>Ссылка на получение средств:</Label>
 							<SuccessTitle>{createdLink}</SuccessTitle>
-						</InputField>}
-												
+						</InputField>
+						}
+						{createdLink && <div style={{    "margin": "65px" }}><QRCode  value={createdLink} /></div>}
 						<Footer>
 						<div onClick={ () => onCancelClick(true) }>
 							<Button bgColor='#1F1F1F' textColor='#fff'>Вернуться</Button>

@@ -21,6 +21,7 @@
     "passport-jwt": "^3.0.0",
     "passport-local": "^1.0.0",
     "prop-types": "^15.6.0",
+    "qrcode.react": "^0.7.2",
     "react": "^15.6.2",
     "react-dom": "^15.6.2",
     "react-emotion": "^7.3.2",

@@ -6,16 +6,18 @@ import Island from '../../misc/island';
 import Title from '../../misc/title';
 
 const PrepaidLayout = styled(Island)`
+	margin: 50px auto;
 	width: 350px;
 	display: flex;
 	flex-direction: column;
-	background-color: #353536;
+	background-color: #477633;
 	position: relative;
 	color: #fff;
 	box-sizing: border-box;
 `;
 
 const PrepaidLayoutError = styled(Island)`
+	margin: 50px auto;	
 	width: 350px;
 	display: flex;
 	flex-direction: column;
@@ -66,40 +68,31 @@ const RepeatPayment = styled.button`
 	align-items: center;
 	border: none;
 	width: 100%;
-	position: absolute;
-	left: 0;
-	bottom: 0;
+	margin-bottom: 10px;
 	cursor: pointer;
 	text-transform: uppercase;
 `;
 
-export const PrepaidSuccess = ({transaction, repeatPayment}) => {
-	const {sum, from} = transaction;
+export const PaymeSuccess = ({transaction, repeatPayment, returnToTrans}) => {
+	const {sum} = transaction;
 
 	return (
 		<PrepaidLayout>
 			<CheckIcom />
 			<SectionGroup>
-				<Header>Карта пополнена</Header>
-				<Section>
-					<SectionLabel>Название платежа:</SectionLabel>
-					<SectionValue>Пополнение c привязанной карты</SectionValue>
-				</Section>
-				<Section>
-					<SectionLabel>Карта с которой пополнили:</SectionLabel>
-					<SectionValue>{from}</SectionValue>
-				</Section>
+				<Header>Перевод выполнен</Header>
 				<Section>
 					<SectionLabel>Сумма:</SectionLabel>
 					<SectionValue>{sum} ₽</SectionValue>
 				</Section>
 			</SectionGroup>
-			<RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
+			<RepeatPayment onClick={repeatPayment}>Отправить еще раз</RepeatPayment>
+			<RepeatPayment onClick={returnToTrans}>Возвратиться к транзакциям</RepeatPayment>
 		</PrepaidLayout>
 	);
 };
 
-PrepaidSuccess.propTypes = {
+PaymeSuccess.propTypes = {
 	transaction: PropTypes.shape({
 		sum: PropTypes.string,
 		number: PropTypes.string
@@ -107,22 +100,14 @@ PrepaidSuccess.propTypes = {
 	repeatPayment: PropTypes.func.isRequired
 };
 
-export const PrepaidError = ({transaction, repeatPayment, error}) => {
-	const {sum, from} = transaction;
+export const PaymeError = ({transaction, repeatPayment, error, returnToTrans}) => {
+	const {sum} = transaction;
 
 	return (
 		<PrepaidLayoutError>
 			<CheckIcom />
 			<SectionGroup>
 				<Header>Ошибка</Header>
-				<Section>
-					<SectionLabel>Название платежа:</SectionLabel>
-					<SectionValue>Пополнение c привязанной карты</SectionValue>
-				</Section>
-				<Section>
-					<SectionLabel>Карта с которой пополнили:</SectionLabel>
-					<SectionValue>{from}</SectionValue>
-				</Section>
 				<Section>
 					<SectionLabel>Сумма:</SectionLabel>
 					<SectionValue>{sum} ₽</SectionValue>
@@ -132,12 +117,13 @@ export const PrepaidError = ({transaction, repeatPayment, error}) => {
 					<SectionValue>{error}</SectionValue>
 				</Section>
 			</SectionGroup>
-			<RepeatPayment onClick={repeatPayment}>Отправить еще один перевод</RepeatPayment>
+			<RepeatPayment onClick={repeatPayment}>Попробовать еще раз</RepeatPayment>
+			<RepeatPayment onClick={returnToTrans}>Возвратиться к транзакциям</RepeatPayment>
 		</PrepaidLayoutError>
 	);
 };
 
-PrepaidError.propTypes = {
+PaymeError.propTypes = {
 	transaction: PropTypes.shape({
 		sum: PropTypes.string,
 		number: PropTypes.string
