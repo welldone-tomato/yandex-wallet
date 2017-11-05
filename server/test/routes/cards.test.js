@@ -34,7 +34,7 @@ describe('Cards routes tests', () => {
                     res.type.should.eql('application/json');
                     res.body.should.be.a('array');
                     res.body.length.should.be.eql(5);
-                    res.body[0].should.not.have.property('userId');
+                    res.body[0].should.have.property('userId');
                     res.body[0].should.have.property('id');
                     res.body[0].should.have.property('cardNumber');
                     res.body[0].should.have.property('currency');
@@ -206,7 +206,7 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(10000);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
-                    res.body.should.not.have.property('userId');
+                    res.body.should.have.property('userId');
 
                     done();
                 });
@@ -232,7 +232,7 @@ describe('Cards routes tests', () => {
                     res.body.should.have.property('balance').eql(0);
                     res.body.should.have.property('exp').eql('04/30');
                     res.body.should.have.property('name').eql('ALYSSA LIVINGSTON');
-                    res.body.should.not.have.property('userId');
+                    res.body.should.have.property('userId');
 
                     done();
                 });

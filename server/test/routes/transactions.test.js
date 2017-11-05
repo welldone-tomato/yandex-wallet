@@ -258,7 +258,7 @@ describe('Transactions routes test', () => {
                             res.body[3].should.have.property('id');
                             res.body[3].should.have.property('cardId').eql('59e9ce16131a183238cc784e');
                             res.body[3].should.have.property('type').eql('card2Card');
-                            res.body[3].should.have.property('data').eql('5101263005131454');
+                            res.body[3].should.have.property('data').eql('5101********1454');
                             res.body[3].should.have.property('sum').eql(-100);
 
                             chai.request(server)
@@ -272,7 +272,7 @@ describe('Transactions routes test', () => {
                                     res.body[2].should.have.property('id');
                                     res.body[2].should.have.property('cardId').eql('59e9ce16131a183238cc7850');
                                     res.body[2].should.have.property('type').eql('prepaidCard');
-                                    res.body[2].should.have.property('data').eql('5469259469067206');
+                                    res.body[2].should.have.property('data').eql('5469********7206');
                                     res.body[2].should.have.property('sum').eql(50);
 
                                     chai.request(server)
