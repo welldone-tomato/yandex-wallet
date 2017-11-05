@@ -1,18 +1,18 @@
 const CardsContext = require('../data/cards_context');
 const TransactionsContext = require('../data/transactions_context');
 const UsersContext = require('../data/users_context');
-const ObjectId = require('mongoose').Types.ObjectId;
 const moment = require('moment');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const axios = require('axios');
+const DOMAIN = 'http://localhost:3000'; // TODO Change for production
 
 
 const CURRENCY_ENUM = {
     'RUB': '🇷🇺 р.',
     'USD': '🇺🇸 $',
     'EUR': '🇪🇺 €'
-}
+};
 
 class TelegramBot {
     constructor() {
@@ -90,7 +90,7 @@ class TelegramBot {
         }
     }
 
-     /**
+    /**
     * Команда списка транзакций по карте
     * @param {Object} user Объект пользователя
     * 
@@ -98,20 +98,30 @@ class TelegramBot {
     mobilePaymentCommand(user) {
         this.bot.command('/mobile', async (ctx) => {
             const params = ctx.message.text.split(' ');
-            const pay = await this.makePayment("59e9ce16131a183238cc784e", params[1], params[2]);
-            ctx.reply(pay);
+            const pay = await this.makeMobilePayment(user, params[1], params[2], params[3]);
+            // ctx.reply(pay);
         });
     }
 
-    async makePayment (id, phone, amount) {
+    /**
+    * Команда списка транзакций по карте
+    * @param {Object} user Объект пользователя
+    * @param {String} cardNumber номер карты
+    * @param {String} phone телефон
+    * @param {String} amount сумма палтежа
+    * 
+    */
+    async makeMobilePayment (user, cardNumber, phone, amount) {
+        const cards = await this.cards(user.id);
+        const card = await cards.getOne({cardNumber: {'$regex': `${cardNumber}$`}});
         const payment = {
-            phone: '89211234567',
-            amount: 500
+            phone: phone,
+            amount: amount
         };
         const token = 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU5ZjI5OWE0ZDYxMWFkMDFkMDExNWIwOSIsImV4cCI6MTUxMDQwMTY1NjI1NH0.snewL_Rkavr_DYQilo5tb3K4fqSphWx3Mkb8tjYEkmI';
         try {
             const { data } = await axios
-                .post(`http://localhost:3000/api/cards/${id}/pay`, payment, {
+                .post(`${DOMAIN}/api/cards/${card.id}/pay`, payment, {
                     headers: {
                         authorization: token
                     }
@@ -134,7 +144,11 @@ class TelegramBot {
     getTransactionsCommand(user) {
         this.bot.command('/last', async (ctx) => {
             const _card = ctx.message.text.substr(ctx.message.text.length - 4);
-            await this.getTransactions(_card, user, ctx);
+            if(_card && _card.length === 4) {
+                await this.getTransactions(_card, user, ctx);
+            } else {
+                ctx.reply(`🙄 This is invalid number, please enter last 4 digits of your card`);
+            }
         });
     }
 
@@ -229,11 +243,12 @@ __________________________
                 if (user && user.email) {
                   await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
                   this.initChatId(user);
-                  ctx.reply(`✅ Cool, you are now signed in!
+                  ctx.reply(`✅ Cool, you are signed in!
 Type: 
 /commands — to see available UI commands
 /cards — to see all availaible cards
 /allcards — to see all availaible cards in inline mode
+/mobile <Last 4 digits of your 💳  number> <Phone Number> <Amount> — pay fro mobile phone
 /last <Last 4 digits of your 💳  number> — to get list of transactions`);
                 } else {
                   ctx.reply(`❌ Sorry, this is not valid secret Telegram key.
@@ -261,8 +276,8 @@ Make sure you inserted correct key.`);
     * 
     */
     async cardsButtons(user, ctx) {
-        this.bot.action(/.+/, async (ctx) => {
-            await this.getTransactions(ctx.match[0], user, ctx);
+        this.bot.action(/.+/, (ctx, next) => {
+            this.getTransactions(ctx.match[0], user, ctx);
         });
         const allCards = await this.cards(user.id).getAll();
         return ctx.reply('<b>Select card to view transactions</b>', Extra.HTML().markup((m) =>
@@ -270,21 +285,6 @@ Make sure you inserted correct key.`);
         ));
     }
 
-    /**
-    * Команда списка карт пользователя для пополнения мобильного
-    * @param {Object} user Объект пользователя
-    * @param {Context} ctx контекст бота
-    * 
-    */
-    async cardsButtonsMobilePayment(user, ctx) {
-        this.bot.action(/.+/, async (ctx) => {
-            await this.getTransactions(ctx.match[0], user, ctx);
-        });
-        const allCards = await this.cards(user.id).getAll();
-        return ctx.reply('<b>Select card to make mobile payment</b>', Extra.HTML().markup((m) =>
-            m.inlineKeyboard(allCards.map((card) => m.callbackButton(`💳  ${card.cardNumber.substr(card.cardNumber.length - 4)} — ${CURRENCY_ENUM[card.currency]}`, `${card.cardNumber.substr(card.cardNumber.length - 4)}`)))
-        ));
-    }
 
     /**
     * Отправляет Telegram-оповещение пользователю
@@ -297,9 +297,9 @@ Make sure you inserted correct key.`);
         const cardNumberSecure = card.cardNumber.substr(card.cardNumber.length - 4);
     		var message;
     		if (notificationParams.type == 'paymentMobile') {
-    			message = `С вашей карты **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на телефон ${phone}`;
+    			message = `С вашей 💳  **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на 📱 ${phone}`;
     		} else {
-    			message = `На вашу карту **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
+    			message = `На вашу 💳  **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
     		}
     		if (chatId) {
     			this.bot.telegram.sendMessage(chatId, message);
