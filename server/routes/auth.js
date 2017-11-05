@@ -28,6 +28,32 @@ const getTokenForUser = payload => {
     }, JWT_SECRET);
 }
 
+const signinMiddleware = provider => async (ctx, next) => passport.authenticate(provider, (err, user) => {
+    if (err || !user)
+        ctx.throw(401, err || 'signin failed')
+
+    const payload = {
+        id: user.id,
+        email: user.email
+    };
+
+    const token = getTokenForUser(payload);
+
+    ctx.cookies.set('jwt', token, {
+        expires: getExpDate(),
+        httpOnly: false
+    });
+
+    ctx.body = {
+        user: user.email,
+        token
+    };
+})(ctx, next);
+
+router.get('/google', passport.authenticate('google'));
+
+router.get('/google/callback', signinMiddleware('google'));
+
 router.get('/verify', async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
         if (!user)
             ctx.throw(401, err || 'auth is required');
@@ -41,27 +67,7 @@ router.get('/verify', async (ctx, next) => await passport.authenticate('jwt', as
  * Main signin route
  *
  */
-router.post('/signin', async (ctx, next) => await passport.authenticate('local', (err, user) => {
-        if (err || !user)
-            ctx.throw(401, err || 'signin failed')
-
-        const payload = {
-            id: user.id,
-            email: user.email
-        };
-
-        const token = getTokenForUser(payload);
-
-        ctx.cookies.set('jwt', token, {
-            expires: getExpDate(),
-            httpOnly: false
-        });
-
-        ctx.body = {
-            user: user.email,
-            token
-        };
-    })(ctx, next));
+router.post('/signin', signinMiddleware('local'));
 
 /**
  * Main signup route
