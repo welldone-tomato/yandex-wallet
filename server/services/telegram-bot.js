@@ -1,13 +1,20 @@
 const CardsContext = require('../data/cards_context');
 const TransactionsContext = require('../data/transactions_context');
 const UsersContext = require('../data/users_context');
+const ObjectId = require('mongoose').Types.ObjectId;
+const moment = require('moment');
+
+
+const CURRENCY_ENUM = {
+    'RUB': '🇷🇺 р.',
+    'USD': '🇺🇸 $',
+    'EUR': '🇪🇺 €'
+}
 
 class TelegramBot {
     constructor() {
         this.bot = require('../libs/bot');
         this.initBotCommands();
-        this.chatId = "";
-        this.userId = "";
     }
 
     transactions(id) {
@@ -49,14 +56,26 @@ class TelegramBot {
             const cards = await this.cards(user.id);
             const card = await cards.getOne({cardNumber: {'$regex': `${_card}$`}});
             const transactions = this.transactions(user.id);
-            ctx.reply(await transactions.getByCardId(card.id));
-            // ctx.reply(_card)
+            const allTransactions = await transactions.getTransactions(card.id);
+            // ctx.reply(await transactions.getByCardId(card.id));
+            ctx.reply(`Here is some of your latest transactions from
+💳 **** **** **** ${_card} 💳 
+
+Transactions:
+${allTransactions.map((transaction) => `Sum: ${transaction.sum} ${CURRENCY_ENUM[card.currency]} | Type: ${transaction.type} | Time: ${moment(transaction.time).format('H:mm DD/MM/YY ')}`).join('\n')}`);
         })
     }
 
     getCardsList(user) {
         this.bot.command('/allcards', async (ctx) => {
-            ctx.reply(await this.cards(user.id).getAll())
+            const allCards = await this.cards(user.id).getAll();
+            ctx.reply(allCards.map((card) => `
+💳 **** **** **** ${card.cardNumber.substr(card.cardNumber.length - 4)}
+Money availvable: ${card.balance} ${CURRENCY_ENUM[card.currency]}
+Card will expire ${card.exp}
+__________________________
+
+`).join('\n'))
         })
     }
 
@@ -69,13 +88,19 @@ class TelegramBot {
     setUserChatId() {
         this.bot.command('/getupdates', async (ctx) => {
             const inputTelegramKey = ctx.message.text.split("/getupdates ")[1];
-            const user = await this.getUserByTelegramKey(inputTelegramKey);
-            if (user && user.email) {
-              await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
-              this.initChatId(user);
-              ctx.reply(`Your chatId is set: ${ctx.chat.id}`);
-            } else {
-              ctx.reply("No user found. Make sure you inserted correct key.");
+            if (inputTelegramKey) {
+                const user = await this.getUserByTelegramKey(inputTelegramKey);
+                if (user && user.email) {
+                  await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
+                  this.initChatId(user);
+                  ctx.reply(` ✅ Cool, you are now signed in!
+Type: 
+/last <Last 4 digits of your 💳  number> 
+to get list of transactions`);
+                } else {
+                  ctx.reply(`❌ Sorry, this is not valid secret Telegram key.
+Make sure you inserted correct key.`);
+                }
             }
         })
     }
