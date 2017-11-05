@@ -33,7 +33,7 @@ const Header = ({activeCard, auth, dispatch}) => {
 		if (activeCard) return (
 		<Balance>
 			{`${activeCard.bankName}: `}
-			<BalanceSum>{`${Number(activeCard.balance.toFixed(4))} ${activeCard.currencySign}`}</BalanceSum>
+			<BalanceSum>{`${Number(activeCard.balance.toFixed(2))} ${activeCard.currencySign}`}</BalanceSum>
 		</Balance>)
 	};
 

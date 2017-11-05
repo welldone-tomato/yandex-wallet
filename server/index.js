@@ -6,6 +6,9 @@ const cors = require('koa2-cors');
 const serve = require('koa-static');
 const mongoose = require('mongoose');
 
+const websockets = require('./websockets');
+const websocketsMiddleware = require('./websockets/middleware');
+
 // Turn on auth strategies
 const passport = require('koa-passport');
 
@@ -87,7 +90,7 @@ const requiredAuth = async (ctx, next) => await passport.authenticate('jwt', asy
 	})(ctx, next);
 
 router.use('/api/auth', authRoute.routes());
-router.use('/api/cards', requiredAuth, cardsRoute.routes());
+router.use('/api/cards', requiredAuth, websocketsMiddleware, cardsRoute.routes());
 router.use('/api/currency', requiredAuth, currencyRoute.routes());
 
 app.use(router.routes());
@@ -115,7 +118,9 @@ if (process.env.NODE_ENV !== 'test') {
 			console.log(`YM Node School APP connected to DB successfully. ADDR= ${MONGO}`)
 			logger.info(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
 
-			http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
+			const server = http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
+			
+			websockets.init(server);
 		})
 		.once('error', error => {
 			console.error('Mongo Error: ', error);

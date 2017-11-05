@@ -24,12 +24,17 @@ import SignUp from './components/auth/signup';
 import reducers from './reducers';
 import { verifyToken } from './actions/auth';
 
+// Websockets
+import Websockets from './websockets';
+
 //
 const middlewares = [reduxThunk, routerMiddleware(browserHistory)];
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, composeEnhancers(applyMiddleware(...middlewares)));
 const history = syncHistoryWithStore(browserHistory, store);
+
+Websockets.init(store);
 
 ////////
 store.dispatch(verifyToken());

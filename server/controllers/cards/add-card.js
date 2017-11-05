@@ -18,7 +18,13 @@ module.exports = async (ctx) => {
         } catch (err) {
             ctx.throw(400, err);
         }
+        
+        const dbCard = await ctx.cards.add(card);
     
-        ctx.body = await ctx.cards.add(card);
+        ctx.body = dbCard;
+  
+        ctx.broadcastCardIds = ctx.broadcastCardIds || [];
+        ctx.broadcastCardIds.push(dbCard.id);
+  
         ctx.status = 201;
 };

@@ -9,5 +9,5 @@ export const convertCurrency = ({ currencyState, sum, convertFrom, convertTo, ro
   const rateTo = currencyState[convertTo];
   if (rateFrom === null || rateTo === null) return '?';
   const convertedSum = rateFrom * sum / rateTo;
-  return Number(convertedSum.toFixed(roundPositions || 4));
+  return Number(convertedSum.toFixed(roundPositions || 2));
 };

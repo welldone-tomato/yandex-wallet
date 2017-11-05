@@ -24,7 +24,7 @@ const getSignByCurrency = (currency) => {
 export const getCurrencyBySign = (sign) => {
     switch (sign) {
         case '₽': return 'RUB';
-        case '$': return '$USD';
+        case '$': return 'USD';
         case '€': return 'EUR';
         default: return '?';
     }
