@@ -1,7 +1,6 @@
 const CardsContext = require('../data/cards_context');
 const TransactionsContext = require('../data/transactions_context');
 const UsersContext = require('../data/users_context');
-const ObjectId = require('mongoose').Types.ObjectId;
 
 class TelegramBot {
     constructor() {
@@ -27,20 +26,21 @@ class TelegramBot {
         const _id = id.toString();
         return await this.users().getOne({chatId: _id});
     }
-
-    initBotCommands() {
-        this.chatId();
-        // this.getUser();
+    
+    async getUserByTelegramKey(telegramKey) {
+        const _key = telegramKey.toString();
+        return await this.users().getOne({telegramKey: _key});
     }
 
-    chatId() {
-        this.bot.command('/chatid', async (ctx) => {
-            const user = await this.userInstance(ctx.chat.id);
-            this.getCardsList(user);
-            this.getTransactions(user);
-            ctx.reply(`text ${ctx.message.text}
-id: ${user.id}`);
-        });
+    initBotCommands() {
+        this.setUserChatId();
+    }
+
+    initChatId(user) {
+        if (user) {
+          this.getCardsList(user);
+          this.getTransactions(user);
+        }
     }
 
     getTransactions(user) {
@@ -65,27 +65,40 @@ id: ${user.id}`);
             ctx.reply(await this.setUser())
         })
     }
+    
+    setUserChatId() {
+        this.bot.command('/getupdates', async (ctx) => {
+            const inputTelegramKey = ctx.message.text.split("/getupdates ")[1];
+            const user = await this.getUserByTelegramKey(inputTelegramKey);
+            if (user && user.email) {
+              await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
+              this.initChatId(user);
+              ctx.reply(`Your chatId is set: ${ctx.chat.id}`);
+            } else {
+              ctx.reply("No user found. Make sure you inserted correct key.");
+            }
+        })
+    }
 
     /**
-	 * Отправляет Telegram-оповещение пользователю
-	 *
-	 * @param {Object} notificationParams параметры нотификации
-	 */
-	sendNotification(notificationParams) {
+    * Отправляет Telegram-оповещение пользователю
+    *
+    * @param {Object} notificationParams параметры нотификации
+    */
+  	sendNotification(notificationParams) {
         const {chatId} = notificationParams.user;
         const {card, phone, amount}= notificationParams;
         const cardNumberSecure = card.cardNumber.substr(card.cardNumber.length - 4);
-		var message;
-		if (notificationParams.type == 'paymentMobile') {
-			message = `С вашей карты **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на телефон ${phone}`;
-		} else {
-			message = `На вашу карту **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
-		}
-		if (chatId) {
-			this.bot.telegram.sendMessage(chatId, message);
-		}
+    		var message;
+    		if (notificationParams.type == 'paymentMobile') {
+    			message = `С вашей карты **** **** **** ${cardNumberSecure} было переведено ${amount}${card.currency} на телефон ${phone}`;
+    		} else {
+    			message = `На вашу карту **** **** **** ${cardNumberSecure}  поступило ${amount}${card.currency}`;
+    		}
+    		if (chatId) {
+    			this.bot.telegram.sendMessage(chatId, message);
+    		}
     }
-    
 
 }
 

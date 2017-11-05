@@ -15,7 +15,12 @@ bot.use((ctx, next) => {
     const ms = new Date() - start
     console.log('response time %sms', ms)
   })
-})
+});
+
+bot.start((ctx) => {
+  console.log('started:', ctx.from.id)
+  return ctx.reply(`Welcome! To start receiving notifications please type /getUpdates <key>`);
+});
 
 const catPhoto = 'http://lorempixel.com/400/200/cats/'
 bot.command('cat', ({ replyWithPhoto }) => replyWithPhoto(catPhoto))
