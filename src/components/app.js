@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 import './fonts.css';
 import styled, { injectGlobal } from 'react-emotion';
 
-import Websockets from '../websockets';
-
 import CardsBar from './cards/cards_bar';
 import Header from './header/header';
 
@@ -39,17 +37,6 @@ flex-grow: 1;
 `;
 
 class App extends Component {
-  componentDidMount() {
-    // this.props.getCurrencies();
-    // this.currencyInterval = setInterval(() => this.props.getCurrencies(), 1000 * 15);
-    Websockets.connect();
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.currencyInterval);
-    Websockets.disconnect();
-  }
-
   render() {
     const {isAuthenticating, children} = this.props;
 
