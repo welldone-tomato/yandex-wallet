@@ -81,12 +81,14 @@ class Header extends React.Component {
 					<Button bgColor='#0088cc' textColor='#fff' onClick={this.onClick}>Telegram</Button>
 				}
 				{this.state.isTelegramModalVisible ? <Popup onCloseClick={this.onCloseClick}>
-					<div>Скопируйте этот текст и вставьте его в диалог с ботом: 
+					<div>
+						<h3 style={{marginBottom: '20px', marginTop: '20px'}}>Ваш секретный ключ: <code>{user.telegramKey}</code> </h3>
+						<p>Скопируйте эту команду и вставьте его в диалог с ботом:</p>
 						<div style={{textAlign:'center', marginBottom: '20px', marginTop: '10px'}}>
 							<code style={{background:'#FFFACD'}}>/getupdates {user.telegramKey}</code>
 						</div>
 					</div>
-					<Button bgColor='#0088cc' textColor='#fff'><a style={{color:'#fff'}} target="_blank" href={`http://telegram.me/@PicturerBot`}>Перейти к боту</a></Button>
+					<Button bgColor='#0088cc' textColor='#fff'><a style={{color:'#fff'}} target="_blank" href={`http://telegram.me/YANMBot`}>Перейти к боту</a></Button>
 				</Popup> : null}
 				{auth.isAuth && <Currency />}
 				<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={()=> dispatch(signOutUser())}/>
