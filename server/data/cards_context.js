@@ -45,12 +45,9 @@ class CardsContext extends Context {
      * @memberof Context
      */
     async getModelById(id) {
-        const {userId} = this;
-
         try {
             return this.model.findOne({
-                _id: new ObjectId(id),
-                userId
+                _id: new ObjectId(id)
             });
 
         } catch (err) {

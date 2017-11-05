@@ -1,7 +1,7 @@
 const {DOMAIN} = require('../../config-env');
 
 module.exports = async ctx => {
-    const {cardId, sum} = ctx.request.body;
+    const {cardId, sum, goal} = ctx.request.body;
 
     if (!cardId)
         ctx.throw(400, 'properties required');
@@ -9,7 +9,8 @@ module.exports = async ctx => {
     const mr = {
         cardId,
         sum: Math.abs(Number(sum)) || 0,
-        userId: ctx.params.userId
+        userId: ctx.params.userId,
+        goal
     };
 
     try {

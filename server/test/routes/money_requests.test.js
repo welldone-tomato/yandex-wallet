@@ -6,10 +6,13 @@ const userJson = require('../data_inits/data_users');
 const restoreDatabase = require('../test_helper');
 
 const should = chai.should();
+
 chai.use(chaiHttp);
 
 describe('Money requests routes tests', () => {
-    let token;
+    let token,
+        token2;
+
     let guid;
 
     before(done => {
@@ -23,12 +26,25 @@ describe('Money requests routes tests', () => {
                 token = res.body.token;
 
                 chai.request(server)
-                    .get('/api/mrs')
-                    .set('Authorization', 'JWT ' + token)
+                    .post('/api/auth/signin')
+                    .send({
+                        email: userJson[1].email,
+                        password: userJson[1].password
+                    })
                     .end((err, res) => {
-                        guid = res.body[0].guid;
+                        token2 = res.body.token;
                         done();
                     });
+            });
+    });
+
+    beforeEach(done => {
+        chai.request(server)
+            .get('/api/mrs')
+            .set('Authorization', 'JWT ' + token)
+            .end((err, res) => {
+                guid = res.body[0].guid;
+                done();
             });
     });
 
@@ -53,7 +69,7 @@ describe('Money requests routes tests', () => {
                 });
         });
 
-        it('it should GET mrs in db', done => {
+        it('it should GET mr in db', done => {
             chai.request(server)
                 .get('/api/mrs/' + guid)
                 .set('Authorization', 'JWT ' + token)
@@ -154,6 +170,36 @@ describe('Money requests routes tests', () => {
                     res.should.have.status(201);
                     res.body.should.have.property('url');
                     done();
+                });
+        });
+    });
+
+    describe('/POST new transaction with money request with DB', () => {
+        afterEach(done => restoreDatabase(done));
+
+        it('it should add transaction', done => {
+            //получаем характеристики транзакции
+            chai.request(server)
+                .get('/api/mrs/' + guid)
+                .set('Authorization', 'JWT ' + token2)
+                .end((err, res) => {
+                    const {sum} = res.body;
+
+                    chai.request(server)
+                        .post('/api/cards/59e9ce16131a183238cc7845/transfer2user')
+                        .set('Authorization', 'JWT ' + token2)
+                        .send({
+                            guid: guid,
+                            amount: sum
+                        })
+                        .end((err, res) => {
+                            res.should.have.status(201);
+                            res.type.should.eql('application/json');
+                            res.body.should.be.a('object');
+                            res.body.should.have.property('status').eql('success');
+
+                            done();
+                        });
                 });
         });
     });

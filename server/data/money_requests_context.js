@@ -28,7 +28,7 @@ class MoneyRequestContext extends Context {
      * Возвращает данные из БД в [] 
      * 
      * @returns {[{"id":String}]} 
-     * @memberof Context
+     * @memberof MoneyRequestContext
      */
     async getAll() {
         const data = await super.getAll();
@@ -43,8 +43,28 @@ class MoneyRequestContext extends Context {
      * Возращает money request по guid
      * 
      * @param {String} guid 
-     * @returns []
-     * @memberof TransactionsContext
+     * @returns {Object}
+     * @memberof MoneyRequestContext
+     */
+    async getCardByGUIDInternal(guid) {
+        const mr = await this.model.findOne({
+            guid
+        });
+
+        if (!mr)
+            throw new ApplicationError(`Money requests with guid=${guid} not found`, 404);
+
+        const card = await Card.findById(mr.cardId);
+
+        return card.toObject();
+    }
+
+    /**
+     * Возращает money request по guid
+     * 
+     * @param {String} guid 
+     * @returns {Object}
+     * @memberof MoneyRequestContext
      */
     async getByGUID(guid) {
         const formatCardNumber = number => number.substr(0, 4) + '********' + number.substr(12, 15);
