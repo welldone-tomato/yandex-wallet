@@ -165,7 +165,7 @@ class TelegramBot {
         const card = await cards.getOne({cardNumber: {'$regex': `${cardNumber}$`}});
         if (card) {
             const transactions = this.transactions(user.id);
-            const allTransactions = await transactions.getTransactions(card.id);
+            const allTransactions = await transactions.getByCardId(card.id);
             if(allTransactions && allTransactions.length > 0) {
                 ctx.reply(`Here is some of your latest transactions from
 💳 **** **** **** ${cardNumber} 💳 
