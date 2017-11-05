@@ -8,16 +8,18 @@ export default ({
 	},
 	sendNotification: function(title, src) {
 		const self = this;
-		self.changeFavicon(src || self._favicon_event);
-		self.changeTitle(title);
-		window.onfocus = null;
-		window.onfocus = ()=>{
-			setTimeout(()=>{
-				self.changeFavicon(self._favicon_origin);
-				self.changeTitle(self._title_origin);
-			}, 1000);
-			
-		};
+		if (!self.isPageVisible()()) { // send notifications only for not active windows
+			self.changeFavicon(src || self._favicon_event);
+			self.changeTitle(title);
+			window.onfocus = null;
+			window.onfocus = ()=>{
+				setTimeout(()=>{
+					self.changeFavicon(self._favicon_origin);
+					self.changeTitle(self._title_origin);
+				}, 1000);
+				
+			};
+		}
 	},
 	changeFavicon: function (src) {
 		/*!
@@ -41,6 +43,26 @@ export default ({
 	},
 	changeTitle: function (title) {
 		document.title = title;	
+	},
+	isPageVisible: function() {
+		return (function(){
+		    var stateKey, eventKey, keys = {
+		        hidden: "visibilitychange",
+		        webkitHidden: "webkitvisibilitychange",
+		        mozHidden: "mozvisibilitychange",
+		        msHidden: "msvisibilitychange"
+		    };
+		    for (stateKey in keys) {
+		        if (stateKey in document) {
+		            eventKey = keys[stateKey];
+		            break;
+		        }
+		    }
+		    return function(c) {
+		        if (c) document.addEventListener(eventKey, c);
+	        	return !document[stateKey];
+	    	}
+		})();
 	}
 });
 	
