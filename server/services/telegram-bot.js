@@ -1,10 +1,12 @@
 const CardsContext = require('../data/cards_context');
 const TransactionsContext = require('../data/transactions_context');
 const UsersContext = require('../data/users_context');
+const addMobilePayment = require('../controllers/transactions/add-payment');
 const ObjectId = require('mongoose').Types.ObjectId;
 const moment = require('moment');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
+const axios = require('axios');
 
 
 const CURRENCY_ENUM = {
@@ -85,6 +87,48 @@ class TelegramBot {
             this.getCardsListСommand(user);
             this.getTransactionsCommand(user);
             this.cardsButtonsCommand(user);
+            this.mobilePaymentCommand(user);
+        }
+    }
+
+     /**
+    * Команда списка транзакций по карте
+    * @param {Object} user Объект пользователя
+    * 
+    */
+    mobilePaymentCommand(user) {
+        this.bot.command('/mobile', async (ctx) => {
+            const pay = await this.makePayment("59e9ce16131a183238cc784e");
+            ctx.reply(pay);
+        });
+    }
+
+    async makePayment (id) {
+        // ObjectId("59e9ce16131a183238cc784e")
+        const url = `/${id}/pay`;
+        const payment = {
+            phone: '89211234567',
+            amount: 500
+        };
+        const token = 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU5ZjI5OWE0ZDYxMWFkMDFkMDExNWIwOSIsImV4cCI6MTUxMDQwMTY1NjI1NH0.snewL_Rkavr_DYQilo5tb3K4fqSphWx3Mkb8tjYEkmI';
+        try {
+            const { data } = await axios
+                .post(`http://localhost:3000/api/cards/${id}/pay`, payment, {
+                    headers: {
+                        authorization: token
+                    }
+                });
+
+            const state = {
+                timestamp: new Date(data.date).getTime(),
+                RUB: 1,
+                USD: Number((1 / data.rates.USD).toFixed(4)),
+                EUR: Number((1 / data.rates.EUR).toFixed(4)),
+            };
+            return state;
+        } catch (err) {
+            // logger.error(`Can not receive fixer currencies: ${err.message}`);
+            return err.message;
         }
     }
 
@@ -175,8 +219,8 @@ __________________________
                 .extra()
             );
         });
-        this.bot.hears('💳  Cards by buttons', ctx => this.cardsButtons(user, ctx));
-        this.bot.hears('💳  Inline cards list', ctx => ctx.reply('Free hugs. Call now!'))
+        this.bot.hears('💳  Cards by buttons', async ctx => await this.cardsButtons(user, ctx));
+        this.bot.hears('💳  Inline cards list', async ctx => await this.getCardsList(user, ctx))
     }
 
     /**
