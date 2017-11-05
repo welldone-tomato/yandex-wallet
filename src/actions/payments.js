@@ -107,7 +107,7 @@ export const payPrepaid = (transaction, id, currentId) => {
                 }
             });
 
-            dispatch(fetchTransactions(id));
+            dispatch(fetchTransactions(currentId));
 
             console.log(err.response.data.message ? err.response.data.message : err.response.data);
         }

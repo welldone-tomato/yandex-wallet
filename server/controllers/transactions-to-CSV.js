@@ -7,6 +7,7 @@
  */
 module.exports = (cursor, stream, ctx) => {
 	const fieldToString = field => '"' + String(field || "").replace(/\"/g, '""') + '"';
+	const formatCardNumber = number => number.substr(0, 4) + '********' + number.substr(12, 15);
 
 	const headers = [
 		'Id',
@@ -21,7 +22,7 @@ module.exports = (cursor, stream, ctx) => {
 		doc.time,
 		doc.sum,
 		doc.type,
-		doc.data,
+		['prepaidCard', 'card2Card'].includes(doc.type) ? formatCardNumber(doc.data) : doc.data,
 	].map(fieldToString).join(',');
 
 	let started = false;
