@@ -87,6 +87,7 @@ class MoneyRequestContext extends Context {
         return {
             userName: user.email,
             cardNumber: formatCardNumber(card.cardNumber),
+            currency: card.currency,
             sum: mr.sum,
             goal: mr.goal
         }
