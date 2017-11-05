@@ -24,12 +24,10 @@ const userSchema = new Schema({
         }
     },
     chatId: {
-        type: String,
-        required: false
+        type: String
     },
     telegramKey: {
-        type: String,
-        required: false
+        type: String
     }
 }, {
     toObject: {

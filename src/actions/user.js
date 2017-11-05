@@ -8,7 +8,7 @@ const ROOT_URL = '/api';
 * Вытаскивает данные по картам пользователя
 * 
 */
-export const getTelegramKey = email => {
+export const getTelegramKey = () => {
     return async dispatch => {
         try {
             dispatch({
@@ -16,7 +16,7 @@ export const getTelegramKey = email => {
             });
 
             const response = await axios
-                .get(`${ROOT_URL}/user/telegram-key/${email}`, {
+                .get(`${ROOT_URL}/user/telegram-key`, {
                     headers: {
                         authorization: 'JWT ' + localStorage.getItem('token')
                     }

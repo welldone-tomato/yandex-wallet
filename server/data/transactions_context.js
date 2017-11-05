@@ -87,19 +87,6 @@ class TransactionsContext extends Context {
     getByCardIdStream(id) {
         return this.getModelByCardId(id).cursor();
     }
-
-    /**
-     * Возращает массив транзакций по id карты пользователя
-     * 
-     * @param {String} id 
-     * @returns []
-     * @memberof TransactionsContext
-     */
-    async getTransactions(id) {
-        return await this.model.find({
-            cardId: new ObjectId(id)
-        });
-    }
 }
 
 module.exports = TransactionsContext;
