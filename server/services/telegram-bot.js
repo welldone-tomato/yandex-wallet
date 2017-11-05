@@ -36,13 +36,6 @@ class TelegramBot {
         this.setUserChatId();
     }
 
-    initChatId(user) {
-        if (user) {
-          this.getCardsList(user);
-          this.getTransactions(user);
-        }
-    }
-
     getTransactions(user) {
         this.bot.command('/last', async (ctx) => {
             const _card = ctx.message.text.substr(ctx.message.text.length - 4);
@@ -72,7 +65,6 @@ class TelegramBot {
             const user = await this.getUserByTelegramKey(inputTelegramKey);
             if (user && user.email) {
               await this.users().addField({"email": user.email}, "chatId", ctx.chat.id);
-              this.initChatId(user);
               ctx.reply(`Your chatId is set: ${ctx.chat.id}`);
             } else {
               ctx.reply("No user found. Make sure you inserted correct key.");
@@ -98,6 +90,18 @@ class TelegramBot {
     		if (chatId) {
     			this.bot.telegram.sendMessage(chatId, message);
     		}
+    }
+    
+    /**
+    * Инициализирует чат с ботом
+    *
+    * @param {Object} user
+    */
+    initChatId(user) {
+        if (user && user.chatId) {
+          this.getCardsList(user);
+          this.getTransactions(user);
+        }
     }
 
 }
