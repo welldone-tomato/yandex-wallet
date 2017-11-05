@@ -19,7 +19,10 @@ bot.use((ctx, next) => {
 
 bot.start((ctx) => {
   console.log('started:', ctx.from.id)
-  return ctx.reply(`Welcome! To start receiving notifications please type /getUpdates <key>`);
+  return ctx.reply(`Hello, sweetheart!
+Let's do some magic with your 💳 
+To start receiving notifications please type:
+/getupdates <Telegram Secret Key>`);
 });
 
 const catPhoto = 'http://lorempixel.com/400/200/cats/'

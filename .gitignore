@@ -10,14 +10,14 @@ coverage
 #custom config of environment
 server/config-env.js
 
-#db
-scripts/db
-!scripts/db/dump/agz
-
 # production
 build
 *.key
 *.crt
+
+#db
+scripts/db
+!scripts/db/*.agz
 
 # misc
 .idea
