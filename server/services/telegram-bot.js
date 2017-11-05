@@ -43,13 +43,6 @@ class TelegramBot {
         this.setUserChatId();
     }
 
-    initChatId(user) {
-        if (user) {
-          this.getCardsList(user);
-          this.getTransactions(user);
-        }
-    }
-
     getTransactions(user) {
         this.bot.command('/last', async (ctx) => {
             const _card = ctx.message.text.substr(ctx.message.text.length - 4);
@@ -123,6 +116,18 @@ Make sure you inserted correct key.`);
     		if (chatId) {
     			this.bot.telegram.sendMessage(chatId, message);
     		}
+    }
+    
+    /**
+    * Инициализирует чат с ботом
+    *
+    * @param {Object} user
+    */
+    initChatId(user) {
+        if (user && user.chatId) {
+          this.getCardsList(user);
+          this.getTransactions(user);
+        }
     }
 
 }
