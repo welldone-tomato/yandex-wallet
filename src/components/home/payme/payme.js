@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import Websockets from '../../../websockets';
+
 import PaymeContract from './payme_contract';
 import { PaymeSuccess, PaymeError } from './payme_screens';
 
@@ -8,6 +10,7 @@ import { getMr } from '../../../actions/mrs';
 import { getPreparedCards } from '../../../selectors/cards';
 import { payCardToUser, repeateCard2User, clearCard2UserState } from '../../../actions/payments';
 import { changeActiveCard } from '../../../actions/cards';
+import { fetchCurrencies } from '../../../actions/currency';
 
 class Payme extends Component {
     validateGUID(guid) {
@@ -23,6 +26,12 @@ class Payme extends Component {
     }
 
     componentDidMount() {
+        // ws
+        Websockets.connect();
+        // currency
+        this.props.getCurrencies();
+        this.currencyInterval = setInterval(() => this.props.getCurrencies(), 1000 * 15);
+        // mr
         const guid = this.props.params.guid;
 
         if (this.validateGUID(guid)) {
@@ -33,26 +42,74 @@ class Payme extends Component {
             this.props.fetchMrs(guid);
         }
     }
+    
+    componentWillUnmount() {
+        Websockets.disconnect();
+        clearInterval(this.currencyInterval);
+    }
 
     render() {
-        const {loadingError, card2UserState, contract, isLoading, userName, cards, onPaymentSubmit, onRepeatPaymentClick, returnToTrans, onChangeActiveCard} = this.props;
+        
+        const {
+            params, loadingError, card2UserState, contract, isLoading, userName, cards, currencyState,
+            onPaymentSubmit, onRepeatPaymentClick, returnToTrans, onChangeActiveCard,
+        } = this.props;
+        
         const {isValidGUID} = this.state;
 
         if (isLoading) return ( <div />);
 
         if (contract)
             if (userName === contract.userName)
-                return (<PaymeError transaction={ { sum: contract ? contract.sum ? contract.sum : 0 : 0 } } error={ 'Вы не можете переводить деньги сами себе...' } repeatPayment={ () => onRepeatPaymentClick() } returnToTrans={ () => returnToTrans() } />);
+                return (
+                  <PaymeError
+                    transaction={ { sum: contract ? contract.sum ? contract.sum : 0 : 0 } }
+                    error={ 'Вы не можете переводить деньги сами себе...' }
+                    repeatPayment={ () => onRepeatPaymentClick() }
+                    returnToTrans={ () => returnToTrans() }
+                  />
+                );
 
         if (card2UserState.stage === 'success')
-            return (<PaymeSuccess transaction={ card2UserState.transaction } repeatPayment={ () => onRepeatPaymentClick() } returnToTrans={ () => returnToTrans() } />);
+            return (
+              <PaymeSuccess
+                transaction={ card2UserState.transaction }
+                repeatPayment={ () => onRepeatPaymentClick() }
+                returnToTrans={ () => returnToTrans() }
+              />
+            );
 
-        if (contract && card2UserState.stage === 'contract') return (<PaymeContract guid={ this.props.params.guid } contract={ contract } cardsList={ cards } onChangeActiveCard={ id => onChangeActiveCard(id) } onPaymentSubmit={ (transaction, id) => onPaymentSubmit(transaction, id) }
-                                                                     />);
-        if (card2UserState.error && card2UserState.stage === 'error') return (<PaymeError transaction={ card2UserState.transaction } error={ card2UserState.error } repeatPayment={ () => onRepeatPaymentClick() } returnToTrans={ () => returnToTrans() } />);
+        if (contract && card2UserState.stage === 'contract')
+            return (
+              <PaymeContract
+                guid={ params.guid }
+                contract={ contract }
+                currencyState={currencyState}
+                cardsList={ cards }
+                onChangeActiveCard={ id => onChangeActiveCard(id) }
+                onPaymentSubmit={ (transaction, id) => onPaymentSubmit(transaction, id) }
+              />
+            );
+        
+        if (card2UserState.error && card2UserState.stage === 'error')
+            return (
+              <PaymeError
+                transaction={ card2UserState.transaction }
+                error={ card2UserState.error }
+                repeatPayment={ () => onRepeatPaymentClick() }
+                returnToTrans={ () => returnToTrans() }
+              />
+            );
 
         if (!isValidGUID || loadingError)
-            return (<PaymeError transaction={ { sum: contract ? contract.sum ? contract.sum : 0 : 0 } } error={ !isValidGUID ? 'Неверная ссылка' : loadingError ? loadingError : 'Что то случилось...' } repeatPayment={ () => onRepeatPaymentClick() } returnToTrans={ () => returnToTrans() } />);
+            return (
+              <PaymeError
+                transaction={ { sum: contract ? contract.sum ? contract.sum : 0 : 0 } }
+                error={ !isValidGUID ? 'Неверная ссылка' : loadingError ? loadingError : 'Что то случилось...' }
+                repeatPayment={ () => onRepeatPaymentClick() }
+                returnToTrans={ () => returnToTrans() }
+              />
+            );
 
         return (<div />);
     }
@@ -64,7 +121,8 @@ const mapStateToProps = state => ({
     isLoading: state.mrs.isLoading,
     contract: state.mrs.contract,
     cards: getPreparedCards(state),
-    userName: state.auth.userName
+    userName: state.auth.userName,
+    currencyState: state.currency,
 });
 
 const mapDispatchToProps = dispatch => ( {
@@ -81,7 +139,9 @@ const mapDispatchToProps = dispatch => ( {
 
     returnToTrans: () => dispatch(clearCard2UserState()),
 
-    onChangeActiveCard: (id) => dispatch(changeActiveCard(id))
+    onChangeActiveCard: (id) => dispatch(changeActiveCard(id)),
+  
+    getCurrencies: () => dispatch(fetchCurrencies()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Payme);

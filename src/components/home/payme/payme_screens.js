@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import Island from '../../misc/island';
 import Title from '../../misc/title';
 
+import { getSignByCurrency } from '../../../selectors/cards';
+
 const PrepaidLayout = styled(Island)`
 	margin: 50px auto;
 	width: 350px;
@@ -74,7 +76,7 @@ const RepeatPayment = styled.button`
 `;
 
 export const PaymeSuccess = ({transaction, repeatPayment, returnToTrans}) => {
-	const {sum} = transaction;
+	const {sum, currency} = transaction;
 
 	return (
 		<PrepaidLayout>
@@ -83,7 +85,7 @@ export const PaymeSuccess = ({transaction, repeatPayment, returnToTrans}) => {
 				<Header>Перевод выполнен</Header>
 				<Section>
 					<SectionLabel>Сумма:</SectionLabel>
-					<SectionValue>{sum} ₽</SectionValue>
+					<SectionValue>{sum} {getSignByCurrency(currency)}</SectionValue>
 				</Section>
 			</SectionGroup>
 			<RepeatPayment onClick={repeatPayment}>Отправить еще раз</RepeatPayment>
@@ -98,7 +100,7 @@ PaymeSuccess.propTypes = {
 };
 
 export const PaymeError = ({transaction, repeatPayment, error, returnToTrans}) => {
-	const {sum} = transaction;
+	const {sum, currency} = transaction;
 
 	return (
 		<PrepaidLayoutError>
@@ -107,7 +109,7 @@ export const PaymeError = ({transaction, repeatPayment, error, returnToTrans}) =
 				<Header>Ошибка</Header>
 				<Section>
 					<SectionLabel>Сумма:</SectionLabel>
-					<SectionValue>{sum} ₽</SectionValue>
+					<SectionValue>{sum} {getSignByCurrency(currency)}</SectionValue>
 				</Section>
 				<Section>
 					<SectionLabel>Ошибка:</SectionLabel>
