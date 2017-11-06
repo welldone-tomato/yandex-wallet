@@ -18,6 +18,7 @@ const cardsRoute = require('./routes/cards');
 const authRoute = require('./routes/auth');
 const currencyRoute = require('./routes/currency');
 const mrRoute = require('./routes/money_requests');
+const userRoute = require('./routes/user');
 
 const CardsContext = require('./data/cards_context');
 const TransactionsContext = require('./data/transactions_context');
@@ -102,6 +103,7 @@ router.use('/api/auth', authRoute.routes());
 router.use('/api/cards', requiredAuth, websocketsMiddleware, cardsRoute.routes());
 router.use('/api/currency', requiredAuth, currencyRoute.routes());
 router.use('/api/mrs', requiredAuth, mrRoute.routes());
+router.use('/api/user', requiredAuth, userRoute.routes());
 
 app.use(router.routes());
 app.use(router.allowedMethods());

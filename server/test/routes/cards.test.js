@@ -14,6 +14,7 @@ describe('Cards routes tests', () => {
     before(done => {
         chai.request(server)
             .post('/api/auth/signin')
+            .set('X-Requested-With', 'XMLHttpRequest')
             .send({
                 email: userJson[0].email,
                 password: userJson[0].password

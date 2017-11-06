@@ -22,7 +22,9 @@ const userSchema = new Schema({
             validator: value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/.test(value),
             message: 'valid password field is required'
         }
-    }
+    },
+    chatId: String,
+    telegramKey: String
 }, {
     toObject: {
         transform: (doc, ret) => {
@@ -35,19 +37,20 @@ const userSchema = new Schema({
 
 userSchema.pre('save', function(next) {
     const user = this;
-    bcrypt.genSalt(10, (err, salt) => {
-        if (err)
-            return next(err);
-        else
-            bcrypt.hash(user.password, salt, null, (err, hash) => {
-                if (err)
-                    return next(err);
-                else {
-                    user.password = hash;
-                    next();
-                }
-            });
-    });
+    if (this.isNew)
+        bcrypt.genSalt(10, (err, salt) => {
+            if (err)
+                return next(err);
+            else
+                bcrypt.hash(user.password, salt, null, (err, hash) => {
+                    if (err)
+                        return next(err);
+                    else {
+                        user.password = hash;
+                        next();
+                    }
+                });
+        });
 });
 
 // Methods

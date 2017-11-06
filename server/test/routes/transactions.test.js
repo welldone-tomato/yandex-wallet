@@ -17,6 +17,7 @@ describe('Transactions routes test', () => {
     before(done => {
         chai.request(server)
             .post('/api/auth/signin')
+            .set('X-Requested-With', 'XMLHttpRequest')
             .send({
                 email: userJson[0].email,
                 password: userJson[0].password
@@ -231,9 +232,9 @@ describe('Transactions routes test', () => {
         });
 
         it('should add new transaction with card2card operation', done => {
-            
-            currency.convert = ({ sum }) => sum * 0.5;
-            
+
+            currency.convert = ({sum}) => sum * 0.5;
+
             chai.request(server)
                 .post('/api/cards/59e9ce16131a183238cc784e/transfer')
                 .set('Authorization', 'JWT ' + token)

@@ -18,6 +18,7 @@ describe('Money requests routes tests', () => {
     before(done => {
         chai.request(server)
             .post('/api/auth/signin')
+            .set('X-Requested-With', 'XMLHttpRequest')
             .send({
                 email: userJson[0].email,
                 password: userJson[0].password
@@ -27,6 +28,7 @@ describe('Money requests routes tests', () => {
 
                 chai.request(server)
                     .post('/api/auth/signin')
+                    .set('X-Requested-With', 'XMLHttpRequest')
                     .send({
                         email: userJson[1].email,
                         password: userJson[1].password

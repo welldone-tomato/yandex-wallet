@@ -5,6 +5,8 @@ const YandexStrategy = require('passport-yandex').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
 
+const stringCrypt = require('../libs/string-encrypt');
+
 const {JWT_SECRET, HOST} = require('../config-env');
 const User = require('../models/user');
 
@@ -102,7 +104,8 @@ const oauth2Callback = async (token, tokenSecret, profile, done) => {
         else {
             const newUser = new User({
                 email,
-                password: token
+                password: token,
+                telegramKey: stringCrypt(email, 4)
             });
 
             await newUser.save();
