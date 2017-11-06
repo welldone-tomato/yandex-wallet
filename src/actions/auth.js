@@ -20,16 +20,38 @@ const setStorageEvents = dispatch => {
         });
 }
 
+const getCookie = cname => {
+    const name = cname + "=";
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) === ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
 export const verifyToken = () => {
     return async dispatch => {
-        const token = localStorage.getItem('token');
+        dispatch({
+            type: action.USER_TOKEN_VERIFY_START
+        });
+
+        let token = localStorage.getItem('token');
+        if (!token) {
+            const cookieToken = getCookie('jwt');
+            if (cookieToken) {
+                localStorage.setItem('token', cookieToken);
+                token = cookieToken;
+            }
+        }
+
         if (token) {
-            setStorageEvents(dispatch);
-
-            dispatch({
-                type: action.USER_TOKEN_VERIFY_START
-            });
-
             try {
                 const response = await axios
                     .get(VERIFY_URL, {
@@ -38,14 +60,14 @@ export const verifyToken = () => {
                         }
                     });
 
+                setStorageEvents(dispatch);
+
                 dispatch({
                     type: action.USER_LOGIN_SUCCESS,
                     payload: response.data.user
                 });
 
                 dispatch(fetchCards());
-
-            // dispatch(push('/'));
             } catch (err) {
                 let message = 'Сеанс закончился';
                 if (err.response.status === 401)
@@ -55,16 +77,24 @@ export const verifyToken = () => {
                 dispatch(signOutUser(message));
             }
         }
+
+        dispatch({
+            type: action.USER_TOKEN_VERIFY_COMPLETE
+        });
     }
 }
 
-export const signInUser = ({email, password}) => {
+export const signInUser = ({email, password} , redirect) => {
     return async dispatch => {
         try {
             const response = await axios
                 .post(SIGNIN_URL, {
                     email,
                     password
+                }, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
                 });
 
             localStorage.setItem('token', response.data.token);
@@ -76,7 +106,8 @@ export const signInUser = ({email, password}) => {
 
             dispatch(fetchCards());
 
-            dispatch(push('/'));
+            if (redirect) dispatch(push(redirect));
+            else dispatch(push('/'));
         } catch (response) {
             dispatch({
                 type: action.USER_LOGIN_FAILURE,

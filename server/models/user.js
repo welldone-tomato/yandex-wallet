@@ -19,7 +19,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, 'password is required'],
         validate: {
-            validator: value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(value),
+            validator: value => /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})/.test(value),
             message: 'valid password field is required'
         }
     }

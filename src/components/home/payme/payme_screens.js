@@ -107,12 +107,11 @@ export const PaymeError = ({transaction, repeatPayment, error, returnToTrans}) =
 			<CheckIcom />
 			<SectionGroup>
 				<Header>Ошибка</Header>
-				<Section>
+				{sum>0 && <Section>
 					<SectionLabel>Сумма:</SectionLabel>
 					<SectionValue>{sum} {getSignByCurrency(currency)}</SectionValue>
-				</Section>
+				</Section>}
 				<Section>
-					<SectionLabel>Ошибка:</SectionLabel>
 					<SectionValue>{error}</SectionValue>
 				</Section>
 			</SectionGroup>

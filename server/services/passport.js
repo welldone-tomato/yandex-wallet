@@ -1,9 +1,11 @@
 const passport = require('koa-passport');
 const JwtStrategy = require('passport-jwt').Strategy;
+const GoogleStrategy = require('passport-google-auth').Strategy;
+const YandexStrategy = require('passport-yandex').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const LocalStrategy = require('passport-local');
 
-const {JWT_SECRET} = require('../config-env');
+const {JWT_SECRET, HOST} = require('../config-env');
 const User = require('../models/user');
 
 // JWT strategy
@@ -81,6 +83,55 @@ const localLogin = new LocalStrategy(localOptions, async (email, password, done)
     }
 });
 
+const oauth2Callback = async (token, tokenSecret, profile, done) => {
+    const {emails} = profile;
+
+    if (!token || !emails[0])
+        return done({
+            message: 'invalid login'
+        }, false);
+
+    const email = emails[0].value;
+
+    try {
+        const user = await User.findOne({
+            email
+        });
+
+        if (user) return done(null, user.toObject());
+        else {
+            const newUser = new User({
+                email,
+                password: token
+            });
+
+            await newUser.save();
+
+            return done(null, newUser.toObject());
+        }
+    } catch (err) {
+        done(err, false)
+    };
+};
+
+const yandexOption = {
+    clientID: '8d36707d898147158df97e7f17d79349',
+    clientSecret: 'dbca634e00a74dffbbe1ac77a37c8cfc',
+    callbackURL: 'http://' + HOST + '/api/auth/yandex/callback'
+}
+
+const yandexLogin = new YandexStrategy(yandexOption, oauth2Callback);
+
+const googleOptions = {
+    clientId: '492605406290-8s77uuohdk13433ejh0ih446bbemod3e.apps.googleusercontent.com',
+    clientSecret: '70wYuryto3tYOCCHmQ3PFI5D',
+    callbackURL: 'http://' + HOST + '/api/auth/google/callback'
+};
+
+const googleLogin = new GoogleStrategy(googleOptions, oauth2Callback);
+
 // Use strategies
 passport.use(jwtLogin);
 passport.use(localLogin);
+passport.use('google', googleLogin);
+passport.use('yandex', yandexLogin);

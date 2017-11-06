@@ -27,7 +27,7 @@ export default ({
     if (['test', 'dev'].includes(process.env.NODE_ENV)) {
       url = 'ws://localhost:4000/ws';
     } else {
-      url = 'ws://wallet.kroniak.net/ws';
+      url = 'wss://wallet.kroniak.net/ws';
     }
   
     const token = localStorage.getItem('token');

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux';
 import { signUpUser } from '../../actions/auth';
 import styled from 'emotion/react';
 import Island from '../misc/island';
@@ -72,6 +73,10 @@ class SignUp extends Component {
         this.handlePasswordCheckChange = this.handlePasswordCheckChange.bind(this); 
     }
 
+    componentDidMount(){
+        if (this.props.isAuth) this.props.dispatch(push('/'));
+    }
+
     handleEmailChange = event => {
         this.setState({
             email: event.target.value
@@ -133,6 +138,7 @@ class SignUp extends Component {
 }
 
 const mapStateToProps = state =>({
+    isAuth: state.auth.isAuth,
     error: state.auth.error
 });
 

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux';
 import { signInUser } from '../../actions/auth';
 import styled from 'emotion/react';
+
 import Island from '../misc/island';
 import Title from '../misc/title';
 import Button from '../misc/button';
@@ -52,9 +54,32 @@ const LoginButton = styled(Button)`
 float: right;
 `;
 
+const SocialButton = styled.div`
+width: 50px;
+height: 50px;
+background-image: ${props=> `url(/assets/${props.provider}-login.svg)`};
+background-repeat: round;
+
+margin: 10px;
+
+&:hover {
+    transform: scale(1.2);
+  }
+`;
+
 const CustomInput = styled(Input)`
 width: 225px;
 `;
+
+const getParameterByName = (name, url) => {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\\[\]]/g, "\\$&");
+    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
 class SignIn extends Component {
     constructor(props) {
@@ -67,30 +92,43 @@ class SignIn extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);        
+        this.handleSocialClick= this.handleSocialClick.bind(this);
     }
 
-    handleEmailChange = event => {
+    componentDidMount(){
+        if (this.props.isAuth) this.props.dispatch(push('/'));
+    }
+
+    handleEmailChange(event) {
         this.setState({
             email: event.target.value
         });
     }
 
-    handlePasswordChange = event => {
+    handlePasswordChange(event) {
         this.setState({
             password: event.target.value
         });
     }
 
-    handleClick = () => {
+    handleClick() {
         const {email, password} = this.state;
+
+        const redirect = getParameterByName('redirect');
+
         if (email && password) {
             this
                 .props
                 .dispatch(signInUser({
                     email,
                     password
-                }));
+                }, redirect));
         }
+    }
+
+    async handleSocialClick(provider) {
+        if (provider)
+            window.location='/api/auth/' + provider;
     }
 
     render() {
@@ -108,12 +146,18 @@ class SignIn extends Component {
 				</InputField>
                 <Underline />
 				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Войти</LoginButton>
+                <Underline />
+                <div style={{"display": "flex"}}>
+                    <SocialButton onClick={()=> this.handleSocialClick('yandex')} provider='yandex'/>
+                    <SocialButton onClick={()=> this.handleSocialClick('google')} provider='google' />
+                </div>              
             </LoginLayout>
             );
     }
 }
 
 const mapStateToProps = state =>({
+    isAuth: state.auth.isAuth,
     error: state.auth.error
 });
 
