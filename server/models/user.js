@@ -45,12 +45,11 @@ userSchema.pre('save', function(next) {
                 bcrypt.hash(user.password, salt, null, (err, hash) => {
                     if (err)
                         return next(err);
-                    else {
+                    else
                         user.password = hash;
-                        next();
-                    }
                 });
         });
+    next();
 });
 
 // Methods

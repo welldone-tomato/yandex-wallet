@@ -5,8 +5,7 @@ const moment = require('moment');
 const Extra = require('telegraf/extra');
 const Markup = require('telegraf/markup');
 const axios = require('axios');
-const DOMAIN = 'http://localhost:3000'; // TODO Change for production
-
+const {HOST} = require('../config-env');
 
 const CURRENCY_ENUM = {
     'RUB': '🇷🇺 р.',
@@ -102,6 +101,7 @@ class TelegramBot {
     mobilePaymentCommand(user) {
         this.bot.command('/mobile', async (ctx) => {
             const params = ctx.message.text.split(' ');
+            // TODO?????
             const pay = await this.makeMobilePayment(user, params[1], params[2], params[3]);
         // ctx.reply(pay);
         });
@@ -129,7 +129,7 @@ class TelegramBot {
         const token = 'JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6IjU5ZjI5OWE0ZDYxMWFkMDFkMDExNWIwOSIsImV4cCI6MTUxMDQwMTY1NjI1NH0.snewL_Rkavr_DYQilo5tb3K4fqSphWx3Mkb8tjYEkmI';
         try {
             const {data} = await axios
-                .post(`${DOMAIN}/api/cards/${card.id}/pay`, payment, {
+                .post(`http://${HOST}/api/cards/${card.id}/pay`, payment, {
                     headers: {
                         authorization: token
                     }

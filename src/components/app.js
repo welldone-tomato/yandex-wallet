@@ -24,12 +24,12 @@ const Wallet = styled.div`
 display: flex;
 min-height: 863px;
 background-color: #fcfcfc;
-width: 94%;
+width: 100%;
 margin: 0px auto;
-@media (min-width: 1200px) { /* стиль имеет смысл, когда ширина экрана больше 1200px, к тому же не нужно придумывать решения для IE7 и ниже */ 
-  width: 60%;
+@media (min-width: 1500px) { /* вот когда он больше сильно его разматывает по краям, не должно этого быть */ 
+  width: 1370px;
 }
-min-width: 1080px;
+min-width: 1280px;
 `;
 
 const CardPane = styled.div`
