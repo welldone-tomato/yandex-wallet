@@ -72,6 +72,7 @@ class Header extends React.Component {
 
 	render() {
 		const {user, auth} = this.props;
+		const botName = ['test', 'dev'].includes(process.env.NODE_ENV)? 'KuhelTestBot': 'YANMBot';
 
 		return (
 			<HeaderLayout>
@@ -80,6 +81,7 @@ class Header extends React.Component {
 				{auth.isAuth && 
 					<Button bgColor='#0088cc' textColor='#fff' onClick={this.onClick}>Telegram</Button>
 				}
+				{auth.isAuth && <Currency />}
 				{this.state.isTelegramModalVisible ? <Popup onCloseClick={this.onCloseClick}>
 					<div>
 						<h3 style={{marginBottom: '20px', marginTop: '20px'}}>Ваш секретный ключ: <code>{user.telegramKey}</code> </h3>
@@ -88,9 +90,8 @@ class Header extends React.Component {
 							<code style={{background:'#FFFACD'}}>/getupdates {user.telegramKey}</code>
 						</div>
 					</div>
-					<Button bgColor='#0088cc' textColor='#fff'><a style={{color:'#fff'}} target="_blank" href={`http://telegram.me/ya_app_wall_bot`}>Перейти к боту</a></Button>
+					<Button bgColor='#0088cc' textColor='#fff'><a style={{color:'#fff'}} target="_blank" href={`http://telegram.me/${botName}`}>Перейти к боту</a></Button>
 				</Popup> : null}
-				{auth.isAuth && <Currency />}
 				<UserInfo isAuth={auth.isAuth} userName={auth.userName} onSignOutClick={this.props.onSignOutClick}/>
 			</HeaderLayout>
 		)

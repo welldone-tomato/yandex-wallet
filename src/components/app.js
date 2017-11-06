@@ -24,10 +24,12 @@ const Wallet = styled.div`
 display: flex;
 min-height: 863px;
 background-color: #fcfcfc;
-width: 94%;
+width: 100%;
 margin: 0px auto;
-
-min-width: 1080px;
+@media (min-width: 1500px) { /* вот когда он больше сильно его разматывает по краям, не должно этого быть */ 
+  width: 1370px;
+}
+min-width: 1280px;
 `;
 
 const CardPane = styled.div`
