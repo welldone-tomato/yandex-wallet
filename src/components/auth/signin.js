@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux';
 import { signInUser } from '../../actions/auth';
 import styled from 'emotion/react';
 import Island from '../misc/island';
@@ -56,6 +57,16 @@ const CustomInput = styled(Input)`
 width: 225px;
 `;
 
+const getParameterByName = (name, url) => {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\\[\]]/g, "\\$&");
+    const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)");
+    const results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 class SignIn extends Component {
     constructor(props) {
         super(props);
@@ -67,6 +78,10 @@ class SignIn extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);        
+    }
+
+    componentDidMount(){
+        if (this.props.isAuth) this.props.dispatch(push('/'));
     }
 
     handleEmailChange = event => {
@@ -83,13 +98,16 @@ class SignIn extends Component {
 
     handleClick = () => {
         const {email, password} = this.state;
+
+        const redirect = getParameterByName('redirect');
+
         if (email && password) {
             this
                 .props
                 .dispatch(signInUser({
                     email,
                     password
-                }));
+                }, redirect));
         }
     }
 
@@ -114,6 +132,7 @@ class SignIn extends Component {
 }
 
 const mapStateToProps = state =>({
+    isAuth: state.auth.isAuth,
     error: state.auth.error
 });
 

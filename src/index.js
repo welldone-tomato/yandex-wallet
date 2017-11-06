@@ -6,7 +6,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose } from 'redux';
 import { Route, Router, IndexRoute, browserHistory } from 'react-router';
 import { syncHistoryWithStore, routerMiddleware, routerActions } from 'react-router-redux';
-import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect'
+import { connectedRouterRedirect } from 'redux-auth-wrapper/history3/redirect';
 
 // Middlewares
 import reduxThunk from 'redux-thunk';

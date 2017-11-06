@@ -58,7 +58,7 @@ export const verifyToken = () => {
     }
 }
 
-export const signInUser = ({email, password}) => {
+export const signInUser = ({email, password} , redirect) => {
     return async dispatch => {
         try {
             const response = await axios
@@ -76,7 +76,8 @@ export const signInUser = ({email, password}) => {
 
             dispatch(fetchCards());
 
-            dispatch(push('/'));
+            if (redirect) dispatch(push(redirect));
+            else dispatch(push('/'));
         } catch (response) {
             dispatch({
                 type: action.USER_LOGIN_FAILURE,
