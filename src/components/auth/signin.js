@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import { push } from 'react-router-redux';
 import { signInUser } from '../../actions/auth';
 import styled from 'emotion/react';
+
 import Island from '../misc/island';
 import Title from '../misc/title';
 import Button from '../misc/button';
@@ -53,6 +54,19 @@ const LoginButton = styled(Button)`
 float: right;
 `;
 
+const SocialButton = styled.div`
+width: 50px;
+height: 50px;
+background-image: ${props=> `url(/assets/${props.provider}-login.svg)`};
+background-repeat: round;
+
+margin: 10px;
+
+&:hover {
+    transform: scale(1.2);
+  }
+`;
+
 const CustomInput = styled(Input)`
 width: 225px;
 `;
@@ -78,25 +92,26 @@ class SignIn extends Component {
         this.handleClick = this.handleClick.bind(this);
         this.handleEmailChange = this.handleEmailChange.bind(this);
         this.handlePasswordChange = this.handlePasswordChange.bind(this);        
+        this.handleSocialClick= this.handleSocialClick.bind(this);
     }
 
     componentDidMount(){
         if (this.props.isAuth) this.props.dispatch(push('/'));
     }
 
-    handleEmailChange = event => {
+    handleEmailChange(event) {
         this.setState({
             email: event.target.value
         });
     }
 
-    handlePasswordChange = event => {
+    handlePasswordChange(event) {
         this.setState({
             password: event.target.value
         });
     }
 
-    handleClick = () => {
+    handleClick() {
         const {email, password} = this.state;
 
         const redirect = getParameterByName('redirect');
@@ -109,6 +124,11 @@ class SignIn extends Component {
                     password
                 }, redirect));
         }
+    }
+
+    async handleSocialClick(provider) {
+        if (provider)
+            window.location='/api/auth/' + provider;
     }
 
     render() {
@@ -126,6 +146,11 @@ class SignIn extends Component {
 				</InputField>
                 <Underline />
 				<LoginButton bgColor='#fff' textColor='#108051' onClick={this.handleClick}>Войти</LoginButton>
+                <Underline />
+                <div style={{"display": "flex"}}>
+                    <SocialButton onClick={()=> this.handleSocialClick('yandex')} provider='yandex'/>
+                    <SocialButton onClick={()=> this.handleSocialClick('google')} provider='google' />
+                </div>              
             </LoginLayout>
             );
     }

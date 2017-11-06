@@ -25,17 +25,17 @@ import { verifyToken } from './actions/auth';
 // Websockets
 import Websockets from './websockets';
 
-//
+// Middlewares inits
 const middlewares = [reduxThunk, routerMiddleware(browserHistory)];
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(reducers, composeEnhancers(applyMiddleware(...middlewares)));
 const history = syncHistoryWithStore(browserHistory, store);
 
-Websockets.init(store);
-
 ////////
 store.dispatch(verifyToken());
+
+Websockets.init(store);
 
 const userIsAuthenticated = connectedRouterRedirect({
   redirectPath: '/signin',

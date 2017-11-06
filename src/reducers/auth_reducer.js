@@ -15,6 +15,12 @@ const authReducer = (state = authInitialState, {type, payload}) => {
                 isAuthenticating: true
             };
 
+        case actions.USER_TOKEN_VERIFY_COMPLETE:
+            return {
+                ...state,
+                isAuthenticating: false
+            };
+
         case actions.USER_LOGIN_SUCCESS:
             return {
                 ...state,

@@ -44,15 +44,23 @@ const signinMiddleware = provider => async (ctx, next) => passport.authenticate(
         httpOnly: false
     });
 
-    ctx.body = {
-        user: user.email,
-        token
-    };
+    const xhr = ctx.request.get('X-Requested-With') === 'XMLHttpRequest';
+
+    if (xhr)
+        ctx.body = {
+            user: user.email,
+            token
+        };
+    else ctx.redirect('/');
 })(ctx, next);
 
 router.get('/google', passport.authenticate('google'));
 
 router.get('/google/callback', signinMiddleware('google'));
+
+router.get('/yandex', passport.authenticate('yandex'));
+
+router.get('/yandex/callback', signinMiddleware('yandex'));
 
 router.get('/verify', async (ctx, next) => await passport.authenticate('jwt', async (err, user) => {
         if (!user)

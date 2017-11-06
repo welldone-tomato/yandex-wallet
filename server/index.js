@@ -25,13 +25,12 @@ const UsersContext = require('./data/users_context');
 const MoneyRequestsContext = require('./data/money_requests_context');
 
 // env config
-const {MONGO} = require('./config-env');
-const PORT = process.env.NODE_PORT || 4000;
+const {MONGO, PORT} = require('./config-env');
 
 mongoose.Promise = global.Promise;
 const app = new Koa();
 
-if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev')
+if (process.env.NODE_ENV !== 'test')
 	app.use(serve(__dirname + '/../build'));
 
 // app.use(cors());
@@ -104,7 +103,7 @@ router.use('/api/mrs', requiredAuth, mrRoute.routes());
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-if (process.env.NODE_ENV !== 'test' && process.env.NODE_ENV !== 'dev')
+if (process.env.NODE_ENV !== 'test')
 	app.use(async ctx => await send(ctx, 'build/index.html'));
 
 //********************** Mongo connections and server starts ***************************** */
@@ -127,7 +126,7 @@ if (process.env.NODE_ENV !== 'test') {
 			logger.info(`YM Node School APP connectsed to DB successfully. ADDR= ${MONGO}`);
 
 			const server = http.createServer(app.callback()).listen(PORT, notifyStarting(PORT));
-			
+
 			websockets.init(server);
 		})
 		.once('error', error => {
